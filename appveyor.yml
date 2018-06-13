@@ -1,0 +1,63 @@
+clone_folder: C:\M
+
+environment:
+  DISABLE_QUALITY_CHECK: true
+  PATH: C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Git\cmd;C:\Program Files\7-Zip
+  DEPLOY_PROVIDER: bintray
+  BINTRAY_USER: jeroen
+  BINTRAY_TARGET: rtools
+  BUILD_URL: https://ci.appveyor.com/project/$(APPVEYOR_ACCOUNT_NAME)/$(APPVEYOR_PROJECT_NAME)/build/$(APPVEYOR_BUILD_VERSION)
+  matrix:
+    - MINGW_INSTALLS: mingw32
+      BINTRAY_REPOSITORY: mingw32
+      PACMAN_REPOSITORY: mingw32
+      BINTRAY_PACKAGE: mingw32
+    - MINGW_INSTALLS: mingw64
+      BINTRAY_REPOSITORY: mingw64
+      PACMAN_REPOSITORY: mingw64
+      BINTRAY_PACKAGE: mingw64
+
+matrix:
+  fast_finish: true
+
+build_script:
+  - C:\msys64\usr\bin\pacman --noconfirm --ask 20 --sync --refresh --refresh --sysupgrade --sysupgrade
+  - C:\msys64\usr\bin\bash --login -c "$(cygpath ${APPVEYOR_BUILD_FOLDER})/ci-build.sh"
+#  - C:\msys64\usr\bin\bash --login -c "$(cygpath ${APPVEYOR_BUILD_FOLDER})/fullindex.sh"
+
+test: off
+
+artifacts:
+  - path: artifacts\*
+    name: binaries
+  - path: sourcepkg\*
+    name: sources
+
+deploy:
+  - provider: BinTray
+    username: $(BINTRAY_USER)
+    subject: $(BINTRAY_TARGET)
+    repo: $(BINTRAY_REPOSITORY)
+    package: $(BINTRAY_PACKAGE)
+    version: latest
+    publish: true
+    override: true
+    api_key:
+      secure: rKoNWcAgUrOM7QLX4cEvA1iKoY2DR4ps/1PRveq7rJknjQjcpKx8xGs42CJPhDwJ
+    on:
+      branch: master
+    artifact: binaries
+
+  - provider: BinTray
+    username: $(BINTRAY_USER)
+    subject: $(BINTRAY_TARGET)
+    repo: sources
+    package: mingw
+    version: latest
+    publish: true
+    override: true
+    api_key:
+      secure: rKoNWcAgUrOM7QLX4cEvA1iKoY2DR4ps/1PRveq7rJknjQjcpKx8xGs42CJPhDwJ
+    on:
+      branch: master
+    artifact: sources
