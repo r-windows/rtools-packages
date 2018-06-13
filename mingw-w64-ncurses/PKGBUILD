@@ -64,3 +64,4 @@ package() {
   cp -r ${pkgdir}${MINGW_PREFIX}/include/ncursesw ${pkgdir}${MINGW_PREFIX}/include/ncurses
   cp ${pkgdir}${MINGW_PREFIX}/lib/libncursesw.a ${pkgdir}${MINGW_PREFIX}/lib/libncurses.a
 }
+
