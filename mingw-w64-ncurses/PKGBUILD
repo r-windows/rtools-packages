@@ -1,0 +1,66 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+# Rtools: Jeroen Ooms <jeroenooms@gmail.com>
+
+_realname=ncurses
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+_base_ver=6.1
+_date_rev=20180407
+pkgver=${_base_ver}.${_date_rev}
+pkgrel=9002
+pkgdesc="System V Release 4.0 curses emulation library (mingw-w64)"
+arch=('any')
+depends=("${MINGW_PACKAGE_PREFIX}-libsystre")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
+url="https://www.gnu.org/software/ncurses/"
+license=('MIT')
+options=('staticlibs' 'strip')
+source=("${_realname}-${pkgver}.tar.gz"::"https://invisible-mirror.net/archives/ncurses/current/${_realname}-${_base_ver}-${_date_rev}.tgz"
+        001-use-libsystre.patch)
+sha256sums=('85baae1a02f695cc8a9b966e8dceea457df183ece9229f8e6a20ec3c3d2ee6a9'
+            'eb28949297a4c1eda67da49cfbed1d60f181b83101a0b3715552a4564bd90ff3')
+
+prepare() {
+  cd ${_realname}-${_base_ver}-${_date_rev}
+  patch -p1 -i ${srcdir}/001-use-libsystre.patch
+}
+
+build() {
+  [[ -d build-${MINGW_CHOST} ]] && rm -rf build-${MINGW_CHOST}
+  mkdir -p build-${MINGW_CHOST}
+  cd build-${MINGW_CHOST}
+
+  ../${_realname}-${_base_ver}-${_date_rev}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --mandir=${MINGW_PREFIX}/share/man \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --without-ada \
+    --with-cxx \
+    --without-shared \
+    --without-pthread \
+    --enable-pc-files \
+    --disable-rpath \
+    --enable-colorfgbg \
+    --enable-ext-colors \
+    --enable-ext-mouse \
+    --disable-symlinks \
+    --enable-warnings \
+    --enable-assertions \
+    --disable-home-terminfo \
+    --enable-database \
+    --enable-sp-funcs \
+    --enable-term-driver \
+    --enable-interop \
+    --enable-widec
+
+  make
+}
+
+package() {
+  cd ${srcdir}/build-${MINGW_CHOST}
+  make DESTDIR=${pkgdir} install
+  cp -r ${pkgdir}${MINGW_PREFIX}/include/ncursesw ${pkgdir}${MINGW_PREFIX}/include/ncurses
+  cp ${pkgdir}${MINGW_PREFIX}/lib/libncursesw.a ${pkgdir}${MINGW_PREFIX}/lib/libncurses.a
+}
