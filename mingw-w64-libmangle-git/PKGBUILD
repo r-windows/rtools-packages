@@ -1,0 +1,41 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+
+_realname=libmangle
+pkgbase=mingw-w64-${_realname}-git
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
+replaces=("${MINGW_PACKAGE_PREFIX}-${_realname}-svn")
+provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+pkgver=5.0.4
+pkgrel=9002
+pkgdesc="MinGW-w64 libmangle"
+arch=('any')
+url="https://mingw-w64.sourceforge.io/"
+license=('custom')
+groups=("${MINGW_PACKAGE_PREFIX}-toolchain")
+makedepends=("git"
+             "${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-binutils"
+             "${MINGW_PACKAGE_PREFIX}-crt-git"
+             "${MINGW_PACKAGE_PREFIX}-headers-git")
+options=('strip' 'staticlibs' '!emptydirs')
+source=("https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/mingw-w64-v${pkgver}.tar.bz2")
+sha256sums=('5527e1f6496841e2bb72f97a184fc79affdcd37972eaa9ebf7a5fd05c31ff803')
+
+build() {
+  [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
+  mkdir -p ${srcdir}/build-${MINGW_CHOST} && cd ${srcdir}/build-${MINGW_CHOST}
+
+  ${srcdir}/mingw-w64-v${pkgver}/mingw-w64-libraries/libmangle/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST}
+
+  make
+}
+
+package() {
+  cd ${srcdir}/build-${MINGW_CHOST}
+  make DESTDIR=${pkgdir} install
+  install -Dm644 ${srcdir}/mingw-w64-v${pkgver}/mingw-w64-libraries/libmangle/COPYING ${pkgdir}${MINGW_PREFIX}/share/licenses/mingw-w64-libraries/COPYING.${_realname}
+}
