@@ -1,0 +1,33 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+# Rtools: Jeroen Ooms <jeroenooms@gmail.com>
+
+_realname=windows-default-manifest
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=6.4
+pkgrel=9002
+pkgdesc='Default Windows application manifest (mingw-w64)'
+url='https://cygwin.com/'
+arch=('any')
+license=('BSD')
+makedepends=('git' "${MINGW_PACKAGE_PREFIX}-gcc")
+_GIT_TAG="release-6_4"
+source=("git://sourceware.org/git/cygwin-apps/${_realname}.git#tag=${_GIT_TAG}")
+sha256sums=('SKIP')
+
+build() {
+  [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
+  cp -rf ${srcdir}/${_realname} ${srcdir}/build-${MINGW_CHOST}
+  cd ${srcdir}/build-${MINGW_CHOST}
+  ./configure \
+    --prefix=${MINGW_PREFIX}/${MINGW_CHOST} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST}
+  make
+}
+
+package() {
+  cd ${srcdir}/build-${MINGW_CHOST}
+  make DESTDIR=${pkgdir} install
+}
