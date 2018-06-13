@@ -1,0 +1,123 @@
+# Maintainer: Alexey Pavlov <Alexpux@gmail.com>
+# Contributor: Ray Donnelly <mingw.android@gmail.com>
+
+# Note: I would like to update to 59.1 but I found
+# putil.cpp: In function 'const char* uprv_getDefaultLocaleID_59d()':
+# putil.cpp:1733:86: error: 'GetUserDefaultLocaleName' was not declared in this sc           ope
+# int length = GetUserDefaultLocaleName(windowsLocale, UPRV_LENGTHOF(windowsL           ocale));
+
+_realname=icu
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=58.2
+pkgrel=9002
+arch=('any')
+pkgdesc="International Components for Unicode library (mingw-w64)"
+arch=('any')
+url="http://www.icu-project.org/"
+license=('custom:icu')
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
+# There's no point adding 'debug' to options as both
+# debug and release packages are built regardless.
+options=('!buildflags' 'staticlibs' 'strip')
+source=("http://download.icu-project.org/files/icu4c/${pkgver}/icu4c-${pkgver//./_}-src.tgz"
+        0004-move-to-bin.mingw.patch
+        0007-actually-move-to-bin.mingw.patch
+        0008-data-install-dir.mingw.patch
+        0009-fix-bindir-in-config.mingw.patch
+        0010-msys-rules-for-makefiles.mingw.patch
+        0011-sbin-dir.mingw.patch
+        0012-libprefix.mingw.patch
+        0014-mingwize-pkgdata.mingw.patch
+        0015-debug.mingw.patch
+        0016-icu-pkgconfig.patch
+        0017-icu-config-versioning.patch
+        0020-workaround-missing-locale.patch
+        0021-mingw-static-libraries-without-s.patch)
+sha256sums=('2b0a4410153a9b20de0e20c7d8b66049a72aef244b53683d0d7521371683da0c'
+            '0b6f5ea91bb579f03cdfa2737719411e3207169f5921ffeea8564cf24fa46715'
+            'a32b3fae6a59599c942e5f8bc2d29416aaedca0ce2832c857ecf99eb7529cee1'
+            'f437f25a62420856ed234d2b33672b860ae00106cb5d4ccc682f5ff15176aeaf'
+            'c84fda5b32edcbf062d629bbf04c47e73e7b9620f4dae752c1c0c25f49124ca8'
+            '1cf7fd08bad22f39441213d54f0659a3046e163729aa4cd6ff393602ec22c285'
+            '4f4787caeccf70607cf0cbde0c005f05f5c6de1543265a927839122405b4054f'
+            'e7ecdafe85e18a4a4b5f29bbfde38776521a848e5b65089a2379b90e59f1592d'
+            '564e0171b9c183dfc45a0022ee94220de715d17351b3d2a8aa7fa7ff4c20a8cd'
+            '0181f9ff8b7dd0a423869d8772da0a4feea64188347eb0dee7eb059aea92131c'
+            '87ebe8962f8c387714f2a697a664a0c49aed2331b988548069d0c211abc36e05'
+            '5247102df5604671c33a6e7226e5135a6b48049550861b892f0686dcefec4329'
+            'cf4c5925da545f864277abde2741009816ec77ae9083a6970f5bde5162a93feb'
+            'd8612f40b1731d9a94290afcf80c896184a2f15b8ae8f23b3643c64f6cabfa2f')
+
+# Helper macros to help make tasks easier #
+apply_patch_with_msg() {
+  msg2 "Applying $1"
+  patch -Nbp1 -i "${srcdir}"/$1
+}
+
+del_file_exists() {
+  for _fname in "$@"
+  do
+    if [ -f $_fname ]; then
+      rm -rf $_fname
+    fi
+  done
+}
+# =========================================== #
+
+prepare() {
+  cd "${srcdir}/icu"
+
+  apply_patch_with_msg 0004-move-to-bin.mingw.patch
+  apply_patch_with_msg 0007-actually-move-to-bin.mingw.patch
+  apply_patch_with_msg 0008-data-install-dir.mingw.patch
+  apply_patch_with_msg 0009-fix-bindir-in-config.mingw.patch
+  apply_patch_with_msg 0010-msys-rules-for-makefiles.mingw.patch
+  apply_patch_with_msg 0011-sbin-dir.mingw.patch
+  apply_patch_with_msg 0012-libprefix.mingw.patch
+  apply_patch_with_msg 0014-mingwize-pkgdata.mingw.patch
+  apply_patch_with_msg 0015-debug.mingw.patch
+  apply_patch_with_msg 0016-icu-pkgconfig.patch
+  apply_patch_with_msg 0017-icu-config-versioning.patch
+  apply_patch_with_msg 0020-workaround-missing-locale.patch
+  apply_patch_with_msg 0021-mingw-static-libraries-without-s.patch
+
+  cd source
+  autoreconf -vfi
+}
+
+build() {
+
+  [[ -d "${srcdir}/build-${MINGW_CHOST}" ]] && rm -rf "${srcdir}/build-${MINGW_CHOST}"
+  mkdir -p "${srcdir}/build-${MINGW_CHOST}"
+  cd "${srcdir}/build-${MINGW_CHOST}"
+
+  CXXFLAGS+=" -DU_USE_STRTOD_L=0" # breaks on Windows XP
+  #CXXFLAGS+=" -D_WIN32_WINNT=0x0601"
+
+  ${srcdir}/icu/source/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --disable-rpath \
+    --disable-shared \
+    --enable-static \
+    --enable-release
+
+    make -j1
+}
+
+check() {
+  make V=1 -k check
+}
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  make install DESTDIR="${pkgdir}"
+
+  # Jeroen: save some space in rtools
+  rm -f "${pkgdir}${MINGW_PREFIX}"/lib/*.dll
+  rm -Rf "${pkgdir}${MINGW_PREFIX}"/bin/
+  rm -Rf "${pkgdir}${MINGW_PREFIX}"/sbin/
+}
