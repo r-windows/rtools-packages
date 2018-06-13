@@ -36,3 +36,4 @@ package() {
   make install prefix="${pkgdir}${MINGW_PREFIX}" exec_prefix="${pkgdir}${MINGW_PREFIX}" oldincludedir=
   rm -r "${pkgdir}"${MINGW_PREFIX}/info/
 }
+
