@@ -1,0 +1,41 @@
+# Maintainer: Alexey Pavlov <Alexpux@gmail.com>
+# Rtools: Jeroen Ooms <jeroenooms@gmail.com>
+
+_realname=gmp
+pkgbase=mingw-w64-${_realname}
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+pkgver=6.1.2
+pkgrel=9002
+pkgdesc="A free library for arbitrary precision arithmetic (mingw-w64)"
+arch=('any')
+url="https://gmplib.org/"
+license=('LGPL3')
+source=(https://gmplib.org/download/gmp-${pkgver}/${_realname}-${pkgver}.tar.xz{,.sig})
+options=('staticlibs')
+validpgpkeys=('343C2FF0FBEE5EC2EDBEF399F3599FF828C67298')
+sha256sums=('87b565e89a9a684fe4ebeeddb8399dce2599f9c9049854ca8c0dfbdea0e21912'
+            'SKIP')
+
+build() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+
+  # Build static version
+  mkdir -p "${srcdir}/static-${MINGW_CHOST}" && cd "${srcdir}/static-${MINGW_CHOST}"
+  ../${_realname}-${pkgver}/configure \
+    --build=${MINGW_CHOST} \
+    --prefix=${MINGW_PREFIX} \
+    --enable-cxx \
+    --enable-static \
+    --disable-shared
+  make
+}
+
+check() {
+  cd "${srcdir}/static-${MINGW_CHOST}"
+  make check
+}
+
+package() {
+  cd "${srcdir}/static-${MINGW_CHOST}"
+  make DESTDIR="${pkgdir}" install
+}
