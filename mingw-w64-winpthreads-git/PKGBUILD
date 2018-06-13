@@ -1,0 +1,102 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+# Contributor: Martell Malone <martellmalone@gmail.com>
+# Contributor: Renato Silva <br.renatosilva@gmail.com>
+# Rtools: Jeroen Ooms <jeroenooms@gmail.com>
+
+_realname=winpthreads
+pkgbase=mingw-w64-${_realname}-git
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}-git")
+pkgver=5.0.4
+pkgrel=9002
+pkgdesc="MinGW-w64 winpthreads library"
+url="https://mingw-w64.sourceforge.io/"
+# The main license of `winpthreads' is MIT, but parts of this library are
+# derived from the "POSIX Threads for Microsoft Windows" library, which is
+# licensed under BSD [1].
+license=('MIT' 'BSD')
+arch=('any')
+groups=("${MINGW_PACKAGE_PREFIX}-toolchain")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-binutils"
+             "${MINGW_PACKAGE_PREFIX}-crt-git"
+             "${MINGW_PACKAGE_PREFIX}-headers-git")
+options=('strip' '!buildflags' 'staticlibs' '!emptydirs' '!debug')
+source=("https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/mingw-w64-v${pkgver}.tar.bz2"
+        "0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch")
+sha256sums=('5527e1f6496841e2bb72f97a184fc79affdcd37972eaa9ebf7a5fd05c31ff803'
+            'd9e8af81682d9bf70e3d87506f51156cec61260b810a234bce861cb2eb3a5919')
+
+prepare() {
+  cd "${srcdir}/mingw-w64-v${pkgver}"
+  [[ -f mingw-w64-libraries/winpthreads/src/libgcc/dll_frame_info.c ]] && rm -rf mingw-w64-libraries/winpthreads/src/libgcc/dll_frame_info.c
+  patch -Nbp1 -i "${srcdir}/0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch"
+  cd "${srcdir}"/mingw-w64-v${pkgver}/mingw-w64-libraries/winpthreads
+  autoreconf -vfi
+}
+
+build() {
+  [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
+  mkdir -p "${srcdir}"/build-${MINGW_CHOST} && cd ${srcdir}/build-${MINGW_CHOST}
+
+  declare -a extra_config
+  if check_option "debug" "y"; then
+    extra_config+=("CFLAGS=-O0 -g -DWINPTHREAD_DBG")
+    extra_config+=("CXXFLAGS=-O0 -g -DWINPTHREAD_DBG")
+    extra_config+=("CXXFLAGS=")
+  fi
+
+  ../mingw-w64-v${pkgver}/mingw-w64-libraries/winpthreads/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --enable-static \
+    --disable-shared \
+    "${extra_config[@]}"
+
+  # I failed to figure out how to disable stripping, this
+  # will have to do instead.
+  if check_option "strip" "n"; then
+    sed -i 's,^STRIP = .*$,STRIP = true,g'                Makefile
+    sed -i 's,^STRIP=.*$,STRIP=true,g'                    libtool
+    sed -i 's,old_striplib=.*$strip,old_striplib=true,g'  libtool
+    sed -i 's,striplib=.*$,striplib=true,g'               libtool
+  fi
+
+  make
+}
+
+_install_licenses() {
+  # TODO: any more license files?
+  install -Dm644 ${srcdir}/mingw-w64-v${pkgver}/COPYING                                 ${pkgdir}${MINGW_PREFIX}/share/licenses/$1/COPYING
+  install -Dm644 ${srcdir}/mingw-w64-v${pkgver}/mingw-w64-libraries/winpthreads/COPYING ${pkgdir}${MINGW_PREFIX}/share/licenses/$1/mingw-w64-libraries/winpthreads/COPYING
+}
+
+package_winpthreads() {
+  depends=("${MINGW_PACKAGE_PREFIX}-crt-git")
+  replaces=("${MINGW_PACKAGE_PREFIX}-${_realname}-svn")
+  provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+  conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+
+  cd ${srcdir}/build-${MINGW_CHOST}
+  make DESTDIR=${pkgdir} install
+
+  mkdir -p ${pkgdir}${MINGW_PREFIX}/${MINGW_CHOST}
+  mv ${pkgdir}${MINGW_PREFIX}/include ${pkgdir}${MINGW_PREFIX}/${MINGW_CHOST}/
+  mv ${pkgdir}${MINGW_PREFIX}/lib ${pkgdir}${MINGW_PREFIX}/${MINGW_CHOST}/
+  rm -rf ${pkgdir}${MINGW_PREFIX}/bin
+
+  _install_licenses ${_realname}
+}
+
+# 32-bit wrappers
+package_mingw-w64-i686-winpthreads-git() {
+  package_winpthreads
+}
+
+# 64-bit wrappers
+package_mingw-w64-x86_64-winpthreads-git() {
+  package_winpthreads
+}
+
+# [1] https://locklessinc.com/articles/pthreads_on_windows/
