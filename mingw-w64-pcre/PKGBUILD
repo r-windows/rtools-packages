@@ -1,0 +1,59 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+
+_realname=pcre
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=8.42
+pkgrel=9002
+pkgdesc="A library that implements Perl 5-style regular expressions (mingw-w64)"
+arch=('any')
+url="https://pcre.org/"
+license=("BSD")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-pkg-config")
+depends=("${MINGW_PACKAGE_PREFIX}-bzip2"
+         #"${MINGW_PACKAGE_PREFIX}-readline"
+         #"${MINGW_PACKAGE_PREFIX}-wineditline"
+         "${MINGW_PACKAGE_PREFIX}-zlib")
+options=('staticlibs' 'strip')
+source=(https://ftp.pcre.org/pub/pcre/${_realname}-${pkgver}.tar.bz2{,.sig})
+sha256sums=('2cd04b7c887808be030254e8d77de11d3fe9d4505c39d4b15d2664ffe8bf9301'
+            'SKIP')
+validpgpkeys=('45F68D54BBE23FB3039B46E59766E084FB0F43D8')
+
+build() {
+  [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
+  mkdir -p "${srcdir}/build-${MINGW_CHOST}" && cd "${srcdir}/build-${MINGW_CHOST}"
+
+  "${srcdir}"/${_realname}-${pkgver}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --enable-unicode-properties \
+    --enable-utf \
+    --enable-pcre8 \
+    --enable-pcre16 \
+    --enable-pcre32 \
+    --enable-pcregrep-libz \
+    --enable-pcregrep-libbz2 \
+    --enable-static \
+    --disable-shared
+
+  make
+}
+
+check() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  make check
+}
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  make DESTDIR="${pkgdir}" install
+
+  # License files
+  cd "${pkgdir}${MINGW_PREFIX}/share"
+  mkdir -p licenses/${_realname}
+  mv doc/${_realname}/COPYING licenses/${_realname}
+  mv doc/${_realname}/LICENCE licenses/${_realname}
+}
