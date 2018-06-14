@@ -59,3 +59,4 @@ package() {
   # See https://fedoraproject.org/wiki/Licensing:MIT#Hylafax_Variant
   install -Dm644 "${srcdir}/tiff-${pkgver}/COPYRIGHT" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYRIGHT"
 }
+
