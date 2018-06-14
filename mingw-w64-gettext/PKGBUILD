@@ -121,4 +121,3 @@ package() {
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/gnulib-local/lib/libxml/COPYING"         "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/gnulib-local/lib/libxml/COPYING"
   rm "${pkgdir}${MINGW_PREFIX}/share/${_realname}/intl/COPYING.LIB"
 }
-
