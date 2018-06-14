@@ -131,3 +131,4 @@ package() {
 
   find  ${pkgdir}${MINGW_PREFIX}/share -type f -iname "opcodes.mo" -o -iname "bfd.mo" | xargs -rtl1 rm
 }
+
