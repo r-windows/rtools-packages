@@ -42,4 +42,3 @@ package() {
   make DESTDIR="${pkgdir}" install
   install -D -m644 "${srcdir}/systre-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE"
 }
-
