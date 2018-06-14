@@ -58,6 +58,7 @@ build() {
     --disable-shared \
     --enable-static \
     --enable-iconv \
+    --disable-nls \
     --with-libiconv=${MINGW_PREFIX} \
     --disable-docs \
     --with-arch=${CARCH} \
