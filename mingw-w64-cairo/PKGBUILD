@@ -53,6 +53,7 @@ build() {
   rm -rf build-${MINGW_CHOST}
   mkdir -p build-${MINGW_CHOST}
   cd build-${MINGW_CHOST}
+  LIBS="-lintl"
   CFLAGS+=" -Wno-implicit-function-declaration"
   ../${_realname}-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
