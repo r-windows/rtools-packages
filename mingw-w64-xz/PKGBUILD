@@ -45,3 +45,4 @@ package() {
   install -Dm644 ${srcdir}/${_realname}-${pkgver}/COPYING.GPLv3 ${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING.GPLv3
   install -Dm644 ${srcdir}/${_realname}-${pkgver}/COPYING.LGPLv2.1 ${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING.LGPLv2.1
 }
+

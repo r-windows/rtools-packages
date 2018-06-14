@@ -64,3 +64,4 @@ package() {
   install -Dm644 README.md  "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/README.md"
   install -Dm644 simd/jsimdext.inc "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/simd/jsimdext.inc"
 }
+

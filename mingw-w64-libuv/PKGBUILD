@@ -47,3 +47,4 @@ package() {
 
   install -D -m644 "${srcdir}"/${_realname}-${pkgver}/LICENSE "${pkgdir}${MINGW_PREFIX}"/share/licenses/${_realname}/LICENSE
 }
+
