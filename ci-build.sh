@@ -22,8 +22,8 @@ pacman --noconfirm -Scc
 pacman --noconfirm -Syyuu
 
 # Install gcc
-pacman --noconfirm -S mingw32/mingw-w64-i686-{xz,gcc,libtre}
-pacman --noconfirm -S mingw64/mingw-w64-x86_64-{xz,gcc,libtre}
+pacman --noconfirm -S mingw32/mingw-w64-i686-{xz,gcc,libtre,pkg-config}
+pacman --noconfirm -S mingw64/mingw-w64-x86_64-{xz,gcc,libtre,pkg-config}
 
 # Detect changed packages
 list_commits  || failure 'Could not detect added commits'
