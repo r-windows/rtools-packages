@@ -1,0 +1,41 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+# Contributor: Renato Silva <br.renatosilva@gmail.com>
+
+_realname=libffi
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=3.2.1
+pkgrel=9002
+pkgdesc="A portable, high level programming interface to various calling conventions (mingw-w64)"
+arch=('any')
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
+options=('staticlibs' 'strip')
+license=('MIT')
+url="https://sourceware.org/libffi"
+source=("https://sourceware.org/pub/libffi/${_realname}-${pkgver}.tar.gz"
+        "fix_return_size.patch")
+sha256sums=('d06ebb8e1d9a22d19e38d63fdb83954253f39bedc5d46232a05645685722ca37'
+            'f0b27e01eb2f7f6bfa52fc519a1e64b5c83e1f68476ffcc2f2fa808ba6ca4e0f')
+
+prepare() {
+  cd ${srcdir}/${_realname}-${pkgver}
+  patch -p2 -i ../fix_return_size.patch
+}
+
+build() {
+  [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
+  mkdir -p ${srcdir}/build-${CARCH} && cd ${srcdir}/build-${CARCH}
+  ../${_realname}-${pkgver}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --disable-shared \
+    --enable-static
+  make
+}
+
+package() {
+  cd "${srcdir}/build-${CARCH}"
+  make DESTDIR="${pkgdir}" install
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/LICENSE" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE"
+}
