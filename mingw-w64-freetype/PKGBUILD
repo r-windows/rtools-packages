@@ -50,6 +50,7 @@ build() {
     --prefix=${MINGW_PREFIX} \
     --enable-static \
     --disable-shared \
+    --disable-nls \
     --with-zlib \
     --with-bzip2 \
     --with-png \

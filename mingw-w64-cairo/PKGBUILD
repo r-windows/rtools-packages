@@ -83,3 +83,4 @@ package() {
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING-LGPL-2.1" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING-LGPL-2.1"
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING-MPL-1.1"  "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING-MPL-1.1"
 }
+
