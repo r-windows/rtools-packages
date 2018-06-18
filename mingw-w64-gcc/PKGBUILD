@@ -288,6 +288,11 @@ package_mingw-w64-gcc() {
   # install "custom" system gdbinit
   install -D -m644 ${srcdir}/gdbinit ${pkgdir}${MINGW_PREFIX}/etc/gdbinit
   sed -i 's|%GCC_NAME%|gcc-'${pkgver}'|g' ${pkgdir}${MINGW_PREFIX}/etc/gdbinit
+
+  # Hack for rustc hardcoding -lgcc_eh
+  if [ "${MINGW_CHOST}" = "i686-w64-mingw32" ]; then
+    cp ${pkgdir}${MINGW_PREFIX}/lib/gcc/${MINGW_CHOST}/${pkgver}/libgcc.a ${pkgdir}${MINGW_PREFIX}/lib/gcc/${MINGW_CHOST}/${pkgver}/libgcc_eh.a
+  fi
 }
 
 package_mingw-w64-gcc-fortran() {
