@@ -46,7 +46,7 @@ prepare() {
   patch -Np1 -i "${srcdir}/007-install.mingw.patch"
   patch -Np1 -i "${srcdir}/008-tcl-8.5.14-hidden.patch"
   patch -Np1 -i "${srcdir}/009-fix-using-gnu-print.patch"
-  patch -Np1 -i "${srcdir}/010-dont-link-shared-with--static-libgcc.patch"
+  #patch -Np1 -i "${srcdir}/010-dont-link-shared-with--static-libgcc.patch"
 
   cd win && autoreconf -fi
 }
@@ -66,7 +66,8 @@ build() {
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST} \
-    --enable-threads \
+    --disable-shared \
+    --disable-threads \
     ${extra_config} \
     ${enable64bit}
 
@@ -74,7 +75,7 @@ build() {
 }
 
 package() {
-  local debug_suffix=
+  local debug_suffix="s"
   if check_option "debug" "y"; then
     debug_suffix="g"
   fi
@@ -119,7 +120,7 @@ package() {
     -e "s|^\(ITCL_BUILD_STUB_LIB_PATH\)='.*|\1='${MINGW_PREFIX}/lib/itcl${_itcl_ver}/libitclstub${_itcl_ver//./}.a'|" \
     -i "${pkgdir}${MINGW_PREFIX}/lib/itcl${_itcl_ver}/itclConfig.sh"
 
-  ln -s "${pkgdir}${MINGW_PREFIX}/lib/libtcl86${debug_suffix}.dll.a" "${pkgdir}${MINGW_PREFIX}/lib/libtcl.dll.a"
+  ln -s "${pkgdir}${MINGW_PREFIX}/lib/libtcl86.a" "${pkgdir}${MINGW_PREFIX}/lib/libtcl.a"
   ln -s "${pkgdir}${MINGW_PREFIX}/lib/tclConfig.sh" "${pkgdir}${MINGW_PREFIX}/lib/tcl${pkgver%.*.*}/tclConfig.sh"
 
   # Install private headers
