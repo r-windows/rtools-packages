@@ -362,6 +362,7 @@ build() {
   [ -d "${srcdir}/build-${CARCH}" ] && rm -rf "${srcdir}/build-${CARCH}"
   mkdir -p "${srcdir}/build-${CARCH}" && cd "${srcdir}/build-${CARCH}"
 
+  export LIBS="-lgdi32 "
   MSYSTEM=MINGW ../Python-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
     --host=${MINGW_CHOST} \
