@@ -368,7 +368,7 @@ build() {
     --host=${MINGW_CHOST} \
     --build=${MINGW_CHOST} \
     --enable-shared \
-    --with-threads \
+    --without-threads \
     --with-system-expat \
     --with-system-ffi \
     --without-ensurepip \
