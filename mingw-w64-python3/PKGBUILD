@@ -375,7 +375,7 @@ build() {
     "${_extra_config[@]}" \
     OPT=""
 
-  make
+  make -j1
 }
 
 package() {
@@ -537,3 +537,4 @@ sha256sums=('f434053ba1b5c8a5cc597e966ead3c5143012af827fd3f0697d21450bb8d87a6'
             '35f4dfc8362356a2f51bae3fc0ae5802a278302ea89a36828769d48b12ed195b'
             '0c345b144f36b92b216d6d277875326faf2e4187ac62101d3bd9aba9ed053998'
             'f4f5359b35741b703cbd22dc73438c181b8541e30b3f7614bd272f7cd2c59049')
+

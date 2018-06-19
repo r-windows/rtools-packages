@@ -15,6 +15,8 @@ git fetch --quiet upstream
 
 # Remove toolchain packages (preinstalled on AppVeyor)
 pacman --noconfirm -Rcsu mingw-w64-{i686,x86_64}-toolchain
+echo "Currently installed:"
+pacman -Qq | grep mingw-w64
 
 # Set build repositories
 cp -f pacman.conf /etc/pacman.conf
