@@ -41,7 +41,7 @@ execute 'Approving recipe quality' check_recipe_quality
 # Force static linking
 rm -f /mingw32/lib/*.dll.a
 rm -f /mingw64/lib/*.dll.a
-export PKG_CONFIG="pkg-config --static"
+export PKG_CONFIG="${MINGW_PREFIX}/bin/pkg-config --static"
 
 for package in "${packages[@]}"; do
     execute 'Building binary' makepkg-mingw --noconfirm --noprogressbar --skippgpcheck --nocheck --syncdeps --rmdeps --cleanbuild

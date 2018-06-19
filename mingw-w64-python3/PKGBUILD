@@ -319,7 +319,7 @@ prepare() {
   # rather than copies shipped in the tarball
   rm -r Modules/expat
   rm -r Modules/zlib
-  # rm -r Modules/_ctypes/{darwin,libffi}*
+  rm -r Modules/_ctypes/{darwin,libffi}*
 }
 
 check() {
