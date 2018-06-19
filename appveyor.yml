@@ -1,4 +1,4 @@
-clone_folder: C:\M
+clone_folder: C:\msys64\home\mingw-packages
 
 environment:
   DISABLE_QUALITY_CHECK: true
