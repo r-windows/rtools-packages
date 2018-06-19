@@ -1,0 +1,18 @@
+diff -Naur Python-3.6.5-orig/setup.py Python-3.6.5/setup.py
+--- Python-3.6.5-orig/setup.py	2018-04-16 09:53:42.947673100 +0300
++++ Python-3.6.5/setup.py	2018-04-16 09:53:47.803510400 +0300
+@@ -889,10 +889,13 @@
+ 
+         if (ssl_incs is not None and
+             ssl_libs is not None):
++            _ssl_libs = ['ssl', 'crypto']
++            if host_platform.startswith(('mingw', 'win')):
++                _ssl_libs += ['ws2_32']
+             exts.append( Extension('_ssl', ['_ssl.c'],
+                                    include_dirs = ssl_incs,
+                                    library_dirs = ssl_libs,
+-                                   libraries = ['ssl', 'crypto'],
++                                   libraries = _ssl_libs,
+                                    depends = ['socketmodule.h']), )
+         else:
+             missing.append('_ssl')
