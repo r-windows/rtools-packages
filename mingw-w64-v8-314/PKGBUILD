@@ -21,6 +21,7 @@ prepare() {
   cd ${_realname}-${pkgver}
   sed -i s/winmm.lib/winmm/g tools/gyp/v8.gyp
   sed -i s/ws2_32.lib/ws2_32/g tools/gyp/v8.gyp
+  sed -i 's/-lreadline/-lreadline -ltermcap/g' src/d8.gyp
   sed -i '/#include "cctest.h"/a #include "win32-headers.h"' test/cctest/test-platform-win32.cc
 }
 
@@ -44,6 +45,7 @@ build() {
     $PYTHON build/gyp_v8 \
       -Dv8_enable_i18n_support=true \
       -Duse_system_icu=1 \
+      -Dconsole=readline \
       -Dv8_target_arch=${_arch} \
       --generator-output=${BUILDDIR} \
       -f make
