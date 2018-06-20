@@ -15,8 +15,6 @@ git fetch --quiet upstream
 
 # Remove toolchain packages (preinstalled on AppVeyor)
 pacman --noconfirm -Rcsu mingw-w64-{i686,x86_64}-toolchain
-echo "Currently installed:"
-pacman -Qq | grep mingw-w64
 
 # Set build repositories
 cp -f pacman.conf /etc/pacman.conf
@@ -24,8 +22,7 @@ pacman --noconfirm -Scc
 pacman --noconfirm -Syyuu
 
 # Install core build stuff
-pacman --noconfirm -S mingw32/mingw-w64-i686-{crt,winpthreads,gcc,libtre,pkg-config,xz}
-pacman --noconfirm -S mingw64/mingw-w64-x86_64-{crt,winpthreads,gcc,libtre,pkg-config,xz}
+pacman --noconfirm -S mingw-w64-{i686,x86_64}-{crt,winpthreads,gcc,libtre,pkg-config,xz}
 
 # Detect changed packages
 list_commits  || failure 'Could not detect added commits'
