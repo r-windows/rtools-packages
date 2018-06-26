@@ -20,3 +20,4 @@ package() {
   install -m644 COPYING COPYING.adobe \
     "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/"
 }
+
