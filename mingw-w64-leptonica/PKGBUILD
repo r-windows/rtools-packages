@@ -1,0 +1,52 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+
+_realname=leptonica
+pkgbase=mingw-w64-${_realname}
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+pkgver=1.74.4
+pkgrel=1
+pkgdesc="Leptonica library (mingw-w64)"
+arch=('any')
+url="http://www.leptonica.org"
+license=("Leptonica")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-pkg-config")
+depends=(${MINGW_PACKAGE_PREFIX}-giflib
+         ${MINGW_PACKAGE_PREFIX}-libtiff
+         ${MINGW_PACKAGE_PREFIX}-libpng
+         ${MINGW_PACKAGE_PREFIX}-libwebp
+         ${MINGW_PACKAGE_PREFIX}-openjpeg2
+         ${MINGW_PACKAGE_PREFIX}-zlib)
+options=('!libtool' 'strip')
+source=(https://github.com/DanBloomberg/leptonica/releases/download/${pkgver}/${_realname}-${pkgver}.tar.gz)
+sha256sums=('29c35426a416bf454413c6fec24c24a0b633e26144a17e98351b6dffaa4a833b')
+
+prepare() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+}
+
+build() {
+  [[ -d "${srcdir}/build-${CARCH}" ]] && rm -rf "${srcdir}/build-${CARCH}"
+  mkdir "${srcdir}/build-${CARCH}"
+  cd "${srcdir}/build-${CARCH}"
+  CFLAGS+=" -DMINIMUM_SEVERITY=L_SEVERITY_WARNING -DOPJ_STATIC"
+  ../${_realname}-${pkgver}/configure \
+    --disable-dependency-tracking \
+    --disable-silent-rules \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --prefix=${MINGW_PREFIX} \
+    --enable-static \
+    --disable-shared
+  make
+}
+
+#check() {
+#  cd "${srcdir}/build-${CARCH}"
+#  make -j1 check
+#}
+
+package() {
+  cd "${srcdir}/build-${CARCH}"
+  make DESTDIR="${pkgdir}" install
+}
