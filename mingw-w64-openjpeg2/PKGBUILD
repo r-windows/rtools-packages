@@ -34,6 +34,9 @@ prepare() {
   patch -p1 -i ${srcdir}/0003-versioned-dlls.mingw.patch
   patch -p1 -i ${srcdir}/0005-sock-jpip.all.patch
   #patch -p1 -i ${srcdir}/0006-openjpeg-2.1.0-stdcall-for-all-win.patch
+
+  # Hack for static linking libtiff (there must be a better way...)
+  sed -i 's/${TIFF_LIBRARIES}/"tiff -ljpeg"/g' thirdparty/CMakeLists.txt
 }
 
 build() {
@@ -47,6 +50,7 @@ build() {
     -G"MSYS Makefiles" \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
     -DBUILD_SHARED_LIBS=OFF \
     -DBUILD_TESTING=OFF \
     -DCMAKE_SYSTEM_PREFIX_PATH=${MINGW_PREFIX} \
@@ -56,7 +60,7 @@ build() {
     -DBUILD_JP3D=ON \
     -DBUILD_JAVA=OFF \
     ../${_realname}-${pkgver}
-  make
+  make -j1
 }
 
 package() {
