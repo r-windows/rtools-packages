@@ -18,7 +18,7 @@ depends=(${MINGW_PACKAGE_PREFIX}-cairo
          ${MINGW_PACKAGE_PREFIX}-zlib)
 options=('!libtool' 'strip')
 source=(${_realname}-${pkgver}.tar.gz::https://github.com/tesseract-ocr/tesseract/archive/${pkgver}.tar.gz
-        https://github.com/tesseract-ocr/tessdata/raw/master/osd.traineddata
+        https://github.com/tesseract-ocr/tessdata/raw/3.04.00/osd.traineddata
         001-proper-include-thread.patch)
 sha256sums=('05898f93c5d057fada49b9a116fc86ad9310ff1726a0f499c3e5211b3af47ec1'
             '9cf5d576fcc47564f11265841e5ca839001e7e6f38ff7f7aacf46d15a96b00ff'
