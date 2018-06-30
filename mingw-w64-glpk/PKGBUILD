@@ -1,0 +1,53 @@
+# Maintainer: Ray Donnelly <mingw.android@gmail.com>
+
+_realname=glpk
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=4.65
+pkgrel=1
+pkgdesc="GNU Linear Programming Kit: solve LP, MIP and other problems (mingw-w64)"
+arch=('any')
+url="https://www.gnu.org/software/glpk/glpk.html"
+license=('GPL')
+depends=("${MINGW_PACKAGE_PREFIX}-gmp")
+options=('staticlibs' 'strip')
+source=("https://ftp.gnu.org/gnu/glpk/glpk-${pkgver}.tar.gz"
+        'timeval-64bit.patch'
+        'fix-platform-check.patch')
+sha256sums=('4281e29b628864dfe48d393a7bedd781e5b475387c20d8b0158f329994721a10'
+            '2d09d58139fd85d695f5b2933ec750adf0b438a1e9a53dee1b264b80dd2e0f6a'
+            '9a866c1e14f7a200a46b83c78b9f2d207167633e6ef0c51341008f07ee677d8a')
+
+prepare () {
+  cd "${srcdir}/glpk-${pkgver}"
+  patch -p1 -i "${srcdir}/timeval-64bit.patch"
+  patch -Np1 -i "${srcdir}/fix-platform-check.patch"
+  sed -i "s|-version-info|-no-undefined -version-info|g" src/Makefile.am
+  autoreconf -vfi
+}
+
+build() {
+  [[ -d build-${CARCH} ]] && rm -rf build-${CARCH}
+  mkdir -p build-${CARCH} && cd build-${CARCH}
+  
+  ../${_realname}-${pkgver}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --disable-shared \
+    --enable-static \
+    --with-gmp \
+    --with-gnu-ld
+
+  make
+}
+
+check() {
+  cd "${srcdir}/build-${CARCH}"
+  make check
+}
+
+package() {
+  cd "${srcdir}/build-${CARCH}"
+  make DESTDIR="${pkgdir}" install
+}
