@@ -1,0 +1,12 @@
+diff -aurp mingw-w64-v5.0.4-orig/mingw-w64-crt/lib32/msvcrt.def.in mingw-w64-v5.0.4/mingw-w64-crt/lib32/msvcrt.def.in
+--- mingw-w64-v5.0.4-orig/mingw-w64-crt/lib32/msvcrt.def.in	2018-07-07 11:12:33.000000000 +0200
++++ mingw-w64-v5.0.4/mingw-w64-crt/lib32/msvcrt.def.in	2018-07-07 11:14:21.000000000 +0200
+@@ -345,6 +345,8 @@ _mbsupr
+ _memccpy
+ _memicmp
+ _mkdir
++_mkgmtime
++_mkgmtime32
+ _mktemp
+ _msize
+ _nextafter
