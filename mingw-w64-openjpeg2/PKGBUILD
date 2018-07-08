@@ -62,6 +62,7 @@ build() {
     -DBUILD_JPIP=OFF \
     -DBUILD_JP3D=ON \
     -DBUILD_JAVA=OFF \
+    -DBUILD_PKGCONFIG_FILES=ON \
     ../${_realname}-${pkgver}
   make -j1
 }
