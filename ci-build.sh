@@ -14,7 +14,7 @@ git remote add upstream 'https://github.com/r-windows/mingw-packages'
 git fetch --quiet upstream
 
 # Remove toolchain packages (preinstalled on AppVeyor)
-pacman --noconfirm -Rcsu mingw-w64-{i686,x86_64}-toolchain
+pacman --noconfirm -Rcsu mingw-w64-{i686,x86_64}-toolchain msys2-devel pkg-config
 
 # Set build repositories
 cp -f pacman.conf /etc/pacman.conf

@@ -10,7 +10,6 @@ arch=('any')
 url='http://www.coin-or.org'
 source=("https://www.coin-or.org/download/source/${_realname}/${_realname}-${pkgver}.tgz")
 sha256sums=('aa8404e49b25853b30ebd6291e3beedc9b5f583e3c0c36822fae17507feb0af1')
-makedepends=('libtool' 'autoconf' 'automake' 'autogen')
 
 prepare() {
   cd $srcdir/${_realname}-${pkgver}
