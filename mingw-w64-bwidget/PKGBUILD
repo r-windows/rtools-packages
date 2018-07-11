@@ -1,0 +1,24 @@
+# Based on Arch's PKGBUILD
+
+_realname=bwidget
+pkgbase=mingw-w64-${_realname}
+pkgname=${MINGW_PACKAGE_PREFIX}-${_realname}
+pkgver=1.9.12
+pkgrel=1
+pkgdesc='A companion to Tcllib, for Tk related packages (mingw-w64)'
+arch=('any')
+url='https://core.tcl.tk/bwidget/home'
+license=('BSD')
+depends=("${MINGW_PACKAGE_PREFIX}-tk")
+source=("https://downloads.sourceforge.net/project/tcllib/BWidget/${pkgver}/bwidget-${pkgver}.tar.gz")
+sha256sums=('2f682da93e07ff8cadd6c0580e7d4de3c8828134eab662dbe3d0e6ffc9443263')
+
+package() {
+  _dest=${pkgdir}/${MINGW_PREFIX}/lib
+  mkdir -p ${_dest}
+  cd ${srcdir}
+  cp -r bwidget-${pkgver} "${_dest}"
+  _bwdir=${_dest}/bwidget-${pkgver}
+  cd ${_bwdir}
+  rm -rf .fslckout Changelog tests demo
+}
