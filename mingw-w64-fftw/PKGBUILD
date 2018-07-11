@@ -5,7 +5,7 @@ pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 _pkgver=3.3.8
 pkgver=${_pkgver//-/.}
-pkgrel=1
+pkgrel=9002
 pkgdesc="A library for computing the discrete Fourier transform (DFT) (mingw-w64)"
 arch=('any')
 url="http://www.fftw.org"
@@ -15,7 +15,10 @@ options=('staticlibs' 'strip')
 source=("${url}/${_realname}-${_pkgver}.tar.gz")
 sha256sums=('6113262f6e92c5bd474f2875fa1b01054c4ad5040f6b0da7c03c98821d9ae303')
 
-precision="double float long_double quad"
+groups=("rtools-${_realname}")
+
+#precision="double float long_double quad"
+precision="double"
 
 build() {
   cd "${srcdir}/${_realname}-${_pkgver}"
@@ -60,4 +63,5 @@ package() {
     make DESTDIR="${pkgdir}" install
     popd > /dev/null
   done
+  cp ${pkgdir}${MINGW_PREFIX}/lib/libfftw3.a ${pkgdir}${MINGW_PREFIX}/lib/libfftw3-3.a
 }
