@@ -1,0 +1,43 @@
+# Maintainer: Jeroen Ooms <jeroenooms@gmail.com>
+
+_realname=SYMPHONY
+pkgbase=mingw-w64-coinor-symphony
+pkgname=("${MINGW_PACKAGE_PREFIX}-coinor-symphony")
+provides=("${MINGW_PACKAGE_PREFIX}-coinor")
+pkgver=5.6.16
+pkgrel=9002
+pkgdesc="Coin-or branch and cut (mingw-w64)"
+arch=('any')
+url='http://www.coin-or.org'
+source=("https://www.coin-or.org/download/source/${_realname}/${_realname}-${pkgver}.tgz")
+sha256sums=('54df3fd953d9a2e4178f10373c6cb8b46a0808569b42adf07aa6d0044b2ab04b')
+
+depends=("${MINGW_PACKAGE_PREFIX}-coinor-cbc")
+makedepends=("${MINGW_PACKAGE_PREFIX}-pkg-config")
+groups=("rtools-coinor-symphony" "rtools-coinor")
+
+build() {
+  cd "$srcdir"/${_realname}-${pkgver}
+  [[ -d "${srcdir}"/build-${CARCH} ]] && rm -rf "${srcdir}"/build-${CARCH}
+  mkdir -p "${srcdir}"/build-${CARCH} && cd "${srcdir}"/build-${CARCH}
+  export PKG_CONFIG=${MINGW_PREFIX}/bin/pkg-config
+  export PKG_CONFIG_PATH=${MINGW_PREFIX}/lib/pkgconfig
+  ../${_realname}-${pkgver}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --with-clp-lib="$(pkg-config --libs-only-l clp)" \
+    --with-cgl-lib="$(pkg-config --libs-only-l cgl)" \
+    --with-osi-lib="$(pkg-config --libs-only-l osi)" \
+    --with-coinutils-lib="$(pkg-config --libs-only-l coinutils)" \
+    --with-sample-datadir="$(pkg-config --variable datadir coindatasample)" \
+    --with-miblib3-datadir="$(pkg-config --variable datadir coindatamiplib3)"
+
+  make
+}
+
+package() {
+  cd "${srcdir}"/build-${CARCH}
+  make install DESTDIR="${pkgdir}"
+}
