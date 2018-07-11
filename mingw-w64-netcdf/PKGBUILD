@@ -9,7 +9,8 @@ pkgdesc="Interface for scientific data access to large binary data (mingw-w64)"
 arch=('any')
 license=('custom')
 url="https://www.unidata.ucar.edu/software/netcdf/"
-depends=("${MINGW_PACKAGE_PREFIX}-hdf5")
+depends=("${MINGW_PACKAGE_PREFIX}-hdf5"
+         "${MINGW_PACKAGE_PREFIX}-curl")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-cmake")
 source=("ftp://ftp.unidata.ucar.edu/pub/netcdf/${_realname}-${pkgver}.zip"
@@ -28,6 +29,8 @@ sha256sums=('94ff06be0d5b998f6f5e31ed8fdbdeac50e6f8267fe9624a1a3ef2e34d0a45e4'
             '4b7e818c06ef33fbbfc6fa12f43ada74f0d38c89e989141adadb22f9c3993810'
             '66f2b494142d4c39096d80765df38254bb3c46829636fccc4d085f63e65bdb6c'
             'a1aa112779a83ec74acd7de8a0a57915f5d37cae44633d0a4d0d20784a2d288c')
+
+groups=("rtools-${_realname}")
 
 prepare() {
   cd "${srcdir}/${_realname}-${pkgver}"
@@ -54,6 +57,7 @@ build() {
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake \
     -G "MSYS Makefiles" \
+    -DNC_EXTRA_DEPS='-lhdf5 -lcurl -lssh2 -lssl -lcrypto -lz -lgdi32 -lws2_32 -lcrypt32 -lwldap32' \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_SHARED_LIBS=OFF \
