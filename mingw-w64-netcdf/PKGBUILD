@@ -41,28 +41,41 @@ prepare() {
   patch -p1 -i ${srcdir}/0005-dapcvt-conversion.patch
   patch -p1 -i ${srcdir}/0006-cvt-conversion.patch
   patch -p1 -i ${srcdir}/0007-mingw-config.patch
+  sed -i 's/\"${${_LIB}_DEP}")/\"${_DEP}")/' CMakeLists.txt
 }
 
 build() {
-  [[ -d ${srcdir}/build-static-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-static-${MINGW_CHOST}
-  mkdir -p ${srcdir}/build-static-${MINGW_CHOST} && cd ${srcdir}/build-static-${MINGW_CHOST}
-
-  # DAP crashes on win32: https://github.com/rwinlib/netcdf/issues/1
-  if [ "$MINGW_PREFIX" = "/mingw64" ]; then
-    ENABLE_DAP=ON
-  else
-    ENABLE_DAP=OFF
-  fi
+  # DAP may crash on win32: https://github.com/rwinlib/netcdf/issues/1
+  [[ -d ${srcdir}/build-dap-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-dap-${MINGW_CHOST}
+  mkdir -p ${srcdir}/build-dap-${MINGW_CHOST} && cd ${srcdir}/build-dap-${MINGW_CHOST}
 
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake \
     -G "MSYS Makefiles" \
-    -DNC_EXTRA_DEPS='-lhdf5 -lcurl -lssh2 -lssl -lcrypto -lz -lgdi32 -lws2_32 -lcrypt32 -lwldap32' \
+    -DNC_EXTRA_DEPS="-lhdf5 -lcurl -lssh2 -lssl -lcrypto -lz -lws2_32 -lcrypt32 -lwldap32" \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_SHARED_LIBS=OFF \
     -DENABLE_DLL=OFF \
-    -DENABLE_DAP=${ENABLE_DAP} \
+    -DENABLE_DAP=ON \
+    -DENABLE_TESTS=OFF \
+    -DENABLE_DYNAMIC_LOADING=OFF \
+    -DENABLE_NETCDF_4=ON \
+    "${srcdir}/${_realname}-${pkgver}"
+  make -j1 SHELL='sh -x'
+
+  [[ -d ${srcdir}/build-nodap-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-nodap-${MINGW_CHOST}
+  mkdir -p ${srcdir}/build-nodap-${MINGW_CHOST} && cd ${srcdir}/build-nodap-${MINGW_CHOST}
+
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+  ${MINGW_PREFIX}/bin/cmake \
+    -G "MSYS Makefiles" \
+    -DNC_EXTRA_DEPS='-lhdf5 -lz' \
+    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DENABLE_DLL=OFF \
+    -DENABLE_DAP=OFF \
     -DENABLE_TESTS=OFF \
     -DENABLE_DYNAMIC_LOADING=OFF \
     -DENABLE_NETCDF_4=ON \
@@ -71,7 +84,7 @@ build() {
 }
 
 package() {
-  cd ${srcdir}/build-static-${MINGW_CHOST}
+  cd ${srcdir}/build-dap-${MINGW_CHOST}
   make DESTDIR=${pkgdir} install
 
   install -Dm644 ${srcdir}/${_realname}-${pkgver}/COPYRIGHT \
@@ -79,4 +92,8 @@ package() {
 
   local PREFIX_DEPS=$(cygpath -am ${MINGW_PREFIX})
   find ${pkgdir}${MINGW_PREFIX}/lib/pkgconfig -name *.pc -exec sed -i -e"s|${PREFIX_DEPS}|${MINGW_PREFIX}|g" {} \;
+
+  # Copy the NODAP build
+  cp ${srcdir}/build-nodap-${MINGW_CHOST}/liblib/libnetcdf.a ${pkgdir}${MINGW_PREFIX}/lib/libnetcdf-nodap.a
+  cp ${srcdir}/build-nodap-${MINGW_CHOST}/liblib/libnetcdf.a ${pkgdir}${MINGW_PREFIX}/lib/libnetcdf4.a
 }
