@@ -21,6 +21,7 @@ checkdepends=('dejagnu' 'bc')
 makedepends=("${MINGW_PACKAGE_PREFIX}-iconv"
              "${MINGW_PACKAGE_PREFIX}-ncurses"
              "${MINGW_PACKAGE_PREFIX}-xz")
+groups=("rtools-${_realname}")
 options=('staticlibs' '!distcc' '!ccache')
 source=(https://ftp.gnu.org/gnu/gdb/${_realname}-${pkgver}.tar.xz{,.sig}
         'gdb-fix-display-tabs-on-mingw.patch'
