@@ -93,7 +93,8 @@ package() {
   local PREFIX_DEPS=$(cygpath -am ${MINGW_PREFIX})
   find ${pkgdir}${MINGW_PREFIX}/lib/pkgconfig -name *.pc -exec sed -i -e"s|${PREFIX_DEPS}|${MINGW_PREFIX}|g" {} \;
 
-  # Copy the NODAP build
-  cp ${srcdir}/build-nodap-${MINGW_CHOST}/liblib/libnetcdf.a ${pkgdir}${MINGW_PREFIX}/lib/libnetcdf-nodap.a
+  # Default to the NODAP build
+  mv ${pkgdir}${MINGW_PREFIX}/lib/libnetcdf.a ${pkgdir}${MINGW_PREFIX}/lib/libnetcdf-dap.a
+  cp ${srcdir}/build-nodap-${MINGW_CHOST}/liblib/libnetcdf.a ${pkgdir}${MINGW_PREFIX}/lib/libnetcdf.a
   cp ${srcdir}/build-nodap-${MINGW_CHOST}/liblib/libnetcdf.a ${pkgdir}${MINGW_PREFIX}/lib/libnetcdf4.a
 }
