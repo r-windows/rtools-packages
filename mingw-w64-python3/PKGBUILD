@@ -342,6 +342,7 @@ build() {
   [[ -d "${srcdir}/build-${CARCH}" ]] && rm -rf "${srcdir}/build-${CARCH}"
   mkdir -p "${srcdir}/build-${CARCH}" && cd "${srcdir}/build-${CARCH}"
 
+  export PKG_CONFIG="${MINGW_PREFIX}/bin/pkg-config --static"
   MSYSTEM=MINGW ../Python-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
     --host=${MINGW_CHOST} \
