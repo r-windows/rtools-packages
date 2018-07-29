@@ -26,8 +26,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-expat"
          "${MINGW_PACKAGE_PREFIX}-sqlite3"
         )
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-pkg-config")
-groups=("rtools-python"
-        "rtools-python3")
+groups=("rtools-python" "rtools-python3")
 options=('makeflags') # 'debug' '!strip' )
 source=("https://www.python.org/ftp/python/${pkgver%rc?}/Python-${pkgver}.tar.xz"
         0000-make-_sysconfigdata.py-relocatable.patch
