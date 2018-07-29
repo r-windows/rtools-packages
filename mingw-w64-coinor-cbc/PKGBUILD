@@ -4,17 +4,20 @@ _realname=Cbc
 pkgbase=mingw-w64-coinor-cbc
 pkgname=("${MINGW_PACKAGE_PREFIX}-coinor-cbc")
 pkgver=2.9.9
-pkgrel=9002
+pkgrel=9100
 pkgdesc="Coin-or branch and cut (mingw-w64)"
 arch=('any')
 url='http://www.coin-or.org'
 source=("https://www.coin-or.org/download/source/${_realname}/${_realname}-${pkgver}.tgz")
 sha256sums=('aa8404e49b25853b30ebd6291e3beedc9b5f583e3c0c36822fae17507feb0af1')
+groups=("rtools-coinor-cbc")
 
 build() {
   cd "$srcdir"/${_realname}-${pkgver}
   [[ -d "${srcdir}"/build-${CARCH} ]] && rm -rf "${srcdir}"/build-${CARCH}
   mkdir -p "${srcdir}"/build-${CARCH} && cd "${srcdir}"/build-${CARCH}
+
+  export enable_bzlib=no
   ../Cbc-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
