@@ -10,7 +10,7 @@ deploy_enabled && mkdir artifacts
 deploy_enabled && mkdir sourcepkg
 git_config user.email 'ci@msys2.org'
 git_config user.name  'MSYS2 Continuous Integration'
-git remote add upstream 'https://github.com/r-windows/mingw-packages'
+git remote add upstream 'https://github.com/r-windows/rtools-packages'
 git fetch --quiet upstream
 
 # Remove toolchain packages (preinstalled on AppVeyor)
