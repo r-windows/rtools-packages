@@ -4,7 +4,7 @@ _realname=mpdecimal
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 pkgver=2.4.2
-pkgrel=1
+pkgrel=9100
 pkgdesc="Package for correctly-rounded arbitrary precision decimal floating point arithmetic (mingw-w64)"
 arch=('any')
 url='http://www.bytereef.org/mpdecimal/index.html"'
@@ -30,9 +30,7 @@ build() {
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST} \
-    --target=${MINGW_CHOST} \
-    --enable-static \
-    --disable-shared
+    --target=${MINGW_CHOST}
 
   make
 }
@@ -45,4 +43,5 @@ check() {
 package() {
   cd "${srcdir}"/build-${CARCH}
   make install DESTDIR="${pkgdir}"
+  rm -R ${pkgdir}${MINGW_PREFIX}/bin ${pkgdir}${MINGW_PREFIX}/lib/*.dll.a
 }
