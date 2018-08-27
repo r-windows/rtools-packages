@@ -1,0 +1,61 @@
+# Maintainer: Alexey Pavlov <Alexpux@gmail.com>
+# Contributer: Zach Bacon <11doctorwhocanada@gmail.com>
+# Contributer: wirx6 <wirx654@gmail.com>
+
+_realname=ffmpeg
+pkgbase="mingw-w64-${_realname}"
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=4.0.2
+pkgrel=1
+pkgdesc="Complete and free Internet live audio and video broadcasting solution (mingw-w64)"
+arch=('any')
+url="https://ffmpeg.org/"
+license=('GPL')
+options=('staticlibs' 'strip')
+depends=("${MINGW_PACKAGE_PREFIX}-bzip2"
+        "${MINGW_PACKAGE_PREFIX}-lame"
+        "${MINGW_PACKAGE_PREFIX}-x264"
+        "${MINGW_PACKAGE_PREFIX}-xvidcore"
+        "${MINGW_PACKAGE_PREFIX}-zlib")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config"
+             "${MINGW_PACKAGE_PREFIX}-nasm")
+source=(https://ffmpeg.org/releases/${_realname}-${pkgver}.tar.xz{,.asc})
+validpgpkeys=('FCF986EA15E6E293A5644F10B4322F04D67658D8')
+sha256sums=('a95c0cc9eb990e94031d2183f2e6e444cc61c99f6f182d1575c433d62afb2f97'
+            'SKIP')
+
+prepare() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+}
+
+build() {
+  [[ -d "build-${MINGW_CHOST}" ]] && rm -rf "build-${MINGW_CHOST}"
+  mkdir -p "${srcdir}/build-${MINGW_CHOST}"
+  cd "${srcdir}/build-${MINGW_CHOST}"
+
+  ../${_realname}-${pkgver}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --target-os=mingw32 \
+    --arch=${CARCH%%-*} \
+    --disable-debug \
+    --enable-static \
+    --disable-shared \
+    --enable-gpl \
+    --enable-libmp3lame \
+    --enable-libx264 \
+    --enable-libxvid \
+    --enable-hardcoded-tables \
+    --enable-version3 \
+    --enable-zlib \
+    --disable-doc
+
+  make
+}
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  make DESTDIR="${pkgdir}" install
+  local PREFIX_DEPS=$(cygpath -am ${MINGW_PREFIX})
+  find ${pkgdir}${MINGW_PREFIX}/lib/pkgconfig -name *.pc -exec sed -i -e"s|${PREFIX_DEPS}|${MINGW_PREFIX}|g" {} \;
+}
