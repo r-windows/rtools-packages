@@ -27,6 +27,7 @@ sha256sums=('a95c0cc9eb990e94031d2183f2e6e444cc61c99f6f182d1575c433d62afb2f97'
 
 prepare() {
   cd "${srcdir}/${_realname}-${pkgver}"
+  sed -i 's/mkstemp/blabbla/g' configure
 }
 
 build() {
@@ -48,6 +49,7 @@ build() {
     --enable-hardcoded-tables \
     --enable-version3 \
     --enable-zlib \
+    --disable-lzma \
     --disable-doc
 
   make
