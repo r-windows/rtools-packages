@@ -6,8 +6,8 @@ pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 # Until https://gcc.gnu.org/bugzilla/show_bug.cgi?id=62279 is
 # fixed, we will stick with 7.6.2 which hasn't got this bug..
-pkgver=8.1
-pkgrel=9100
+pkgver=8.2
+pkgrel=9200
 pkgdesc="GNU Debugger (mingw-w64)"
 arch=('any')
 url="https://www.gnu.org/software/gdb/"
@@ -33,11 +33,9 @@ source=(https://ftp.gnu.org/gnu/gdb/${_realname}-${pkgver}.tar.xz{,.sig}
         'gdb-fix-using-gnu-print.patch'
         'gdb-7.12-dynamic-libs.patch'
         'gdb-py3-fixes.patch'
-        'python-configure-path-fixes.patch'
-        'gdb-Avert-the-crash-when-using-info-register-on-Windows.patch'
-        'gdb-py37-build-fix.patch')
+        'python-configure-path-fixes.patch')
 validpgpkeys=('F40ADB902B24264AA42E50BF92EDB04BFF325CF3')
-sha256sums=('af61a0263858e69c5dce51eab26662ff3d2ad9aa68da9583e8143b5426be4b34'
+sha256sums=('c3a441a29c7c89720b734e5a9c6289c0a06be7e0c76ef538f7bbcef389347c39'
             'SKIP'
             'a3e64bf3acc8e92016d493aa1e2fbb5b55c67bfce4359b3578d7a6b5e5d5692a'
             '225608a1e486ee98641611804b07209915367c6767a735ae928175ad45b93060'
@@ -46,9 +44,7 @@ sha256sums=('af61a0263858e69c5dce51eab26662ff3d2ad9aa68da9583e8143b5426be4b34'
             '264eba33ef71c4762514a634dcf94fdb778914dbba6ce99e63804fe063225d97'
             '4398bd83a798baa15c0f91878391a0882239a682cf523ef6551766cba7b03699'
             'bfe8985e806200e5a1007c4565bd60de0a297369d17d4a0178512f2df29b34fc'
-            'bdf6c2b51d6c8c84b7b20abb9d1702f110c0c0e06e3d68eb6aba817664354450'
-            '41e464ea41aa3d2c603a4c411d029036d47745e43f569db3b5e6e457180eab10'
-            '1893a9b9a82d35eefafc6754751beb272605a608fd37eef1d46fe985b668cd50')
+            'bdf6c2b51d6c8c84b7b20abb9d1702f110c0c0e06e3d68eb6aba817664354450')
 
 prepare() {
   cd ${srcdir}/${_realname}-${pkgver}
@@ -68,10 +64,6 @@ prepare() {
 
   patch -p1 -i ${srcdir}/gdb-py3-fixes.patch
   patch -p1 -i ${srcdir}/python-configure-path-fixes.patch
-  patch -p1 -i ${srcdir}/gdb-Avert-the-crash-when-using-info-register-on-Windows.patch
-
-  # https://sourceware.org/bugzilla/show_bug.cgi?id=23252
-  patch -p1 -i ${srcdir}/gdb-py37-build-fix.patch
 
   # hack! - libiberty configure tests for header files using "$CPP $CPPFLAGS"
   sed -i "/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -O2/" libiberty/configure
