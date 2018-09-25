@@ -1,0 +1,44 @@
+# Maintainer: Jeroen Ooms <jeroen@berkeley.edu>
+
+_realname=libsbml
+pkgbase="mingw-w64-${_realname}"
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=5.17.0
+pkgrel=1
+pkgdesc="A file format for exchanging computational models in systems biology (mingw-w64)"
+arch=('any')
+license=("custom")
+url="http://sbml.org/Software/libSBML/"
+source=("https://downloads.sourceforge.net/project/sbml/libsbml/${pkgver}/stable/libSBML-${pkgver}-core-src.tar.gz")
+sha256sums=('ab2bd29720e8d5a92166eb3eacc8d77b34e3f94a83ac19924708e1b0e4317494')
+depends=("${MINGW_PACKAGE_PREFIX}-libxml2")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config"
+			 automake)
+
+options=('staticlibs' 'strip')
+
+prepare() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+}
+
+build() {
+  [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
+  cp -R "${srcdir}/${_realname}-${pkgver}" "${srcdir}/build-${MINGW_CHOST}"
+  cd ${srcdir}/build-${MINGW_CHOST}
+  ./configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+	--enable-static \
+	--disable-shared \
+	--without-swig \
+	--enable-cpp-namespace
+	
+  make
+}
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  make DESTDIR="${pkgdir}" install
+}
