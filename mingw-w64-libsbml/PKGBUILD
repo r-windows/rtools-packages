@@ -13,8 +13,8 @@ source=("https://downloads.sourceforge.net/project/sbml/libsbml/${pkgver}/stable
 sha256sums=('ab2bd29720e8d5a92166eb3eacc8d77b34e3f94a83ac19924708e1b0e4317494')
 depends=("${MINGW_PACKAGE_PREFIX}-libxml2")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
-             "${MINGW_PACKAGE_PREFIX}-pkg-config"
-			 automake)
+             "${MINGW_PACKAGE_PREFIX}-cmake"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config")
 
 options=('staticlibs' 'strip')
 
@@ -24,21 +24,24 @@ prepare() {
 
 build() {
   [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
-  cp -R "${srcdir}/${_realname}-${pkgver}" "${srcdir}/build-${MINGW_CHOST}"
-  cd ${srcdir}/build-${MINGW_CHOST}
-  ./configure \
-    --prefix=${MINGW_PREFIX} \
-    --build=${MINGW_CHOST} \
-    --host=${MINGW_CHOST} \
-	--enable-static \
-	--disable-shared \
-	--without-swig \
-	--enable-cpp-namespace
-	
+  mkdir -p ${srcdir}/build-${MINGW_CHOST} && cd ${srcdir}/build-${MINGW_CHOST}
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+  ${MINGW_PREFIX}/bin/cmake \
+    -G"MSYS Makefiles" \
+    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DWITH_SWIG=OFF \
+    -DLIBSBML_DEPENDENCY_DIR=${MINGW_PREFIX} \
+    -DLIBXML_INCLUDE_DIR="${MINGW_PREFIX}/include/libxml2" \
+    -DLIBXML_LIBRARY="$(pkg-config --libs-only-l --static libxml-2.0)" \
+    ../${_realname}-${pkgver}
+
   make
 }
 
 package() {
   cd "${srcdir}/build-${MINGW_CHOST}"
   make DESTDIR="${pkgdir}" install
+  rm -Rf ${pkgdir}${MINGW_PREFIX}/bin/*.dll
+  rm -Rf ${pkgdir}${MINGW_PREFIX}/lib/*.dll.a
 }
