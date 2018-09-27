@@ -42,6 +42,7 @@ build() {
 package() {
   cd "${srcdir}/build-${MINGW_CHOST}"
   make DESTDIR="${pkgdir}" install
-  rm -Rf ${pkgdir}${MINGW_PREFIX}/bin/*.dll
+  rm -Rf ${pkgdir}${MINGW_PREFIX}/bin
   rm -Rf ${pkgdir}${MINGW_PREFIX}/lib/*.dll.a
+  mv ${pkgdir}${MINGW_PREFIX}/lib/libsbml-static.a ${pkgdir}${MINGW_PREFIX}/lib/libsbml.a
 }
