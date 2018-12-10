@@ -23,17 +23,20 @@ options=('strip' 'staticlibs')
 source=("https://poppler.freedesktop.org/${_realname}-${pkgver}.tar.xz"
         004-basename-include.patch
         005-openjpeg2-include-dirs.patch
-        static-mingw.patch)
+        static-mingw.patch
+	backports.patch)
 sha256sums=('c1747eb8f26e9e753c4001ed951db2896edc1021b6d0f547a0bd2a27c30ada51'
             'a0d1dfb3d5e698cc8d3348b108ede52d44165122e57754c6a696efe745e93030'
             'c2e401f94739a15125c06041eef2e4f988355422aa35aaea2144f7dc7bdfa047'
-	'SKIP')
+            'SKIP'
+            'SKIP')
 
 prepare() {
   cd ${_realname}-${pkgver}
   patch -p1 -i ${srcdir}/004-basename-include.patch
   patch -p1 -i ${srcdir}/005-openjpeg2-include-dirs.patch
   patch -p1 -i ${srcdir}/static-mingw.patch
+  patch -p1 -i ${srcdir}/backports.patch
 }
 
 build() {
