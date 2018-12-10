@@ -5,7 +5,7 @@ _realname=cairo
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=1.16.0
-pkgrel=9100
+pkgrel=9101
 pkgdesc="Cairo vector graphics library (mingw-w64)"
 arch=('any')
 url="https://cairographics.org/"
@@ -58,7 +58,7 @@ build() {
     --disable-tee \
     --disable-xlib \
     --disable-xcb \
-    --enable-fc \
+    --disable-fc \
     --enable-ft \
     --disable-silent-rules \
     --disable-gtk-doc-html
