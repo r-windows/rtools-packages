@@ -151,7 +151,7 @@ build() {
     threadapi=win32 \
     toolset=gcc \
     variant=${variant} \
-    python=3.6 \
+    python=3.7 \
     --debug-configuration \
     --prefix=${MINGW_PREFIX} \
     --layout=tagged \
@@ -196,7 +196,7 @@ package() {
       threadapi=win32 \
       toolset=gcc \
       variant=${variant} \
-      python=3.6 \
+      python=3.7 \
       --prefix=${pkgdir}${MINGW_PREFIX} \
       --layout=tagged \
       --without-mpi \
