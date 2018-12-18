@@ -3,12 +3,22 @@
 # Contributor: Saul Ibarra Corretge <saghul@gmail.com>
 # Contributor: Frode Solheim <frode@fs-uae.net>
 
+# TODO :: subprocess.Popen .. specifically list2cmdline in subprocess.py
+#         needs a fix so it can handle running MSYS2 executables better.
+#         Arguments should not be quoted in the Windows fashion as-per:
+#         http://www.daviddeley.com/autohotkey/parameters/parameters.htm
+#         but instead how Cygwin expects them to be quoted. Checking for
+#         {cygwin,msys-2.0}.dll in the executable is the only way that I
+#         can think to do this at present.
+#         Any double quoted string will cause problems, e.g.
+#         -DGNOMELOCALEDIR=\"/mingw64/share/locale\"
+
 _realname=python3
 pkgbase="mingw-w64-${_realname}"
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 _pybasever=3.7
-pkgver=${_pybasever}.0
-pkgrel=9100
+pkgver=${_pybasever}.1
+pkgrel=9200
 pkgdesc="A high-level scripting language (mingw-w64)"
 arch=('any')
 license=('PSF')
@@ -115,6 +125,7 @@ source=("https://www.python.org/ftp/python/${pkgver%rc?}/Python-${pkgver}.tar.xz
         1850-disable-readline.patch
         1860-fix-isselectable.patch
         2000-warnings-fixes.patch
+        1900-ctypes-dont-depend-on-internal-libffi.patch
         smoketests.py)
 
 # Helper macros to help make tasks easier #
@@ -270,6 +281,9 @@ prepare() {
     1860-fix-isselectable.patch
 
   apply_patch_with_msg 2000-warnings-fixes.patch
+
+  # https://github.com/python/cpython/pull/9258
+  apply_patch_with_msg 1900-ctypes-dont-depend-on-internal-libffi.patch
 
   autoreconf -vfi
 
@@ -429,7 +443,7 @@ package() {
       -i "${pkgdir}${MINGW_PREFIX}"/lib/python${_pybasever}/lib-dynload/_sysconfigdata*.py
 }
 
-sha256sums=('0382996d1ee6aafe59763426cf0139ffebe36984474d0ec4126dd1c40a8b3549'
+sha256sums=('fa7e2b8e8c9402f192ad56dc4f814089d1c4466c97d780f5e5acc02c04243d6d'
             'fa58527f17b1c3defeb9345ef0606d937b2c6ea2746033bfe980879eefe2c50e'
             '8b2c7d6b3d0efec48f44c1e46be25fcfb4ba6711ca49b93cf9fa40fb4f0966b6'
             'b2111d31e812b33e5cec85f6505bd730975dd242f8eb138307f71ffe0d7fdf6b'
@@ -453,7 +467,7 @@ sha256sums=('0382996d1ee6aafe59763426cf0139ffebe36984474d0ec4126dd1c40a8b3549'
             'b86c646b8eca162f73a107e453498d06ed7c79b14d5823a48f7108822230bdfd'
             '22e002727f64cac5f5ba38d1da516fb10e04f41f3366e15796ed36a05f1f1685'
             'c629be9a191948eff146f07dcb09c760ab55acfd08639dfc94dc1bc43160012f'
-            'a813da554315f410ec86e7af28d5c3de7ea369e8925c357ceec2be18a38e9403'
+            '92d106d0dbc273cb08cb52759ba8467e16e6d61019eeb3464397822b991ed861'
             '8e2ae92f24ca52b16215612a57fe5076d5b0ea1cc0923d5ab9bd7395b6330816'
             'b21b63eb077c4ed9380034957034d9fc726992e34abd9185d9f57080e088b4e8'
             '4f28511452f8c56aadc79e6e1079531aad94392778f9a62090e9c423487baf4c'
@@ -465,7 +479,7 @@ sha256sums=('0382996d1ee6aafe59763426cf0139ffebe36984474d0ec4126dd1c40a8b3549'
             'ae5c4001975f10c15aae614b48671821a23ea7367fb2e6a911707dde48c28638'
             'a14d40567e6bf6d08fab55e95a56495eb6fcdfc9d06d80b959b487df26481190'
             'a8b2096f3b4a26d32a325e778ed47cd921d40a1ef481a0387a5ff3592d5d9c77'
-            '67c132e02d8bd67d9b55c7a3f17329f52ee84a588314522c5f8763bd3e175700'
+            'c0fa618b89fd43b27862f4c765926f19cf5679a46e8af3d8eb918a648e33429b'
             '4802eceab9a147fc1cddaadf84917839edfca0b3dcd33d3be92e4c2edde3c726'
             'f0d20525f42387153cf82e2d4a3139a7b7a39a7408833c8b02e9c072a9967674'
             '8bd4dddfda38e8dae700eca868693cba3b2fb766088b46a52a4ac475e9e6b25e'
@@ -515,5 +529,6 @@ sha256sums=('0382996d1ee6aafe59763426cf0139ffebe36984474d0ec4126dd1c40a8b3549'
             '612736b2f9b3b9a2276440d1a5cbd968f51635e8fab6b9d89c2b34947fb67216'
             '3262ce24714dc6cfea5b18d528d7f1a333128eadf5aa9c3a026131c34f082e1f'
             'bd9b934e8c1f92573115efaef6b6b04966e3222ba769511e006366d1217d34d6'
-            '30d507205b3d99e877bf7418b9ad7a181d747758bcc8e96fd296da72e8cd8758'
-            '846ceef71ae4001df68a1040e865d54e3688d7cc657927febc2344dcee8e1852')
+            'e91f897e43063e0c4e52d971f5de4b5e193d9eb6a35fc3acfca1dc057a2fcd65'
+            'e3b0171303b3e28a7347a81b1110dfe42df92a87d160caf624510304d5390728'
+            'ea41f389324bf56277ef27a02f3510d22e5c88becbdb465468bdad9c15e0d229')
