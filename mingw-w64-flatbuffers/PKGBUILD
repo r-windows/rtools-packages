@@ -1,0 +1,46 @@
+# Maintainer: Martell Malone <martellmalone@gmail.com>
+
+_realname=flatbuffers
+pkgbase=mingw-w64-${_realname}
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+pkgver=1.10.0
+pkgrel=1
+pkgdesc='Memory Efficient Serialization Library (mingw-w64)'
+arch=('any')
+url='https://google.github.io/flatbuffers/'
+license=('Apache')
+makedepends=("${MINGW_PACKAGE_PREFIX}-cmake")
+depends=("${MINGW_PACKAGE_PREFIX}-libsystre")
+source=("${_realname}-${pkgver}.tar.gz"::"https://github.com/google/${_realname}/archive/v${pkgver}.tar.gz"
+        "${_realname}-1.9.0.patch")
+sha256sums=('3714e3db8c51e43028e10ad7adffb9a36fc4aa5b1a363c2d0c4303dd1be59a7c'
+            '67bf9306dfff8652a81695f96dec8ec0eb6b6e5a57e2b29b4dc0fe5caba16545')
+options=('strip' '!libtool' 'staticlibs')
+noextract=("${_realname}-${pkgver}.tar.gz")
+
+prepare() {
+  cd "${srcdir}"
+  tar -xvf ${_realname}-${pkgver}.tar.gz --exclude='CONTRIBUTING.md'
+  cd "${_realname}-${pkgver}"
+  patch -Np1 -i "../${_realname}-1.9.0.patch"
+}
+
+build() {
+  [[ -d "${srcdir}"/build-${MINGW_CHOST} ]] && rm -rf "${srcdir}"/build-${MINGW_CHOST}
+  mkdir -p "${srcdir}"/build-${MINGW_CHOST} && cd "${srcdir}"/build-${MINGW_CHOST}
+
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+  ${MINGW_PREFIX}/bin/cmake \
+    -G"MSYS Makefiles" \
+    -DCMAKE_INSTALL_PREFIX="${MINGW_PREFIX}" \
+    -DFLATBUFFERS_BUILD_SHAREDLIB=OFF \
+    ../${_realname}-${pkgver}
+
+  make
+}
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  make install DESTDIR="${pkgdir}"
+  install -Dm755 flatc.exe -t "${pkgdir}${MINGW_PREFIX}"/bin
+}
