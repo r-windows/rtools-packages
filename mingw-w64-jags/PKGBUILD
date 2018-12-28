@@ -4,7 +4,7 @@ _realname=jags
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=4.3.0
-pkgrel=9100
+pkgrel=9101
 arch=('any')
 pkgdesc="JAGS is Just Another Gibbs Sampler (mingw-w64)"
 makedepends=("${MINGW_PACKAGE_PREFIX}-lapack" "${MINGW_PACKAGE_PREFIX}-gcc-fortran")
@@ -15,16 +15,25 @@ url="http://mcmc-jags.sourceforge.net/"
 source=("https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Source/JAGS-${pkgver}.tar.gz")
 sha256sums=('8ac5dd57982bfd7d5f0ee384499d62f3e0bb35b5f1660feb368545f1186371fc')
 
+# Disable some outdated special casing for Windows
+prepare() {
+  cd "${_realname}-${pkgver}"
+  sed -i 's/win=true/win=false/g' configure.ac
+  sed -i 's/_WIN32/_FOO/g' src/terminal/parser.cc
+  autoreconf -vfi
+}
+
 build() {
   [[ -d "${srcdir}/build-${MINGW_CHOST}" ]] && rm -rf "${srcdir}/build-${MINGW_CHOST}"
   mkdir -p "${srcdir}/build-${MINGW_CHOST}"
   cd "${srcdir}/build-${MINGW_CHOST}"
+  LIBS="-lgfortran  -lquadmath -lpthread -lm" \
   ../"JAGS-${pkgver}"/configure \
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST} \
     --target=${MINGW_CHOST} \
     --prefix=${MINGW_PREFIX} \
-    --enable-shared \
+    --disable-shared \
     --enable-static
   make
 }
