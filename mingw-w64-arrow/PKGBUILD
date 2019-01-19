@@ -14,8 +14,10 @@ depends=("${MINGW_PACKAGE_PREFIX}-boost"
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-gcc")
 options=("staticlibs" "strip" "!buildflags")
-source=("https://www.apache.org/dist/arrow/arrow-${pkgver}/apache-${_realname}-${pkgver}.tar.gz")
-sha256sums=("56a60e54a7baf660d4accebe4f2c35b623278e010e475b2b5ca9a78161b57214")
+source=("https://www.apache.org/dist/arrow/arrow-${pkgver}/apache-${_realname}-${pkgver}.tar.gz"
+        "32bit.patch")
+sha256sums=("34dae7e4dde9274e9a52610683e78a80f3ca312258ad9e9f2c0973cf44247a98"
+            "SKIP")
 
 cmake_build_type=release
 meson_build_type=debugoptimized
@@ -26,8 +28,7 @@ c_glib_build_dir=build-${CARCH}-c-glib
 
 prepare() {
   pushd ${source_dir}
-  #patch -p1 -i ${srcdir}/aaf70a41575f5eff590b4f73b8160ae896e6c24e.patch
-  #patch -p1 -i ${srcdir}/eb500b657895ed5f762aa7b819fcea2cb898358d.patch
+  patch -p1 -i ${srcdir}/32bit.patch
   popd
 }
 
