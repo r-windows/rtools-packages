@@ -14,9 +14,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-boost"
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-gcc")
 options=("staticlibs" "strip" "!buildflags")
-source=(
-#       "https://www.apache.org/dist/arrow/arrow-${pkgver}/apache-${_realname}-${pkgver}.tar.gz"
-        "https://dist.apache.org/repos/dist/dev/arrow/apache-arrow-0.12.0-rc2/apache-arrow-0.12.0.tar.gz")
+source=("https://www.apache.org/dist/arrow/arrow-${pkgver}/apache-${_realname}-${pkgver}.tar.gz")
 sha256sums=("56a60e54a7baf660d4accebe4f2c35b623278e010e475b2b5ca9a78161b57214")
 
 cmake_build_type=release
