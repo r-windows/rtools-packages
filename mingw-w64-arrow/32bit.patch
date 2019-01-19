@@ -1,0 +1,18 @@
+diff -aurp apache-arrow-0.12.0-orig/cpp/src/arrow/util/sse-util.h apache-arrow-0.12.0/cpp/src/arrow/util/sse-util.h
+--- apache-arrow-0.12.0-orig/cpp/src/arrow/util/sse-util.h	2019-01-19 14:05:02.000000000 -0600
++++ apache-arrow-0.12.0/cpp/src/arrow/util/sse-util.h	2019-01-19 14:05:38.000000000 -0600
+@@ -36,12 +36,12 @@
+ 
+ // gcc/clang (possibly others)
+ 
+-#if defined(__SSE4_2__)
++#if defined(__SSE4_2__) && defined(__MINGW64__)
+ #define ARROW_HAVE_SSE2 1
+ #include <emmintrin.h>
+ #endif
+ 
+-#if defined(__SSE4_2__)
++#if defined(__SSE4_2__) && defined(__MINGW64__)
+ #define ARROW_HAVE_SSE4_2 1
+ #include <nmmintrin.h>
+ #endif
