@@ -1,0 +1,55 @@
+# Maintainer: Martell Malone <martellmalone@gmail.com>
+
+_realname=libgit2
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=0.27.8
+pkgrel=1
+pkgdesc='A linkable library for Git (mingw-w64)'
+arch=('any')
+url='https://github.com/libgit2/libgit2'
+license=('GPL2' 'custom')
+options=('strip')
+depends=("${MINGW_PACKAGE_PREFIX}-curl"
+         "${MINGW_PACKAGE_PREFIX}-http-parser"
+         "${MINGW_PACKAGE_PREFIX}-libssh2"
+         "${MINGW_PACKAGE_PREFIX}-openssl"
+         "${MINGW_PACKAGE_PREFIX}-zlib")
+makedepends=("${MINGW_PACKAGE_PREFIX}-cmake" "${MINGW_PACKAGE_PREFIX}-gcc")
+source=(${_realname}-${pkgver}.tar.gz::"https://github.com/libgit2/libgit2/archive/v${pkgver}.tar.gz"
+        "https://github.com/libgit2/libgit2/commit/2d9d246409d8131dfbbded2f880b784f205e93a5.patch")
+noextract=(${_realname}-${pkgver}.tar.gz)
+sha256sums=('8313873d49dc01e8b880ec334d7430ae67496a89aaa8c6e7bbd3affb47a00c76'
+            'SKIP')
+
+prepare() {
+  tar --exclude tests/resources/testrepo-worktree/link_to_new.txt -zxf ${_realname}-${pkgver}.tar.gz
+  cd ${_realname}-${pkgver}
+  patch -p1 -i "${srcdir}/2d9d246409d8131dfbbded2f880b784f205e93a5.patch"
+}
+
+build() {
+  [[ -d "${srcdir}"/build-${MINGW_CHOST} ]] && rm -rf "${srcdir}"/build-${MINGW_CHOST}
+  mkdir -p "${srcdir}"/build-${MINGW_CHOST} && cd "${srcdir}"/build-${MINGW_CHOST}
+
+  rm ../${_realname}-${pkgver}/src/win32/thread.c
+
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+  ${MINGW_PREFIX}/bin/cmake.exe \
+    -G"MSYS Makefiles" \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+    -DPKG_CONFIG_WITHOUT_PREFIX=ON \
+    -DCMAKE_EXE_LINKER_FLAGS="-lsecur32 -lws2_32 -lgdi32 -lcrypt32 -lwldap32" \
+    -DTHREADSAFE=OFF \
+    -DCMAKE_C_FLAGS="-DCURL_STATICLIB" \
+    -DWINHTTP=ON \
+    ../${_realname}-${pkgver}
+
+  make
+}
+
+package() {
+  cd ${srcdir}/build-${MINGW_CHOST}
+  make DESTDIR=${pkgdir} install
+}
