@@ -1,0 +1,39 @@
+# Maintainer: Martell Malone <martellmalone@gmail.com>
+# Contributor: Alethea Rose <alethea@alethearose.com>
+# Contributor: Andrew Sun <adsun701@gmail.com>
+
+_realname=http-parser
+pkgbase=mingw-w64-${_realname}
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+pkgver=2.9.0
+pkgrel=1
+pkgdesc="Parser for HTTP Request/Response written in C (mingw-w64)"
+arch=('any')
+url='https://github.com/joyent/http-parser'
+license=('MIT')
+source=(${_realname}-${pkgver}.tar.gz::"https://github.com/joyent/http-parser/archive/v${pkgver}.tar.gz")
+options=('strip' 'staticlibs')
+sha256sums=('ef26268c54c8084d17654ba2ed5140bffeffd2a040a895ffb22a6cca3f6c613f')
+
+build() {
+  [[ -d "${srcdir}"/build-${CARCH} ]] && rm -rf "${srcdir}"/build-${CARCH}
+  mkdir -p "${srcdir}"/build-${CARCH} && cd "${srcdir}"/build-${CARCH}
+  cp -R ${srcdir}/${_realname}-${pkgver}/. "${srcdir}"/build-${CARCH}
+
+  CC=${MINGW_PREFIX}/bin/gcc \
+  AR=${MINGW_PREFIX}/bin/ar \
+  make -j1 \
+    library package
+}
+
+check() {
+  cd "${srcdir}"/build-${CARCH}
+  make test
+}
+
+package() {
+  cd "${srcdir}"/build-${CARCH}
+  mkdir -p ${pkgdir}${MINGW_PREFIX}/{include,lib}
+  install -Dm644 http_parser.h "${pkgdir}${MINGW_PREFIX}/include/http_parser.h"
+  cp *.a ${pkgdir}${MINGW_PREFIX}/lib/
+}
