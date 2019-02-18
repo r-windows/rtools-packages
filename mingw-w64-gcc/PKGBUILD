@@ -8,7 +8,7 @@ _realname=gcc
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
          "${MINGW_PACKAGE_PREFIX}-${_realname}-fortran")
-pkgver=8.2.0
+pkgver=8.3.0-RC-20190215
 pkgrel=9101
 pkgdesc="GCC for the MinGW-w64"
 arch=('any')
@@ -31,7 +31,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-${_realname}"
 optdepends=()
 groups=("rtools-gcc")
 options=('staticlibs' '!emptydirs') # '!strip' 'debug')
-source=("ftp://gcc.gnu.org/pub/gcc/snapshots/8.3.0-RC-20190215/gcc-8.3.0-RC-20190215.tar.xz"
+source=("ftp://gcc.gnu.org/pub/gcc/snapshots/${pkgver}/gcc-${pkgver}.tar.xz"
         "gdbinit"
         0002-Relocate-libintl.patch
         0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
@@ -87,7 +87,7 @@ del_file_exists() {
 
 
 prepare() {
-  cd ${srcdir}/${_sourcedir}
+  cd ${srcdir}/${pkgver}
   del_file_exists intl/canonicalize.c intl/canonicalize.h \
     intl/relocatex.c intl/relocatex.h \
     libstdc++-v3/src/filesystem/fs-posix.h \
