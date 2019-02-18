@@ -31,40 +31,37 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-${_realname}"
 optdepends=()
 groups=("rtools-gcc")
 options=('staticlibs' '!emptydirs') # '!strip' 'debug')
-source=("https://ftp.gnu.org/gnu/gcc/${_realname}-${pkgver}/${_realname}-${pkgver}.tar.xz"{,.sig}
+source=("ftp://gcc.gnu.org/pub/gcc/snapshots/8.3.0-RC-20190215/gcc-8.3.0-RC-20190215.tar.xz"
         "gdbinit"
-        "0002-Relocate-libintl.patch"
-        "0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch"
-        "0004-Windows-Use-not-in-progpath-and-leave-case-as-is.patch"
-        "0005-Windows-Don-t-ignore-native-system-header-dir.patch"
-        "0006-Windows-New-feature-to-allow-overriding.patch"
-        "0007-Build-EXTRA_GNATTOOLS-for-Ada.patch"
-        "0008-Prettify-linking-no-undefined.patch"
-        "0010-Fix-using-large-PCH.patch"
-        "0011-Enable-shared-gnat-implib.patch"
-        "0014-clone_function_name_1-Retain-any-stdcall-suffix.patch"
-        "0016-gcc-7-branch-disable-weak-refs-in-libstdc++.patch"
-        "0017-gcc-7-branch-Enable-std-experimental-filesystem.patch"
-        "0018-gcc-7-branch-Enable-a-native-GCC-to-color-diagnostic-messages-sen.patch"
-        "0019-gcc-8-branch-Backport-patches-for-std-filesystem-from-master.patch"
-        "0140-gcc-8.2.0-diagnostic-color.patch")
-sha256sums=('196c3c04ba2613f893283977e6011b2345d1cd1af9abeac58e916b1aab3e0080'
-            'SKIP'
+        0002-Relocate-libintl.patch
+        0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
+        0004-Windows-Use-not-in-progpath-and-leave-case-as-is.patch
+        0005-Windows-Don-t-ignore-native-system-header-dir.patch
+        0006-Windows-New-feature-to-allow-overriding.patch
+        0007-Build-EXTRA_GNATTOOLS-for-Ada.patch
+        0008-Prettify-linking-no-undefined.patch
+        0009-gcc-make-xmmintrin-header-cplusplus-compatible-depre.patch
+        0010-Fix-using-large-PCH.patch
+        0011-Enable-shared-gnat-implib.patch
+        0014-clone_function_name_1-Retain-any-stdcall-suffix.patch
+        0019-gcc-8-branch-Backport-patches-for-std-filesystem-from-master.patch
+        0130-libstdc++-in-out.patch
+        0140-gcc-8.2.0-diagnostic-color.patch)
+sha256sums=('SKIP'
             'dea2bbad4967280910559c6a11b865aeec19cab34647fb5894cb498b24b14462'
-            '83e9c6f76f728ae3e2f2eabb588b0d6cea7a3eda03cd5e77aed9d613143b7348'
+            '2dd7498bcb25b41afcc458696386b456ee4ff440bf395519a23d1f945ba15a41'
             '6033acda690786397059536787a6577e1a9f2b39f8a66276821917066094f43c'
             '388f423a67e4be6f547ca7e340ff8ee4c78b1ed83f3fd698daa409e309911807'
             '86fc77d5a6c137a9aca65ad6ba56653fb41b05636b763ce2c0b0b14d617c9de4'
             'd1e10cd2ef5594c34acead334bb93af500e00699ba673edc8916da22a572677d'
             '3629446c0039d9061cfedcb6d7a7589279588bb4601c7ce233546d357bd4be34'
             'ec6800816632234afc35ce40542a6aab3ee76e8514a7d0cb4171fd874353ecd7'
+            '0eaee0e1201f4f85ea20756432a9d51531e0e859f6f121276684e2b63b2ee315'
             '0decbbebda7ceac91da5d3dec9b7330f406a4358fa150560f08ff6f54739035f'
             '8faff8e503a617f283270f411399a8bcacda3ab62b4072dedf117e108af4844a'
             '60a58ed41389691a68ef4b7d47a0328df4d28d26e6c680a6b06b31191481ca65'
-            'c1e271c166de0062092cb61d50977c0e61d75b0ae6fb086cb8bb4da2b3fd18d7'
-            'b1c3c20bf501cebbcb02b4a50f117a4f90eb4fb79eac7aa99c85e2c54c106790'
-            '33392651e17b81609718873ff32606deee5f3fc5176c197bb96eedc3dada8912'
-            '1a2309d027c3defd0257f50a3c82fa8d2b5ea825c9d880ed77ea8e43505112b2'
+            'b3a02a35e5e9fce937bf7a617fe56b16d36cfe2184becb481a87f511ce292e85'
+            'ba2f77db605577d08e4079f08a7a9556c975b5416be8610c5be31e915637feb7'
             'e467f0ac68b349de826c79b00a45c5ad9e7c5a55d06b9b9fa7afd94c597f6376')
 
 _threads="posix"
@@ -90,13 +87,12 @@ del_file_exists() {
 
 
 prepare() {
-  cd ${srcdir}/${_realname}-${pkgver}
+  cd ${srcdir}/${_sourcedir}
   del_file_exists intl/canonicalize.c intl/canonicalize.h \
     intl/relocatex.c intl/relocatex.h \
     libstdc++-v3/src/filesystem/fs-posix.h \
     libstdc++-v3/src/filesystem/fs-win32.h \
     gcc/testsuite/gfortran.dg/list_read_14.f90
-
   apply_patch_with_msg \
     0002-Relocate-libintl.patch \
     0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch \
@@ -105,19 +101,23 @@ prepare() {
     0006-Windows-New-feature-to-allow-overriding.patch \
     0007-Build-EXTRA_GNATTOOLS-for-Ada.patch \
     0008-Prettify-linking-no-undefined.patch \
+    0009-gcc-make-xmmintrin-header-cplusplus-compatible-depre.patch \
     0010-Fix-using-large-PCH.patch \
     0011-Enable-shared-gnat-implib.patch \
     0014-clone_function_name_1-Retain-any-stdcall-suffix.patch \
-    0019-gcc-8-branch-Backport-patches-for-std-filesystem-from-master.patch \
-    0140-gcc-8.2.0-diagnostic-color.patch
-  
-  # These are for GCC 7 branch only:
-  # 0016-gcc-7-branch-disable-weak-refs-in-libstdc++.patch \
-  # 0017-gcc-7-branch-Enable-std-experimental-filesystem.patch \
-  # 0018-gcc-7-branch-Enable-a-native-GCC-to-color-diagnostic-messages-sen.patch
+    0019-gcc-8-branch-Backport-patches-for-std-filesystem-from-master.patch
+    
 
-  # do not expect $prefix/mingw symlink - this should be superceded by
-  # 0004-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
+  apply_patch_with_msg \
+    0130-libstdc++-in-out.patch
+
+  # Enable diagnostic color under mintty
+  # Вячеслав Петрищев <vyachemail@gmail.com>
+  apply_patch_with_msg \
+    0140-gcc-8.2.0-diagnostic-color.patch
+
+  # do not expect ${prefix}/mingw symlink - this should be superceded by
+  # 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
   sed -i 's/${prefix}\/mingw\//${prefix}\//g' configure
 
   # change hardcoded /mingw prefix to the real prefix .. isn't this rubbish?
@@ -160,10 +160,10 @@ build() {
     --enable-threads=${_threads} \
     --enable-graphite \
     --enable-fully-dynamic-string \
+    --enable-libstdcxx-filesystem-ts=yes \
     --enable-libstdcxx-time=yes \
     --disable-libstdcxx-pch \
     --disable-libstdcxx-debug \
-    --enable-libstdcxx-filesystem-ts=yes \
     --disable-isl-version-check \
     --enable-lto \
     --enable-libgomp \
