@@ -8,7 +8,7 @@ _realname=gcc
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
          "${MINGW_PACKAGE_PREFIX}-${_realname}-fortran")
-pkgver=8.3.0
+pkgver=8.2.1
 _srcver=8.3.0-RC-20190215
 pkgrel=9200
 pkgdesc="GCC for the MinGW-w64"
