@@ -3,6 +3,7 @@
 # Contributor: Ray Donnelly <mingw.android@gmail.com>
 # Contributor: Renato Silva <br.renatosilva@gmail.com>
 # Rtools: Jeroen Ooms <jeroenooms@gmail.com>
+# Deploy only
 
 _realname=gcc
 pkgbase=mingw-w64-${_realname}
