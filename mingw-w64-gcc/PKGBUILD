@@ -33,7 +33,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-${_realname}"
 optdepends=()
 groups=("rtools-gcc")
 options=('staticlibs' '!emptydirs') # '!strip' 'debug')
-source=("https://ftp.gnu.org/gnu/gcc/${_realname}-${pkgver}/${_realname}-${pkgver}.tar.gz{,.sig}"
+source=("https://ftp.gnu.org/gnu/gcc/${_realname}-${pkgver}/${_realname}-${pkgver}.tar.gz"{,.sig}
         "gdbinit"
         0002-Relocate-libintl.patch
         0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
