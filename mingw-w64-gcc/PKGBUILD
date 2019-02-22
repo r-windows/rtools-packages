@@ -8,9 +8,10 @@ _realname=gcc
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
          "${MINGW_PACKAGE_PREFIX}-${_realname}-fortran")
-pkgver=8.2.1
-_srcver=8.3.0-RC-20190215
-pkgrel=9200
+pkgver=8.3.0
+_srcver=8.3.0
+#_srcver=8.3.0-RC-20190215
+pkgrel=9300
 pkgdesc="GCC for the MinGW-w64"
 arch=('any')
 url="https://gcc.gnu.org"
@@ -32,7 +33,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-${_realname}"
 optdepends=()
 groups=("rtools-gcc")
 options=('staticlibs' '!emptydirs') # '!strip' 'debug')
-source=("ftp://gcc.gnu.org/pub/gcc/snapshots/${_srcver}/${_realname}-${_srcver}.tar.xz"
+source=("https://ftp.gnu.org/gnu/gcc/${_realname}-${pkgver}/${_realname}-${pkgver}.tar.gz{,.sig}"
         "gdbinit"
         0002-Relocate-libintl.patch
         0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
@@ -48,7 +49,8 @@ source=("ftp://gcc.gnu.org/pub/gcc/snapshots/${_srcver}/${_realname}-${_srcver}.
         0019-gcc-8-branch-Backport-patches-for-std-filesystem-from-master.patch
         0130-libstdc++-in-out.patch
         0140-gcc-8.2.0-diagnostic-color.patch)
-sha256sums=('SKIP'
+sha256sums=('ea71adc1c3d86330874b8df19611424b143308f0d6612d542472600532c96d2d'
+            'SKIP'
             'dea2bbad4967280910559c6a11b865aeec19cab34647fb5894cb498b24b14462'
             '2dd7498bcb25b41afcc458696386b456ee4ff440bf395519a23d1f945ba15a41'
             '6033acda690786397059536787a6577e1a9f2b39f8a66276821917066094f43c'
