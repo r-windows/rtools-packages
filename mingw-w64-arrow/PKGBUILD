@@ -15,7 +15,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-gcc")
 options=("staticlibs" "strip" "!buildflags")
 source=("http://arrowlib.rstudio.com/dev/apache-${_realname}-${pkgver}.tar.gz")
-sha256sums=("e859c58d354e2b3b8bb93dfe55ae0f598a6f346c7c2bd60e9a5613c79c3caac4")
+sha256sums=("a8ecb0453c5269869dcb6446cf834a5a36591bd9e846be9baf2ebe48a7027160")
 
 cmake_build_type=release
 meson_build_type=debugoptimized
