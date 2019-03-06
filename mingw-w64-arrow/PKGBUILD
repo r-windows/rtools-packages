@@ -14,10 +14,8 @@ depends=("${MINGW_PACKAGE_PREFIX}-boost"
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-gcc")
 options=("staticlibs" "strip" "!buildflags")
-source=("https://www.apache.org/dist/arrow/arrow-${pkgver}/apache-${_realname}-${pkgver}.tar.gz"
-        "32bit.patch")
-sha256sums=("34dae7e4dde9274e9a52610683e78a80f3ca312258ad9e9f2c0973cf44247a98"
-            "SKIP")
+source=("http://arrowlib.rstudio.com/dev/apache-arrow-0.13.0.tar.gz")
+sha256sums=("c556debea7ac1bd65611798b96f7a4f0e9df658229b4d86206dba90f80fafcb5")
 
 cmake_build_type=release
 meson_build_type=debugoptimized
