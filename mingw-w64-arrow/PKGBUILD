@@ -25,6 +25,8 @@ cpp_build_dir=build-${CARCH}-cpp
 c_glib_build_dir=build-${CARCH}-c-glib
 
 prepare() {
+  pushd ${source_dir}
+  popd
 }
 
 build() {
