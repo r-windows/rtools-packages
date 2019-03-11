@@ -4,7 +4,7 @@ _realname=arrow
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=0.12.9000
-fakever=0.13
+srcver=0.13
 pkgrel=1
 pkgdesc="Apache Arrow is a cross-language development platform for in-memory data (mingw-w64)"
 arch=("any")
@@ -15,13 +15,13 @@ depends=("${MINGW_PACKAGE_PREFIX}-boost"
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-gcc")
 options=("staticlibs" "strip" "!buildflags")
-source=("http://arrowlib.rstudio.com/dev/apache-${_realname}-${fakever}.tar.gz")
+source=("http://arrowlib.rstudio.com/dev/apache-${_realname}-${srcver}.tar.gz")
 sha256sums=("a8ecb0453c5269869dcb6446cf834a5a36591bd9e846be9baf2ebe48a7027160")
 
 cmake_build_type=release
 meson_build_type=debugoptimized
 
-source_dir=apache-${_realname}-${pkgver}
+source_dir=apache-${_realname}-${srcver}
 cpp_build_dir=build-${CARCH}-cpp
 c_glib_build_dir=build-${CARCH}-c-glib
 
