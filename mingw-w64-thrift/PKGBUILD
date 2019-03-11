@@ -10,9 +10,12 @@ arch=("any")
 url="https://thrift.apache.org/"
 license=("Apache-2.0")
 depends=("${MINGW_PACKAGE_PREFIX}-boost"
-         "${MINGW_PACKAGE_PREFIX}-openssl")
-makedepends=("bison"
-			 "automake")
+         "${MINGW_PACKAGE_PREFIX}-openssl"
+		 "${MINGW_PACKAGE_PREFIX}-zlib")
+makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
+             "bison"
+             "flex"
+             "make")
 options=("staticlibs" "strip" "!buildflags")
 source=("https://archive.apache.org/dist/thrift/${pkgver}/${_realname}-${pkgver}.tar.gz")
 sha256sums=("c336099532b765a6815173f62df0ed897528a9d551837d627c1f87fadad90428")
@@ -27,7 +30,7 @@ build() {
     -Wno-dev \
     -G"MSYS Makefiles" \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
-	-DCMAKE_CXX_STANDARD_LIBRARIES="$(pkg-config --libs-only-l --static openssl)" \
+    -DCMAKE_CXX_STANDARD_LIBRARIES="$(pkg-config --libs-only-l --static openssl)" \
     -DWITH_SHARED_LIB="OFF" \
     -DWITH_STATIC_LIB="ON" \
     -DCMAKE_BUILD_TYPE="Release" \
