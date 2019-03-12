@@ -96,7 +96,7 @@ _download_previous() {
     local filenames=("${@}")
     [[ "${DEPLOY_PROVIDER}" = bintray ]] || return 1
     for filename in "${filenames[@]}"; do
-        if ! wget --no-verbose "https://dl.bintray.com/${BINTRAY_TARGET}/${BINTRAY_REPOSITORY}/${filename}"; then
+        if ! curl -fsSOL "https://dl.bintray.com/${BINTRAY_TARGET}/${BINTRAY_REPOSITORY}/${filename}"; then
             rm -f "${filenames[@]}"
             return 1
         fi
@@ -160,7 +160,7 @@ create_build_references() {
 # Add packages to repository
 create_pacman_repository() {
     local name="${1}"
-    _download_previous "${name}".{db,files}{,.tar.xz}
+    _download_previous "${name}".{db,files}{,.tar.xz} || return 1
     repo-add "${name}.db.tar.xz" *.pkg.tar.xz
 }
 

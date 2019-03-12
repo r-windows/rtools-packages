@@ -1,4 +1,4 @@
-# Maintainer: Jeroen Ooms
+## Maintainer: Jeroen Ooms
 
 _realname=thrift
 pkgbase=mingw-w64-${_realname}
