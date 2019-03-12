@@ -30,6 +30,7 @@ build() {
     -Wno-dev \
     -G"MSYS Makefiles" \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+    -DCMAKE_SYSTEM_PREFIX_PATH=${MINGW_PREFIX} \
     -DCMAKE_CXX_STANDARD_LIBRARIES="$(pkg-config --libs --static openssl)" \
     -DWITH_SHARED_LIB="OFF" \
     -DWITH_STATIC_LIB="ON" \
