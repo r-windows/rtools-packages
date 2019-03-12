@@ -36,6 +36,9 @@ build() {
   mkdir -p ${cpp_build_dir}
   pushd ${cpp_build_dir}
 
+  # Workaround to fix static libparquet
+  export CXXFLAGS="-DARROW_STATIC"
+
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
     ${MINGW_PREFIX}/bin/cmake.exe \
     ../${source_dir}/cpp \
