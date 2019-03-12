@@ -12,6 +12,7 @@ url="https://arrow.apache.org/"
 license=("Apache-2.0")
 depends=("${MINGW_PACKAGE_PREFIX}-boost"
          "${MINGW_PACKAGE_PREFIX}-zlib"
+         "${MINGW_PACKAGE_PREFIX}-double-conversion"
 		 "${MINGW_PACKAGE_PREFIX}-thrift")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-gcc")
@@ -63,7 +64,8 @@ build() {
     -DARROW_USE_GLOG=OFF \
     -DARROW_BUILD_UTILITIES=ON \
     -DARROW_TEST_LINKAGE="static" \
-	-DTHRIFT_HOME="${MINGW_PREFIX}"
+	-DTHRIFT_HOME="${MINGW_PREFIX}" \
+	-DDOUBLE_CONVERSION_HOME="${MINGW_PREFIX}"
 
   make
   popd
