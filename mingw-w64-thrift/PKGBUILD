@@ -64,5 +64,5 @@ check() {
 package() {
   cd "${srcdir}/build-${MINGW_CHOST}"
   make DESTDIR="${pkgdir}" -j1 install
-  ${pkgdir}/bin/thrift --version
+  ${pkgdir}${MINGW_PREFIX}/bin/thrift --version
 }
