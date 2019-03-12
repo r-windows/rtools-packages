@@ -5,13 +5,14 @@ pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=0.12.9000
 srcver=0.13.0
-pkgrel=1
+pkgrel=2
 pkgdesc="Apache Arrow is a cross-language development platform for in-memory data (mingw-w64)"
 arch=("any")
 url="https://arrow.apache.org/"
 license=("Apache-2.0")
 depends=("${MINGW_PACKAGE_PREFIX}-boost"
-         "${MINGW_PACKAGE_PREFIX}-zlib")
+         "${MINGW_PACKAGE_PREFIX}-zlib"
+		 "${MINGW_PACKAGE_PREFIX}-thrift")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-gcc")
 options=("staticlibs" "strip" "!buildflags")
@@ -43,6 +44,9 @@ build() {
     -DCMAKE_BUILD_TYPE=${cmake_build_type} \
     -DARROW_BUILD_STATIC=ON \
     -DARROW_BUILD_TESTS=OFF \
+    -DARROW_PARQUET=ON \
+    -DARROW_PLASMA=OFF \
+    -DARROW_HDFS=OFF \
     -DARROW_PYTHON=OFF \
     -DARROW_BOOST_USE_SHARED=OFF \
     -DARROW_WITH_SNAPPY=OFF \
@@ -54,10 +58,9 @@ build() {
     -DARROW_WITH_ZLIB=OFF \
     -DARROW_WITH_BROTLI=OFF \
     -DARROW_USE_GLOG=OFF \
-    -DPTHREAD_LIBRARY=OFF \
     -DARROW_BUILD_UTILITIES=ON \
     -DARROW_TEST_LINKAGE="static" \
-    -DARROW_HDFS=OFF
+	-DTHRIFT_HOME="${MINGW_PREFIX}"
 
   make
   popd
