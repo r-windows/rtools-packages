@@ -1,4 +1,4 @@
-# Maintainer: Kouhei Sutou <kou@clear-code.com>
+# Maintainer: Jeroen Ooms
 
 _realname=thrift
 pkgbase=mingw-w64-${_realname}
@@ -61,9 +61,8 @@ check() {
   make check
 }
 
-
 package() {
   cd "${srcdir}/build-${MINGW_CHOST}"
   make DESTDIR="${pkgdir}" -j1 install
-  ${DESTDIR}/bin/thrift --version
+  ${pkgdir}/bin/thrift --version
 }
