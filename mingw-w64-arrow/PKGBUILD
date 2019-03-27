@@ -23,7 +23,7 @@ cmake_build_type=release
 meson_build_type=debugoptimized
 
 #source_dir=${_realname}-${pkgver}
-source_dir=${_realname}
+source_dir=apache-${_realname}-${pkgver}
 cpp_build_dir=build-${CARCH}-cpp
 c_glib_build_dir=build-${CARCH}-c-glib
 
