@@ -12,7 +12,7 @@ fi
 _realname=curl
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}${_namesuff}"
-pkgver=7.63.0
+pkgver=7.64.1
 pkgrel=9200
 pkgdesc="Command line tool and library for transferring data with URLs. (mingw-w64)"
 arch=('any')
@@ -27,20 +27,17 @@ if [ -n "${_namesuff}" ]; then
   conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 fi
 options=('staticlibs')
-source=("${url}/download/${_realname}-${pkgver}.tar.bz2"{,.asc}
-        "0001-Make-cURL-relocatable.patch")
-sha256sums=('9bab7ed4ecff77020a312d84cc5fb7eb02d58419d218f267477a724a17fd8dd8'
-            'SKIP'
-            '5d29129b312500c94c4e94cbcdee2fb54148b5788837761534aabb698484f4d4')
+source=("${url}/download/${_realname}-${pkgver}.tar.bz2")
+sha256sums=('4cc7c738b35250d0680f29e93e0820c4cb40035f43514ea3ec8d60322d41a45d')
 validpgpkeys=('914C533DF9B2ADA2204F586D78E11C6B279D5C91'  # Daniel Stenberg
               '27EDEAF22F3ABCEB50DB9A125CC908FDB71E12C2'
               '4461EAF0F8E9097F48AF0555F9FEAFF9D34A1BDB')
 
 prepare() {
   cd "${_realname}-${pkgver}"
-  rm -f lib/pathtools.h lib/pathtools.c > /dev/null 2>&1 || true
-  patch -p1 -i "${srcdir}/0001-Make-cURL-relocatable.patch"
-  autoreconf -vfi
+  #rm -f lib/pathtools.h lib/pathtools.c > /dev/null 2>&1 || true
+  #patch -p1 -i "${srcdir}/0001-Make-cURL-relocatable.patch"
+  #autoreconf -vfi
 }
 
 build() {
@@ -77,6 +74,8 @@ build() {
     _variant_config+=("--without-nghttp2")
     _variant_config+=("--without-librtmp")
   fi
+
+  export curl_disallow_strtok_r="yes" # For rtools 4.6.3
   cd "${srcdir}/build-${CARCH}"
   ../${_realname}-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
