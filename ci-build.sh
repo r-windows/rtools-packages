@@ -8,21 +8,29 @@ cd "$(dirname "$0")"
 source 'ci-library.sh'
 deploy_enabled && mkdir artifacts
 deploy_enabled && mkdir sourcepkg
+
+# Depending on if this is an rtools40 or msys64 installation:
+if [[ $(cygpath -m /) == *"rtools40"* ]]; then
+	# rtools40: enable upstream msys2 (but keep rtools-base as primary)
+	curl -L https://raw.githubusercontent.com/r-windows/rtools-installer/master/disable-msys.patch | patch -d/ -R -p0
+else
+	# msys64: remove preinstalled toolchains and swith to rtools40 repositories
+    pacman --noconfirm -Rcsu mingw-w64-{i686,x86_64}-toolchain gcc pkg-config
+    cp -f pacman.conf /etc/pacman.conf
+fi
+
+pacman --noconfirm -Scc
+pacman --noconfirm -Syyu
+pacman --noconfirm --needed -S git base-devel
+
+# Install core build stuff
+pacman --noconfirm --needed -S mingw-w64-{i686,x86_64}-{crt,winpthreads,gcc,libtre,pkg-config,xz}
+
+# Initiate git
 git_config user.email 'ci@msys2.org'
 git_config user.name  'MSYS2 Continuous Integration'
 git remote add upstream 'https://github.com/r-windows/rtools-packages'
 git fetch --quiet upstream
-
-# Remove toolchain packages (preinstalled on AppVeyor)
-pacman --noconfirm -Rcsu mingw-w64-{i686,x86_64}-toolchain gcc pkg-config
-
-# Set build repositories
-cp -f pacman.conf /etc/pacman.conf
-pacman --noconfirm -Scc
-pacman --noconfirm -Syyuu
-
-# Install core build stuff
-pacman --noconfirm -S mingw-w64-{i686,x86_64}-{crt,winpthreads,gcc,libtre,pkg-config,xz}
 
 # Detect changed packages
 list_commits  || failure 'Could not detect added commits'

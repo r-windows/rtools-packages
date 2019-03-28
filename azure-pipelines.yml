@@ -1,0 +1,22 @@
+jobs:
+  - job: MINGW
+    timeoutInMinutes: 360
+    pool:
+      vmImage: vs2015-win2012r2
+    strategy:
+      maxParallel: 5
+      matrix:
+        i686:
+          RTOOLS_ARCH: x86_64
+          MINGW_INSTALLS: mingw32
+        x86_64:
+          RTOOLS_ARCH: x86_64
+          MINGW_INSTALLS: mingw64
+    steps:
+      - powershell: |
+          Import-Module '.\scripts.ps1'
+          InstallRtools
+        displayName: Installing Rtools for Windows
+      - script: |
+          C:\rtools40\usr\bin\bash --login -c "$(cygpath ${SYSTEM_DEFAULTWORKINGDIRECTORY})/ci-build.sh"
+        displayName: Building Packages
