@@ -14,7 +14,6 @@ provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 conflicts=("${MINGW_PACKAGE_PREFIX}-openblas-git")
 replaces=("${MINGW_PACKAGE_PREFIX}-${_realname}"
           "${MINGW_PACKAGE_PREFIX}-${_realname}-git")
-depends=("${MINGW_PACKAGE_PREFIX}-libwinpthread")
 makedepends=("perl"
              "${MINGW_PACKAGE_PREFIX}-gcc-fortran")
 options=('!buildflags')
@@ -50,9 +49,7 @@ build() {
 package() {
   cd "${srcdir}"/build-${CARCH}
 
-  mkdir -p "${pkgdir}${MINGW_PREFIX}/bin"
   mkdir -p "${pkgdir}${MINGW_PREFIX}/lib"
-
   make LIBNAME=libopenblasp.a \
        DESTDIR="${pkgdir}" PREFIX="${MINGW_PREFIX}"  \
        OPENBLAS_INCLUDE_DIR=${MINGW_PREFIX}/include/${_realname} \
