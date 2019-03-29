@@ -6,7 +6,6 @@ pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=2019_20181003
 _pkgver=2019_U1
 pkgrel=1
-epoch=1
 pkgdesc='High level abstract threading library (mingw-w64)'
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-make")
 options=('!strip' 'staticlibs')

@@ -29,4 +29,4 @@ jobs:
         condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false))
         inputs:
           pathtoPublish: artifacts
-          artifactName: $(MINGW_INSTALLS)-packages
+          artifactName: $(MINGW_INSTALLS)
