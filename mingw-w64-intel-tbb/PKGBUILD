@@ -61,7 +61,7 @@ build() {
     parch=ia32
   fi
   unset LDFLAGS
-  mingw32-make arch=$parch tbb_os=windows runtime=mingw compiler=gcc stdver=c++11
+  mingw32-make arch=$parch tbb_os=windows runtime=mingw compiler=gcc stdver=c++11 extra_inc=big_iron.inc
 }
 
 package() {
@@ -77,6 +77,6 @@ package() {
   install -d "${pkgdir}${MINGW_PREFIX}"/include
   cp -a include/tbb "${pkgdir}${MINGW_PREFIX}"/include
   install -d "${pkgdir}${MINGW_PREFIX}"/lib
-  install -m755 build/windows_${parch}_gcc_mingw_debug/*.a "${pkgdir}${MINGW_PREFIX}"/lib
+  #install -m755 build/windows_${parch}_gcc_mingw_debug/*.a "${pkgdir}${MINGW_PREFIX}"/lib
   install -m755 build/windows_${parch}_gcc_mingw_release/*.a "${pkgdir}${MINGW_PREFIX}"/lib
 }
