@@ -20,6 +20,9 @@ jobs:
       - script: |
           C:\rtools40\usr\bin\bash --login -c "$(cygpath ${SYSTEM_DEFAULTWORKINGDIRECTORY})/ci-build.sh"
         displayName: Building Packages
+        env:
+          BUILD_URL: dummy
+          DEPLOY_PROVIDER: bintray
       - task: PublishBuildArtifacts@1
         displayName: Publish packages
         continueOnError: true
