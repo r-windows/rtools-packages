@@ -1,0 +1,83 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+
+_realname=intel-tbb
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=2019_20181003
+_pkgver=2019_U1
+pkgrel=1
+epoch=1
+pkgdesc='High level abstract threading library (mingw-w64)'
+depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-make")
+options=('!strip' 'staticlibs')
+arch=('any')
+url='https://www.threadingbuildingblocks.org/'
+license=('Apache')
+source=(https://github.com/01org/tbb/archive/${_pkgver}.tar.gz)
+sha256sums=('a4875c6b6853213083e52ecd303546bdf424568ec67cfc7e51d132a7c037c66a')
+
+prepare () {
+  cd ${srcdir}/tbb-${_pkgver}
+
+  # do not build debug libraries
+  #sed -i "/debug/d" Makefile
+
+  # not not use win32 api
+  #patch -p1 -i "$srcdir"/tbb-disable_windows_api.patch
+  #echo "CPLUS_FLAGS += -DUSE_WIN32_API=0" >> build/windows.gcc.inc
+
+  # platform configuration
+  #sed -i "s|export SHELL = cmd|export SHELL = sh -c|g" build/windows.inc
+  #sed -i "s|CMD=cmd /C|CMD=sh -c|g" build/windows.inc
+  #sed -i "s|CWD=\$(shell cmd /C echo %CD%)|CWD=\$(shell pwd)|g" build/windows.inc
+  #sed -i "s|RM=cmd /C del /Q /F|RM?=rm -f|g" build/windows.inc
+  #sed -i "s|RD=cmd /C rmdir|RD?=rmdir|g" build/windows.inc
+  #sed -i "s|MD=cmd /c mkdir|MD?=mkdir -p|g" build/windows.inc
+  #sed -i "s|SLASH=\\\\\\\\|SLASH=/|g" build/windows.inc
+  #sed -i "s|NUL = nul|NUL= /dev/null|g" build/windows.inc
+  #sed -i "s|.DLL = tbb|.DLL = libtbb|g" build/windows.inc
+  #sed -i "s|.LIB = tbb|.LIB = libtbb|g" build/windows.inc
+  #sed -i "/MAKE_VERSIONS/d" build/windows.inc
+  #echo "MAKE_VERSIONS=sh \$(tbb_root)/build/version_info_linux.sh \$(CPLUS) \$(CPLUS_FLAGS) \$(INCLUDES) >version_string.ver" >> build/windows.inc
+  #sed -i "/MAKE_TBBVARS/d" build/windows.inc
+  #echo "MAKE_TBBVARS=sh \$(tbb_root)/build/generate_tbbvars.sh" >> build/windows.inc
+}
+
+build() {
+  cd ${srcdir}/tbb-${_pkgver}
+
+  sed -i "s|OUTPUT_KEY = -o #|OUTPUT_KEY = -Wl,--out-implib,lib\$(BUILDING_LIBRARY).a -o #|g" build/windows.gcc.inc
+  #sed -i "s|\$(call detect_js,/minversion gcc 4.4)|ok|g" build/windows.gcc.inc
+  echo "CPLUS_FLAGS += -mrtm" >> build/windows.gcc.inc # makes test cases pass
+
+  # use mingw's pthreads
+  #sed -i "s|USE_WINTHREAD|USE_PTHREAD|g" build/windows.gcc.inc src/tbbmalloc/TypeDefinitions.h
+  #sed -i "s|LIBDL =|LIBDL = -ldl|g" build/windows.gcc.inc
+
+  if test "${MINGW_CHOST}" = "x86_64-w64-mingw32"
+  then
+    parch=intel64
+  else
+    parch=ia32
+  fi
+  unset LDFLAGS
+  mingw32-make arch=$parch tbb_os=windows runtime=mingw compiler=gcc stdver=c++11
+}
+
+package() {
+  cd ${srcdir}/tbb-${_pkgver}
+
+  if test "${MINGW_CHOST}" = "x86_64-w64-mingw32"
+  then
+    parch=intel64
+  else
+    parch=ia32
+  fi
+
+  install -d "${pkgdir}${MINGW_PREFIX}"/include
+  cp -a include/tbb "${pkgdir}${MINGW_PREFIX}"/include
+  install -d "${pkgdir}${MINGW_PREFIX}"/lib
+  install -m755 build/windows_${parch}_gcc_mingw_debug/*.a "${pkgdir}${MINGW_PREFIX}"/lib
+  install -m755 build/windows_${parch}_gcc_mingw_release/*.a "${pkgdir}${MINGW_PREFIX}"/lib
+}
