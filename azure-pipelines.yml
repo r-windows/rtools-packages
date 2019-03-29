@@ -20,3 +20,10 @@ jobs:
       - script: |
           C:\rtools40\usr\bin\bash --login -c "$(cygpath ${SYSTEM_DEFAULTWORKINGDIRECTORY})/ci-build.sh"
         displayName: Building Packages
+      - task: PublishBuildArtifacts@1
+        displayName: Publish packages
+        continueOnError: true
+        condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false))
+        inputs:
+          pathtoPublish: $(SYSTEM_DEFAULTWORKINGDIRECTORY)/artifacts
+          artifactName: $(MINGW_INSTALLS)
