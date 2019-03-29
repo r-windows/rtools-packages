@@ -28,5 +28,5 @@ jobs:
         continueOnError: true
         condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false))
         inputs:
-          pathtoPublish: "$(Build.SourcesDirectory)/artifacts"
-          artifactName: "$(MINGW_INSTALLS)"
+          pathtoPublish: '$(Build.SourcesDirectory)\artifacts'
+          artifactName: '$(MINGW_INSTALLS)'
