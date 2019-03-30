@@ -15,7 +15,8 @@ depends=("${MINGW_PACKAGE_PREFIX}-intel-tbb"
          "${MINGW_PACKAGE_PREFIX}-libtiff"
          "${MINGW_PACKAGE_PREFIX}-libwebp"
          "${MINGW_PACKAGE_PREFIX}-zlib")
-makedepends=("${MINGW_PACKAGE_PREFIX}-cmake")
+makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
+             "${MINGW_PACKAGE_PREFIX}-python3")
 source=("${_realname}-${pkgver}.tar.gz"::https://github.com/opencv/opencv/archive/${pkgver}.tar.gz
         "${_realname}_contrib-${pkgver}.tar.gz"::https://github.com/opencv/opencv_contrib/archive/${pkgver}.tar.gz
         '0001-mingw-w64-cmake.patch'
@@ -77,9 +78,9 @@ build() {
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake.exe -Wno-dev \
     -G"MSYS Makefiles" \
-	-DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
-	-DBUILD_SHARED_LIBS=OFF \
+    -DBUILD_SHARED_LIBS=OFF \
     -DPKG_CONFIG_WITHOUT_PREFIX=ON \
     -DWITH_OPENCL=ON \
     -DWITH_OPENGL=ON \
@@ -90,7 +91,7 @@ build() {
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_PROTOBUF=OFF \
     -DBUILD_EXAMPLES=OFF \
-	-DBUILD_JAVA=OFF \
+    -DBUILD_JAVA=OFF \
     -DINSTALL_C_EXAMPLES=OFF \
     -DINSTALL_PYTHON_EXAMPLES=OFF \
     -DWITH_GTK=OFF \
@@ -101,13 +102,14 @@ build() {
     -DWITH_FFMPEG=OFF \
     -DWITH_GPHOTO2=OFF \
     -DWITH_GSTREAMER=OFF \
-	-DWITH_OPENEXR=OFF \
-	-DWITH_PROTOBUF=OFF \
+    -DWITH_OPENEXR=OFF \
+    -DWITH_PROTOBUF=OFF \
     -DWITH_XINE=OFF \
     -DCMAKE_SKIP_RPATH=ON \
     -DENABLE_PRECOMPILED_HEADERS=OFF \
     -DBUILD_opencv_python2=OFF \
     -DBUILD_opencv_python3=OFF \
+    -DOPENCV_EXTRA_MODULES_PATH=../${_realname}_contrib-${pkgver}/modules \
     -DBUILD_INFO_SKIP_EXTRA_MODULES=ON \
     -DOPENCV_GENERATE_PKGCONFIG=ON \
     ../${_realname}-${pkgver}
