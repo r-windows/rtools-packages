@@ -1,0 +1,161 @@
+diff -Naur a/cmake/OpenCVFindOpenEXR.cmake b/cmake/OpenCVFindOpenEXR.cmake
+--- a/cmake/OpenCVFindOpenEXR.cmake	2015-02-25 18:10:31.000000000 +0600
++++ b/cmake/OpenCVFindOpenEXR.cmake	2015-03-05 22:18:10.517256700 +0600
+@@ -13,7 +13,7 @@
+ SET(OPENEXR_LIBSEARCH_SUFFIXES "")
+ file(TO_CMAKE_PATH "$ENV{ProgramFiles}" ProgramFiles_ENV_PATH)
+ 
+-if(WIN32)
++if(WIN32 AND NOT MINGW)
+     SET(OPENEXR_ROOT "C:/Deploy" CACHE STRING "Path to the OpenEXR \"Deploy\" folder")
+     if(CMAKE_CL_64)
+         SET(OPENEXR_LIBSEARCH_SUFFIXES x64/Release x64 x64/Debug)
+diff -Naur a/cmake/OpenCVDetectPython.cmake b/cmake/OpenCVDetectPython.cmake
+--- a/cmake/OpenCVDetectPython.cmake	2015-02-25 18:10:31.000000000 +0600
++++ b/cmake/OpenCVDetectPython.cmake	2015-03-05 22:18:10.517256700 +0600
+@@ -125,7 +125,7 @@
+     endif()
+ 
+     if(NOT ANDROID AND NOT IOS)
+-      if(CMAKE_HOST_UNIX)
++      if(CMAKE_HOST_UNIX OR MINGW)
+         execute_process(COMMAND ${_executable} -c "from distutils.sysconfig import *; print(get_python_lib())"
+                         RESULT_VARIABLE _cvpy_process
+                         OUTPUT_VARIABLE _std_packages_path
+diff -Naur a/cmake/OpenCVGenPkgconfig.cmake b/cmake/OpenCVGenPkgconfig.cmake
+--- a/cmake/OpenCVGenPkgconfig.cmake	2015-02-25 18:10:31.000000000 +0600
++++ b/cmake/OpenCVGenPkgconfig.cmake	2015-03-05 22:18:10.532856700 +0600
+@@ -100,6 +100,6 @@
+                "${CMAKE_BINARY_DIR}/unix-install/${OPENCV_PC_FILE_NAME}"
+                @ONLY)
+ 
+-if(UNIX AND NOT ANDROID)
++if((UNIX AND NOT ANDROID) OR MINGW)
+   install(FILES ${CMAKE_BINARY_DIR}/unix-install/${OPENCV_PC_FILE_NAME} DESTINATION ${OPENCV_LIB_INSTALL_PATH}/pkgconfig COMPONENT dev)
+ endif()
+diff -Naur a/cmake/OpenCVModule.cmake b/cmake/OpenCVModule.cmake
+--- a/cmake/OpenCVModule.cmake	2015-02-25 18:10:31.000000000 +0600
++++ b/cmake/OpenCVModule.cmake	2015-03-05 22:18:10.532856700 +0600
+@@ -940,7 +584,9 @@
+   endif()
+ 
+   set_target_properties(${the_module} PROPERTIES
+-    OUTPUT_NAME "${the_module}${OPENCV_DLLVERSION}"
++    OUTPUT_NAME "${the_module}"
++    RUNTIME_OUTPUT_NAME "${the_module}${OPENCV_DLLVERSION}"
++    ARCHIVE_OUTPUT_NAME "${the_module}"
+     DEBUG_POSTFIX "${OPENCV_DEBUG_POSTFIX}"
+     COMPILE_PDB_NAME "${the_module}${OPENCV_DLLVERSION}"
+     COMPILE_PDB_NAME_DEBUG "${the_module}${OPENCV_DLLVERSION}${OPENCV_DEBUG_POSTFIX}"
+@@ -1294,7 +1294,11 @@
+         add_dependencies(${parent_target} ${the_target})
+ 
+         if(WIN32)
+-          install(TARGETS ${the_target} RUNTIME DESTINATION "samples/${module_id}" COMPONENT samples)
++          if(MINGW)
++            install(TARGETS ${the_target} RUNTIME DESTINATION "share/OpenCV/samples/${module_id}" COMPONENT samples)
++          else()
++            install(TARGETS ${the_target} RUNTIME DESTINATION "samples/${module_id}" COMPONENT samples)
++          endif()
+         endif()
+       endforeach()
+     endif()
+diff -Naur a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2015-02-25 18:10:31.000000000 +0600
++++ b/CMakeLists.txt	2015-03-05 22:18:10.532856700 +0600
+@@ -111,20 +111,6 @@
+   endif()
+ endif()
+ 
+-# Add these standard paths to the search paths for FIND_PATH
+-# to find include files from these locations first
+-if(MINGW)
+-  if(EXISTS /mingw)
+-      list(APPEND CMAKE_INCLUDE_PATH /mingw)
+-  endif()
+-  if(EXISTS /mingw32)
+-      list(APPEND CMAKE_INCLUDE_PATH /mingw32)
+-  endif()
+-  if(EXISTS /mingw64)
+-      list(APPEND CMAKE_INCLUDE_PATH /mingw64)
+-  endif()
+-endif()
+-
+ # ----------------------------------------------------------------------------
+ # OpenCV cmake options
+ # ----------------------------------------------------------------------------
+@@ -191,13 +177,13 @@
+ 
+ # 3rd party libs
+ OCV_OPTION(OPENCV_FORCE_3RDPARTY_BUILD   "Force using 3rdparty code from source" OFF)
+-OCV_OPTION(BUILD_ZLIB               "Build zlib from source"             (WIN32 OR APPLE OR OPENCV_FORCE_3RDPARTY_BUILD) )
+-OCV_OPTION(BUILD_TIFF               "Build libtiff from source"          (WIN32 OR ANDROID OR APPLE OR OPENCV_FORCE_3RDPARTY_BUILD) )
+-OCV_OPTION(BUILD_JASPER             "Build libjasper from source"        (WIN32 OR ANDROID OR APPLE OR OPENCV_FORCE_3RDPARTY_BUILD) )
+-OCV_OPTION(BUILD_JPEG               "Build libjpeg from source"          (WIN32 OR ANDROID OR APPLE OR OPENCV_FORCE_3RDPARTY_BUILD) )
+-OCV_OPTION(BUILD_PNG                "Build libpng from source"           (WIN32 OR ANDROID OR APPLE OR OPENCV_FORCE_3RDPARTY_BUILD) )
+-OCV_OPTION(BUILD_OPENEXR            "Build openexr from source"          (((WIN32 OR ANDROID OR APPLE) AND NOT WINRT) OR OPENCV_FORCE_3RDPARTY_BUILD) )
+-OCV_OPTION(BUILD_WEBP               "Build WebP from source"             (((WIN32 OR ANDROID OR APPLE) AND NOT WINRT) OR OPENCV_FORCE_3RDPARTY_BUILD) )
++OCV_OPTION(BUILD_ZLIB               "Build zlib from source"             (MSVC OR APPLE  OR OPENCV_FORCE_3RDPARTY_BUILD))
++OCV_OPTION(BUILD_TIFF               "Build libtiff from source"          (MSVC OR ANDROID OR APPLE OR OPENCV_FORCE_3RDPARTY_BUILD))
++OCV_OPTION(BUILD_JASPER             "Build libjasper from source"        (MSVC OR ANDROID OR APPLE OR OPENCV_FORCE_3RDPARTY_BUILD))
++OCV_OPTION(BUILD_JPEG               "Build libjpeg from source"          (MSVC OR ANDROID OR APPLE OR OPENCV_FORCE_3RDPARTY_BUILD))
++OCV_OPTION(BUILD_PNG                "Build libpng from source"           (MSVC OR ANDROID OR APPLE OR OPENCV_FORCE_3RDPARTY_BUILD))
++OCV_OPTION(BUILD_OPENEXR            "Build openexr from source"          (((WIN32 OR ANDROID OR APPLE) AND NOT WINRT AND NOT MINGW) OR OPENCV_FORCE_3RDPARTY_BUILD))
++OCV_OPTION(BUILD_WEBP               "Build WebP from source"             (((WIN32 OR ANDROID OR APPLE) AND NOT WINRT AND NOT MINGW) OR OPENCV_FORCE_3RDPARTY_BUILD))
+ OCV_OPTION(BUILD_TBB                "Download and build TBB from source" (ANDROID OR OPENCV_FORCE_3RDPARTY_BUILD) )
+ OCV_OPTION(BUILD_IPP_IW             "Build IPP IW from source"           (NOT MINGW OR OPENCV_FORCE_3RDPARTY_BUILD) IF (X86_64 OR X86) AND NOT WINRT )
+ OCV_OPTION(BUILD_ITT                "Build Intel ITT from source"        (NOT MINGW OR OPENCV_FORCE_3RDPARTY_BUILD) IF (X86_64 OR X86) AND NOT WINRT AND NOT APPLE_FRAMEWORK )
+@@ -376,11 +376,11 @@
+   endif()
+ endif()
+ 
+-if(ANDROID OR WIN32)
++if(ANDROID OR MSVC)
+   ocv_update(OPENCV_DOC_INSTALL_PATH doc)
+ endif()
+ 
+-if(WIN32 AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
++if(MSVC AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
+   if(DEFINED OpenCV_RUNTIME AND DEFINED OpenCV_ARCH)
+     ocv_update(OpenCV_INSTALL_BINARIES_PREFIX "${OpenCV_ARCH}/${OpenCV_RUNTIME}/")
+   else()
+@@ -393,7 +393,7 @@
+ if(ANDROID)
+   ocv_update(OPENCV_SAMPLES_BIN_INSTALL_PATH "${OpenCV_INSTALL_BINARIES_PREFIX}samples/${ANDROID_NDK_ABI_NAME}")
+ else()
+-  ocv_update(OPENCV_SAMPLES_BIN_INSTALL_PATH "${OpenCV_INSTALL_BINARIES_PREFIX}samples")
++  ocv_update(OPENCV_SAMPLES_BIN_INSTALL_PATH "${OpenCV_INSTALL_BINARIES_PREFIX}share/OpenCV/samples")
+ endif()
+ 
+ if(ANDROID)
+@@ -434,7 +434,7 @@
+   set(LIBRARY_OUTPUT_PATH         "${OpenCV_BINARY_DIR}/lib")
+   set(3P_LIBRARY_OUTPUT_PATH      "${OpenCV_BINARY_DIR}/3rdparty/lib${LIB_SUFFIX}")
+ 
+-  if(WIN32 AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
++  if(MSVC AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
+     if(OpenCV_STATIC)
+       set(OPENCV_LIB_INSTALL_PATH   "${OpenCV_INSTALL_BINARIES_PREFIX}staticlib${LIB_SUFFIX}")
+     else()
+@@ -652,7 +638,7 @@
+ endif()
+ 
+ # for UNIX it does not make sense as LICENSE and readme will be part of the package automatically
+-if(ANDROID OR NOT UNIX)
++if((ANDROID OR NOT UNIX) AND NOT MINGW)
+   install(FILES ${OPENCV_LICENSE_FILE}
+         PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+         DESTINATION . COMPONENT libs)
+--- opencv-3.4.2/samples/CMakeLists.txt.orig	2018-08-07 08:44:43.608190600 +0300
++++ opencv-3.4.2/samples/CMakeLists.txt	2018-08-07 08:50:18.380338500 +0300
+@@ -12,7 +12,9 @@
+   if(WIN32 AND MSVC AND NOT BUILD_SHARED_LIBS)
+     set_target_properties(${the_target} PROPERTIES LINK_FLAGS "/NODEFAULTLIB:atlthunk.lib /NODEFAULTLIB:atlsd.lib /DEBUG")
+   endif()
+-  if(WIN32)
++  if(MINGW)
++    install(TARGETS ${the_target} RUNTIME DESTINATION "share/OpenCV/samples/${sub}" COMPONENT samples)
++  else()
+     install(TARGETS ${the_target} RUNTIME DESTINATION "samples/${sub}" COMPONENT samples)
+   endif()
+   # Add single target to build all samples in the group: 'make opencv_samples_cpp'
