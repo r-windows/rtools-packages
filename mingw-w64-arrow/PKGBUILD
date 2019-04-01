@@ -16,7 +16,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-boost"
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-gcc")
 options=("staticlibs" "strip" "!buildflags")
-source=("https://dist.apache.org/repos/dist/dev/arrow/apache-${_realname}-${pkgver}-rc3/apache-arrow-${pkgver}.tar.gz")
+source=("https://archive.apache.org/dist/arrow/arrow-${_realname}-${pkgver}-rc3/apache-arrow-${pkgver}.tar.gz")
 sha256sums=("SKIP")
 
 cmake_build_type=release
