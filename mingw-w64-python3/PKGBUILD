@@ -432,22 +432,6 @@ package() {
     "${pkgdir}${MINGW_PREFIX}"/lib/python${_pybasever}/lib-dynload/_sysconfigdata*.py \
     "${pkgdir}${MINGW_PREFIX}"/lib/python${_pybasever}/smtpd.py
 
-  # Doing sysconfig relocatable as patch 0000 do it only partially
-  sed -e "s/sys.prefix + //g" \
-      -e "s/'\/bin'/sys.prefix + '\/bin'/g" \
-      -e "s/'\/include\//sys.prefix + '\/include\//g" \
-      -e "s/'\/include /sys.prefix + '\/include /g" \
-      -e "s/'\/include'/sys.prefix + '\/include'/g" \
-      -e "s/ \/include\// ' + sys.prefix + '\/include\//g" \
-      -e "s/ \/include / ' + sys.prefix + '\/include /g" \
-      -e "s/'\/lib\//sys.prefix + '\/lib\//g" \
-      -e "s/'\/lib /sys.prefix + '\/lib /g" \
-      -e "s/'\/lib'/sys.prefix + '\/lib'/g" \
-      -e "s/ \/lib\// ' + sys.prefix + '\/lib\//g" \
-      -e "s/ \/lib / ' + sys.prefix + '\/lib /g" \
-      -e "s/'\/share\//sys.prefix + '\/share\//g" \
-      -e "s/'\/share'/sys.prefix + '\/share'/g" \
-      -i "${pkgdir}${MINGW_PREFIX}"/lib/python${_pybasever}/lib-dynload/_sysconfigdata*.py
 }
 
 sha256sums=('da60b54064d4cfcd9c26576f6df2690e62085123826cff2e667e72a91952d318'
