@@ -1,4 +1,27 @@
-### Global variables
+# We use upstream msys2 to build packages because the runtime from rtools may
+# be out of sync with the upstream core build utilities.
+Function InstallMSYS64 {
+	Write-Host "Installing MSYS2 64-bit..." -ForegroundColor Cyan
+	$zipPath = "$($env:USERPROFILE)\msys2-x86_64-latest.tar.xz"
+	$tarPath = "$($env:USERPROFILE)\msys2-x86_64-latest.tar"
+
+	Write-Host "Downloading MSYS installation package..."
+	(New-Object Net.WebClient).DownloadFile('http://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz', $zipPath)
+
+	Write-Host "Untaring installation package..."
+	7z x $zipPath -y -o"$env:USERPROFILE" | Out-Null
+
+	Write-Host "Unzipping installation package..."
+	7z x $tarPath -y -oC:\ | Out-Null
+	del $zipPath
+	del $tarPath
+
+	Write-Host "Initiating pacman..."
+	C:\msys64\usr\bin\bash.exe --login -c exit
+}
+
+##### Old stuff ###
+
 $RTOOLS_ARCH = ${env:RTOOLS_ARCH}
 $RTOOLS_ZIP = "rtools40-${RTOOLS_ARCH}.7z"
 $RTOOLS_EXE = "rtools40-${RTOOLS_ARCH}.exe"
@@ -8,11 +31,6 @@ $RTOOLS_EXE = "rtools40-${RTOOLS_ARCH}.exe"
 $RTOOLS_MIRROR = "https://dl.bintray.com/rtools/installer/"
 # $RTOOLS_MIRROR = "https://cloud.r-project.org/bin/windows/Rtools/"
 # $RTOOLS_MIRROR = "https://ftp.opencpu.org/archive/rtools/4.0/"
-
-### InnoSetup Mirror
-$INNO_MIRROR = "https://github.com/jrsoftware/issrc/releases/download/is-5_6_1/innosetup-5.6.1-unicode.exe"
-# $INNO_MIRROR = "https://mlaan2.home.xs4all.nl/ispack/innosetup-5.6.1-unicode.exe"
-# $INNO_MIRROR = "http://files.jrsoftware.org/is/5/innosetup-5.6.1-unicode.exe"
 
 function CheckExitCode($msg) {
   if ($LastExitCode -ne 0) {
@@ -40,6 +58,7 @@ Function InstallRtoolsExe {
 #	CheckExitCode "Failed to install ${RTOOLS_EXE}"
 	Write-Host "Installation of ${RTOOLS_EXE} done!" -ForegroundColor Green
 }
+
 
 function bash($command) {
     Write-Host $command -NoNewline

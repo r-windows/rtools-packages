@@ -2,7 +2,7 @@ jobs:
   - job: MINGW
     timeoutInMinutes: 360
     pool:
-      vmImage: vs2015-win2012r2
+      vmImage: vs2017-win2016
     strategy:
       maxParallel: 5
       matrix:
@@ -15,10 +15,11 @@ jobs:
     steps:
       - powershell: |
           Import-Module '.\scripts.ps1'
-          InstallRtools
-        displayName: Installing Rtools for Windows
+          InstallMSYS64
+          C:\msys64\usr\bin\pacman --noconfirm --ask 20 --sync --refresh --refresh --sysupgrade --sysupgrade
+        displayName: Installing msys64 build environment
       - script: |
-          C:\rtools40\usr\bin\bash --login -c "$(cygpath ${SYSTEM_DEFAULTWORKINGDIRECTORY})/ci-build.sh"
+          C:\msys64\usr\bin\bash --login -c "$(cygpath ${SYSTEM_DEFAULTWORKINGDIRECTORY})/ci-build.sh"
         displayName: Building Packages
         env:
           BUILD_URL: dummy
