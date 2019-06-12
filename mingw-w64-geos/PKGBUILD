@@ -26,15 +26,15 @@ build() {
   rm -rf "${srcdir}/build-${MINGW_CHOST}"
   mkdir "${srcdir}/build-${MINGW_CHOST}"
   cd "${srcdir}/build-${MINGW_CHOST}"
-  
-  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
-  ${MINGW_PREFIX}/bin/cmake \
-    -G"MSYS Makefiles" \
-    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DGEOS_ENABLE_INLINE=OFF \
-    -DBUILD_SHARED_LIBS=OFF \
-    ../${_realname}-${pkgver}
+
+  ../${_realname}-${pkgver}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --enable-static \
+    --disable-shared \
+    --disable-inline
 
   make
 }
