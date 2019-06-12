@@ -1,0 +1,50 @@
+# Maintainer: Alexey Kasatkin <alexeikasatkin@gmail.com>
+# Updated by: Diego Sogari <diego.sogari@gmail.com>
+
+_realname=geos
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=3.7.2
+pkgrel=1
+pkgdesc="C++ port of the Java Topology Suite (mingw-w64)"
+arch=('any')
+url="https://trac.osgeo.org/geos/"
+license=('LGPL')
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-cmake")
+options=('strip' '!emptydirs')
+source=("http://download.osgeo.org/geos/geos-${pkgver}.tar.bz2"
+        "geos-3.5.0.patch")
+sha256sums=('2166e65be6d612317115bfec07827c11b403c3f303e0a7420a2106bc999d7707'
+            '206f8780b8da547d3fd1bbc3ffb827abc71ec0e5d90a217db2032fe481807992')
+
+prepare() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+  patch -Np1 -i "${srcdir}/geos-3.5.0.patch"
+}
+
+build() {
+  rm -rf "${srcdir}/build-${MINGW_CHOST}"
+  mkdir "${srcdir}/build-${MINGW_CHOST}"
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+  ${MINGW_PREFIX}/bin/cmake \
+    -G"MSYS Makefiles" \
+    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DGEOS_ENABLE_INLINE=OFF \
+    -DBUILD_SHARED_LIBS=OFF \
+    ../${_realname}-${pkgver}
+
+  make
+}
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  make DESTDIR=${pkgdir} install
+}
+
+check() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  ctest
+}
