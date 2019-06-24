@@ -19,6 +19,8 @@ jobs:
           C:\msys64\usr\bin\pacman --noconfirm --ask 20 --sync --refresh --refresh --sysupgrade --sysupgrade
         displayName: Installing msys64 build environment
       - script: |
+          rmdir /s /Q "C:\Program Files\Boost"
+          C:\msys64\usr\bin\pacman --noconfirm --needed -S git
           C:\msys64\usr\bin\bash --login -c "$(cygpath ${SYSTEM_DEFAULTWORKINGDIRECTORY})/ci-build.sh"
         displayName: Building Packages
         env:

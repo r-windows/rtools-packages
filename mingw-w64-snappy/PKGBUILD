@@ -1,0 +1,41 @@
+# Maintainer: Norbert Pfeiler <norbert.pfeiler@gmail.com>
+# Contributor: Andrew Sun <adsun701@gmail.com>
+
+_realname=snappy
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=1.1.7
+pkgrel=2
+pkgdesc="A fast C++ compressor/decompressor library (mingw-w64)"
+arch=('any')
+license=('New BSD License')
+url="https://github.com/google/snappy"
+makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
+             "${MINGW_PACKAGE_PREFIX}-gcc"
+             "make")
+checkdepends=("${MINGW_PACKAGE_PREFIX}-zlib"
+              "${MINGW_PACKAGE_PREFIX}-lzo2")
+source=("${_realname}-${pkgver}.tar.gz"::"https://github.com/google/snappy/archive/${pkgver}.tar.gz")
+sha256sums=('3dfa02e873ff51a11ee02b9ca391807f0c8ea0529a4924afa645fbf97163f9d4')
+
+build() {
+  [[ -d "${srcdir}"/build-${MINGW_CHOST}-static ]] && rm -rf "${srcdir}"/build-${MINGW_CHOST}-static
+  mkdir -p ${srcdir}/build-${MINGW_CHOST}-static
+  cd ${srcdir}/build-${MINGW_CHOST}-static
+  
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+    ${MINGW_PREFIX}/bin/cmake \
+      -G'MSYS Makefiles' \
+      -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_SHARED_LIBS=OFF \
+      -DSNAPPY_BUILD_TESTS=OFF \
+      ../${_realname}-${pkgver}
+
+  make
+}
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}-static"
+  make DESTDIR=${pkgdir} install
+}

@@ -15,7 +15,8 @@ if [[ $(cygpath -m /) == *"rtools40"* ]]; then
 	curl -L https://raw.githubusercontent.com/r-windows/rtools-installer/master/disable-msys.patch | patch -d/ -R -p0
 else
 	# msys64: remove preinstalled toolchains and swith to rtools40 repositories
-    pacman --noconfirm -Rcsu mingw-w64-{i686,x86_64}-toolchain gcc pkg-config
+    pacman --noconfirm -Rcsu $(pacman -Qqe | grep "^mingw-w64-")
+    pacman --noconfirm -Rcsu gcc pkg-config
     cp -f pacman.conf /etc/pacman.conf
 fi
 
