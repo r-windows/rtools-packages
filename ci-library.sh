@@ -97,6 +97,7 @@ _download_previous() {
     [[ "${DEPLOY_PROVIDER}" = bintray ]] || return 1
     for filename in "${filenames[@]}"; do
         if ! curl -fsSOL "https://dl.bintray.com/${BINTRAY_TARGET}/${BINTRAY_REPOSITORY}/${filename}"; then
+            echo "Failed to get https://dl.bintray.com/${BINTRAY_TARGET}/${BINTRAY_REPOSITORY}/${filename}"
             rm -f "${filenames[@]}"
             return 1
         fi

@@ -26,6 +26,9 @@ jobs:
         env:
           BUILD_URL: dummy
           DEPLOY_PROVIDER: bintray
+          BINTRAY_TARGET: rtools
+          BINTRAY_REPOSITORY: $(MINGW_INSTALLS)
+          PACMAN_REPOSITORY: $(MINGW_INSTALLS)
       - task: PublishBuildArtifacts@1
         displayName: Publish packages
         continueOnError: true
