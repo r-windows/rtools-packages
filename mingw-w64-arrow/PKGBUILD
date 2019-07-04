@@ -28,10 +28,6 @@ source=("${_realname}"::"git+https://github.com/apache/arrow#tag=apache-arrow-${
 sha256sums=("SKIP")
 source_dir=${_realname}
 
-# Other stuff
-cmake_build_type=release
-cpp_build_dir=build-${CARCH}-cpp
-
 pkgver() {
   cd "$source_dir"
   grep Version r/DESCRIPTION | cut -d " " -f 2
@@ -43,9 +39,9 @@ prepare() {
 }
 
 build() {
-  [[ -d ${cpp_build_dir} ]] && rm -rf ${cpp_build_dir}
-  mkdir -p ${cpp_build_dir}
-  pushd ${cpp_build_dir}
+  [[ -d "build-${CARCH}-cpp" ]] && rm -rf "build-${CARCH}-cpp"
+  mkdir -p "build-${CARCH}-cpp"
+  pushd "build-${CARCH}-cpp"
 
   # Workaround to fix static libparquet
   export CXXFLAGS="-DARROW_STATIC"
@@ -55,7 +51,7 @@ build() {
     ../${source_dir}/cpp \
     -G "MSYS Makefiles" \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
-    -DCMAKE_BUILD_TYPE=${cmake_build_type} \
+    -DCMAKE_BUILD_TYPE="release" \
     -DARROW_BUILD_STATIC=ON \
     -DARROW_BUILD_TESTS=OFF \
     -DARROW_PARQUET=ON \
@@ -92,7 +88,7 @@ check() {
 }
 
 package() {
-  make -C ${cpp_build_dir} DESTDIR="${pkgdir}" install
+  make -C "build-${CARCH}-cpp" DESTDIR="${pkgdir}" install
 
   local PREFIX_DEPS=$(cygpath -am ${MINGW_PREFIX})
   pushd "${pkgdir}${MINGW_PREFIX}/lib/pkgconfig"
