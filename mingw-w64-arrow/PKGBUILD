@@ -3,7 +3,7 @@
 _realname=arrow
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=0.13.9000
+pkgver=0.14.0
 pkgrel=1
 pkgdesc="Apache Arrow is a cross-language development platform for in-memory data (mingw-w64)"
 arch=("any")
@@ -23,16 +23,10 @@ options=("staticlibs" "strip" "!buildflags")
 #sha256sums=("ac2a77dd9168e9892e432c474611e86ded0be6dfe15f689c948751d37f81391a")
 #source_dir=apache-${_realname}-${pkgver}
 
-# For git version
-source=("${_realname}"::"git+https://github.com/apache/arrow")
+# Build from git (remove the #tag=... to build from master)
+source=("${_realname}"::"git+https://github.com/apache/arrow#tag=apache-arrow-${pkgver}")
 sha256sums=("SKIP")
 source_dir=${_realname}
-
-# Other stuff
-cmake_build_type=release
-meson_build_type=debugoptimized
-cpp_build_dir=build-${CARCH}-cpp
-c_glib_build_dir=build-${CARCH}-c-glib
 
 pkgver() {
   cd "$source_dir"
@@ -45,9 +39,9 @@ prepare() {
 }
 
 build() {
-  [[ -d ${cpp_build_dir} ]] && rm -rf ${cpp_build_dir}
-  mkdir -p ${cpp_build_dir}
-  pushd ${cpp_build_dir}
+  [[ -d "build-${CARCH}-cpp" ]] && rm -rf "build-${CARCH}-cpp"
+  mkdir -p "build-${CARCH}-cpp"
+  pushd "build-${CARCH}-cpp"
 
   # Workaround to fix static libparquet
   export CXXFLAGS="-DARROW_STATIC"
@@ -57,7 +51,7 @@ build() {
     ../${source_dir}/cpp \
     -G "MSYS Makefiles" \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
-    -DCMAKE_BUILD_TYPE=${cmake_build_type} \
+    -DCMAKE_BUILD_TYPE="release" \
     -DARROW_BUILD_STATIC=ON \
     -DARROW_BUILD_TESTS=OFF \
     -DARROW_PARQUET=ON \
@@ -94,7 +88,7 @@ check() {
 }
 
 package() {
-  make -C ${cpp_build_dir} DESTDIR="${pkgdir}" install
+  make -C "build-${CARCH}-cpp" DESTDIR="${pkgdir}" install
 
   local PREFIX_DEPS=$(cygpath -am ${MINGW_PREFIX})
   pushd "${pkgdir}${MINGW_PREFIX}/lib/pkgconfig"
