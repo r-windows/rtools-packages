@@ -22,7 +22,7 @@ options=("staticlibs" "strip" "!buildflags")
 #source=("${_realname}"::"git+https://github.com/apache/arrow")
 #source_dir=${_realname}
 source=("${_realname}-${pkgver}.tar.gz"::"http://apache.osuosl.org/arrow/arrow-${pkgver}/apache-arrow-${pkgver}.tar.gz")
-source_dir="arrow-apache-${_realname}-${pkgver}"
+source_dir="apache-${_realname}-${pkgver}"
 sha256sums=("9948ddb6d4798b51552d0dca3252dd6e3a7d0f9702714fc6f5a1b59397ce1d28")
 
 pkgver() {
