@@ -23,7 +23,7 @@ options=("staticlibs" "strip" "!buildflags")
 #source_dir=${_realname}
 source=("${_realname}-${pkgver}.tar.gz"::"https://github.com/apache/arrow/archive/apache-arrow-${pkgver}.tar.gz")
 source_dir="arrow-apache-${_realname}-${pkgver}"
-sha256sums=("SKIP")
+sha256sums=("9948ddb6d4798b51552d0dca3252dd6e3a7d0f9702714fc6f5a1b59397ce1d28")
 
 pkgver() {
   cd "$source_dir"
