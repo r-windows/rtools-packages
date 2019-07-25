@@ -38,9 +38,7 @@ build() {
   if check_option "debug" "y"; then
     extra_config+=( --enable-debug )
   fi
-  
-  # Hack for leptonica missing openjp2 from .pc file:
-  LIBS="-lopenjp2" \
+
   ../tesseract-${pkgver}/configure \
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST} \

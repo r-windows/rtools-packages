@@ -22,6 +22,9 @@ sha256sums=('e2ed2e81e7a22ddf45d2c05f0bc8b9ae7450545d995bfe28517ba408d14a5a88')
 
 prepare() {
   cd "${srcdir}/${_realname}-${pkgver}"
+
+  # Fix pkg-config... remove this hack for next release
+  sed -i.bak 's/@JPEG_LIBS@/@JPEG_LIBS@ @LIBJP2K_LIBS@/g' lept.pc.in
 }
 
 build() {
