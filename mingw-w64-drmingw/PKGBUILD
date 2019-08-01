@@ -1,0 +1,61 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+# Contributor: Renato Silva <br.renatosilva@gmail.com>
+
+_realname=drmingw
+pkgbase="mingw-w64-${_realname}"
+pkgname=(${MINGW_PACKAGE_PREFIX}-${_realname})
+pkgver=0.9.2
+pkgrel=1
+pkgdesc="Just-in-Time (JIT) debugger (mingw-w64)"
+arch=('any')
+license=(LGPL2.1)
+makedepends=(${MINGW_PACKAGE_PREFIX}-discount
+             ${MINGW_PACKAGE_PREFIX}-cmake
+             ${MINGW_PACKAGE_PREFIX}-gcc
+             ${MINGW_PACKAGE_PREFIX}-python3)
+url='https://github.com/jrfonseca/drmingw'
+source=(${_realname}-${pkgver}.tar.gz::"https://github.com/jrfonseca/drmingw/archive/${pkgver}.tar.gz"
+        import-libs.patch
+        install-files.patch)
+options=(!strip staticlibs)
+sha256sums=('a09536e1fd7f0908baa68f7414d57e81fc4b02fe5a63fdd1db73d12f00d775c1'
+            '2098bb85c6fdd4c9879d1c23702b570087443bcd56f083563126f3ac93e14a93'
+            '25f67789665a02ed47396bf3af85447a045ae0bb1d23991d66571243aae6bbfb')
+
+prepare() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+  #patch -p1 -i ${srcdir}/import-libs.patch
+  patch -p1 -i ${srcdir}/install-files.patch
+}
+
+build() {
+  [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
+  mkdir -p ${srcdir}/build-${MINGW_CHOST} && cd ${srcdir}/build-${MINGW_CHOST}
+
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+  ${MINGW_PREFIX}/bin/cmake.exe \
+    -G"MSYS Makefiles" \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+    -DPYTHON_EXECUTABLE=${MINGW_PREFIX}/bin/python3.exe \
+    ../${_realname}-${pkgver}
+
+  make
+}
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  make DESTDIR=${pkgdir} -j1 install
+  
+  mv ${pkgdir}${MINGW_PREFIX}/bin/addr2line{,-drmingw}.exe
+
+  # License files
+  cd "${pkgdir}${MINGW_PREFIX}/share"
+  mkdir -p licenses/${_realname}
+  mv doc/${_realname}/LICENSE* licenses/${_realname}
+
+  # Readme
+  cd "${pkgdir}${MINGW_PREFIX}/share/doc/${_realname}"
+  markdown README.md > README.html
+  rm README.md
+}

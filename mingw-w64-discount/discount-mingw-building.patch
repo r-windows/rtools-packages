@@ -1,0 +1,131 @@
+--- discount-2.2.2/configure.inc.orig	2017-01-19 05:42:06.000000000 +0300
++++ discount-2.2.2/configure.inc	2017-02-01 15:39:01.087821900 +0300
+@@ -749,7 +749,11 @@
+     if [ "$DEST" ]; then
+ 	rm -f /tmp/b$$
+ 	$DEST -s /tmp/a$$ /tmp/b$$
+-	if [ "`$PROG_FIND /tmp/b$$ -type l -print`" ]; then
++	if [ "$AC_LN_PROG" ]; then
++        TLOG " ($AC_LN_PROG)"
++		PROG_LN_S="$AC_LN_PROG"
++	    AC_SUB 'LN_S' "$AC_LN_PROG"
++	elif [ "`$PROG_FIND /tmp/b$$ -type l -print`" ]; then
+ 	    TLOG " ($DEST)"
+ 	    echo "$DEST exists, and ln -s works"
+ 	    PROG_LN_S="$DEST -s"
+@@ -1274,6 +1278,9 @@
+     AC_PROG_CC
+ 
+     LOGN "checking for C compiler option to produce PIC "
++	if uname -a | grep MINGW >/dev/null; then
++	    LOG "(not needed)"
++	else
+     echo "int some_variable = 0;" > ngc$$.c 
+ 
+     if $AC_CC -c -fPIC -o ngc$$ ngc$$.c $LIBS; then
+@@ -1286,6 +1293,7 @@
+     fi
+     __remove ngc$$ ngc$$.c
+     return $__rc
++	fi
+ }
+ 
+ 
+@@ -1380,6 +1388,41 @@
+     chmod +x librarian.sh
+ }
+ 
++# Generate an binary librarian (for Windows)
++#
++__AC_DLL_LIBRARIAN() {
++    __config_files="$__config_files librarian.sh"
++    cat > librarian.sh << EOF
++#! /bin/sh
++#
++#  Build shared libraries, hiding (some) ickiness from the makefile
++
++ACTION=\$1; shift
++LIBRARY=\$1; shift
++	
++eval \`awk -F. '{ printf "MAJOR=%d\n", \$1;
++		  printf "VERSION=%d.%d.%d\n", \$1, \$2, \$3; }' \$1\`
++shift
++
++LIBNAME=\$LIBRARY
++FULLNAME=\$LIBNAME.dll
++IMPLIB=\$LIBNAME.dll.a
++
++case "\$ACTION" in
++make)   FLAGS="$AC_CFLAGS -shared"
++
++	rm -f \$FULLNAME \$IMPLIB
++	$AC_CC \$FLAGS -Wl,--out-implib,\$IMPLIB -o \$FULLNAME "\$@"
++	;;
++files)  echo "\$FULLNAME" "\$IMPLIB"
++	;;
++install)$PROG_INSTALL -c \$FULLNAME "\$1"
++	$PROG_INSTALL -c \$IMPLIB "\$1"
++	;;
++esac
++EOF
++    chmod +x librarian.sh
++}
+ 
+ #
+ # AC_CC_SHLIBS checks if the C compiler can produce shared libraries
+@@ -1404,6 +1447,10 @@
+ 	    LOG "(no)"
+ 	    __rc=1
+ 	fi
++	elif uname -a | grep MINGW >/dev/null; then
++	__AC_DLL_LIBRARIAN
++        LOG "(yes; -shared)"
++	__rc=0	
+     elif $AC_CC $AC_PICFLAG -shared -o ngc$$.so ngc$$.c; then
+ 	__AC_ELF_LIBRARIAN
+         LOG "(yes; -shared)"
+@@ -1544,7 +1544,7 @@
+ 
+     AC_SUB 'INSTALL' "$PROG_INSTALL"
+     AC_SUB 'INSTALL_PROGRAM' "$PROG_INSTALL $_strip -m 755"
+-    AC_SUB 'INSTALL_DATA' "$PROG_INSTALL -m 444"
++    AC_SUB 'INSTALL_DATA' "$PROG_INSTALL -m 644"
+ 
+     # finally build a little directory installer
+     # if mkdir -p works, use that, otherwise use install -d,
+--- discount-2.2.6.orig/Makefile.in	2019-05-11 16:30:52.787500200 -0400
++++ discount-2.2.6/Makefile.in	2019-05-11 17:44:21.088220200 -0400
+@@ -14,10 +14,11 @@
+ 	$(BUILD) -c -o $@ $<
+ 	
+ 
+-BINDIR=@exedir@
+-MANDIR=@mandir@
+-LIBDIR=@libdir@
+-INCDIR=@prefix@/include
++PREFIX=/usr
++BINDIR=$(PREFIX)/bin
++MANDIR=$(PREFIX)/share/man
++LIBDIR=$(PREFIX)/lib
++INCDIR=$(PREFIX)/include
+ @MK_PKGCONFIG@PKGDIR=$(LIBDIR)/pkgconfig
+ 
+ PGMS=markdown
+@@ -36,7 +37,7 @@
+ 
+ MAN3PAGES=mkd-callbacks.3 mkd-functions.3 markdown.3 mkd-line.3
+ 
+-all: $(PGMS) $(SAMPLE_PGMS) $(TESTFRAMEWORK)
++all: $(PGMS) $(SAMPLE_PGMS)
+ 
+ install: $(PGMS) $(DESTDIR)$(BINDIR) $(DESTDIR)$(LIBDIR) $(DESTDIR)$(INCDIR) $(DESTDIR)$(PKGDIR)
+ 	$(INSTALL_PROGRAM) $(PGMS) $(DESTDIR)$(BINDIR)
+@@ -70,8 +71,6 @@
+ 	$(INSTALL_DIR) $(DESTDIR)$(MANDIR)/man1
+ 	$(INSTALL_DATA) markdown.1 $(DESTDIR)$(MANDIR)/man1
+ 
+-install.everything: install install.man
+-
+ $(DESTDIR)$(BINDIR):
+ 	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)
+ 
