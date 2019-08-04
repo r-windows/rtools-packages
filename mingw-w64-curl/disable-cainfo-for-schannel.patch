@@ -1,0 +1,12 @@
+diff -aurp curl-7.64.1-orig/lib/vtls/schannel.c curl-7.64.1/lib/vtls/schannel.c
+--- curl-7.64.1-orig/lib/vtls/schannel.c	2019-07-31 18:58:22.000000000 +0200
++++ curl-7.64.1/lib/vtls/schannel.c	2019-07-31 20:12:58.000000000 +0200
+@@ -470,7 +470,7 @@ schannel_connect_step1(struct connectdat
+ #endif
+ #else
+ #ifdef HAS_MANUAL_VERIFY_API
+-  if(SSL_CONN_CONFIG(CAfile)) {
++  if(SSL_CONN_CONFIG(CAfile) && 0) { /* disabled by jeroen */
+     if(Curl_verify_windows_version(6, 1, PLATFORM_WINNT,
+                                    VERSION_GREATER_THAN_EQUAL)) {
+       BACKEND->use_manual_cred_validation = true;
