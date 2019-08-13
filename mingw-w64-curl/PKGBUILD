@@ -13,7 +13,7 @@ _realname=curl
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}${_namesuff}"
 pkgver=7.64.1
-pkgrel=9201
+pkgrel=9202
 pkgdesc="Command line tool and library for transferring data with URLs. (mingw-w64)"
 arch=('any')
 url="https://curl.haxx.se/"
@@ -22,6 +22,11 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-pkg-config")
 depends=("${MINGW_PACKAGE_PREFIX}-libssh2"
          "${MINGW_PACKAGE_PREFIX}-zlib"
          "${MINGW_PACKAGE_PREFIX}-openssl")
+
+# We include stubs for these libs because many packages have -lidn -lrtmp harcoded
+conflicts=("${MINGW_PACKAGE_PREFIX}-rtmpdump-git"
+           "${MINGW_PACKAGE_PREFIX}-libidn")
+
 if [ -n "${_namesuff}" ]; then
   provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
   conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
@@ -111,4 +116,8 @@ package() {
   
   local PREFIX_DEPS=$(cygpath -am ${MINGW_PREFIX})
   sed -s "s|${PREFIX_DEPS}|${MINGW_PREFIX}|g" -i ${pkgdir}${MINGW_PREFIX}/bin/curl-config
+
+  # Legacy things because old packages hardcode -lrtm -lidn
+  ar r "${pkgdir}${MINGW_PREFIX}/lib/librtmp.a"
+  ar r "${pkgdir}${MINGW_PREFIX}/lib/libidn.a"
 }
