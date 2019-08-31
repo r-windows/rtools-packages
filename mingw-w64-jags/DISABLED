@@ -1,4 +1,5 @@
 # Maintainer: Jeroen Ooms <jeroenooms@gmail.com>
+# This doesn't work yet, disable to prevent deployment.
 
 _realname=jags
 pkgbase=mingw-w64-${_realname}
