@@ -165,6 +165,27 @@ create_pacman_repository() {
     repo-add "${name}.db.tar.xz" *.pkg.tar.xz
 }
 
+# Remove from repository
+remove_from_repository() {
+    set_arch
+    local name="${1}"
+    local package="${2}"
+    _download_previous "${name}".{db,files}{,.tar.xz} || return 1
+    repo-remove "${name}.db.tar.xz" "mingw-w64-${_arch}-${package}"
+}
+
+# Get architecture
+set_arch(){
+  case ${MINGW_INSTALLS} in
+    mingw32)
+      _arch=i686
+    ;;
+    mingw64)
+      _arch=x86_64
+    ;;
+  esac
+}
+
 # Deployment is enabled
 deploy_enabled() {
     test -n "${BUILD_URL}" || return 1

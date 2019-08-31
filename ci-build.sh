@@ -9,6 +9,12 @@ source 'ci-library.sh'
 deploy_enabled && mkdir artifacts
 deploy_enabled && mkdir sourcepkg
 
+# Remove packages
+deploy_enabled && cd artifacts
+execute 'Removing JAGS from repository' remove_from_repository "${PACMAN_REPOSITORY:-ci-build}" "jags"
+success 'Package removal successful'
+exit 0
+
 # Depending on if this is an rtools40 or msys64 installation:
 if [[ $(cygpath -m /) == *"rtools40"* ]]; then
 	# rtools40: enable upstream msys2 (but keep rtools-base as primary)
