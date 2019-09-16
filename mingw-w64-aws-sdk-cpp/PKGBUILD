@@ -28,8 +28,6 @@ build() {
 	mkdir -p build
 	cd build
 
-	export CC="/usr/bin/gcc" CXX="/usr/bin/g++"
-
 	CMAKE_FLAGS="-Wno-dev \
 		-DCMAKE_INSTALL_LIBDIR=/usr/lib \
 		-DCMAKE_INSTALL_INCLUDEDIR=/usr/include \
@@ -41,8 +39,7 @@ build() {
 		-DCMAKE_VERBOSE_MAKEFILE=ON \
 		-DBUILD_SHARED_LIBS=OFF"
 	cmake $CMAKE_FLAGS ..
-
-	make ${MAKEFLAGS}
+	make
 }
 
 package() {
