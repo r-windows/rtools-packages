@@ -1,14 +1,18 @@
 # Original source: https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=aws-sdk-cpp-git
-pkgname=aws-sdk-cpp-git
+_realname=aws-sdk-cpp
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=1.7.183
 pkgrel=1
 pkgdesc="AWS SDK for C++"
 arch=('x86_64')
 url="https://github.com/aws/aws-sdk-cpp"
 license=('Apache')
-depends=('cmake')
-makedepends=('openssl' 'curl' 'zlib' 'libutil-linux')
-conclits=('aws-checksums-git')
+depends=("${MINGW_PACKAGE_PREFIX}-cmake")
+makedepends=("${MINGW_PACKAGE_PREFIX}-openssl"
+             "${MINGW_PACKAGE_PREFIX}-curl"
+             "${MINGW_PACKAGE_PREFIX}-zlib"
+             "${MINGW_PACKAGE_PREFIX}-libutil-linux")
 source=("${pkgname}::git+https://github.com/aws/aws-sdk-cpp")
 sha256sums=('SKIP')
 
