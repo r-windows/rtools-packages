@@ -28,18 +28,17 @@ build() {
 	cd build
 
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
-  ${MINGW_PREFIX}/bin/cmake \
-    -G"MSYS Makefiles" \
-    -DCMAKE_INSTALL_PREFIX="${MINGW_PREFIX}" \
-	  -Wno-dev \
+    ${MINGW_PREFIX}/bin/cmake.exe \
+    ../ \
+    -G "MSYS Makefiles" \
+    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
     -DBUILD_ONLY=s3;core;config \
 		-DCMAKE_BUILD_TYPE=Release \
     -DENABLE_UNITY_BUILD=ON \
 		-DENABLE_TESTING=OFF \
 		-DSTATIC_LINKING=1 \
 		-DMINIMIZE_SIZE=ON \
-		-DBUILD_SHARED_LIBS=OFF \
-    ..
+		-DBUILD_SHARED_LIBS=OFF
 	make
 }
 
