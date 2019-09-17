@@ -1,4 +1,4 @@
-# Original source: https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=aws-sdk-cpp-git
+# Inspired by https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=aws-sdk-cpp-git
 _realname=aws-sdk-cpp
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
@@ -17,28 +17,29 @@ options=("staticlibs" "strip" "!buildflags")
 source=("${pkgname}::git+https://github.com/aws/aws-sdk-cpp")
 sha256sums=('SKIP')
 
-# disable until aws engineers can settle on their ... build process
 pkgver() {
 	cd "${srcdir}/${pkgname}"
-
 	git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 build() {
 	cd "${srcdir}/${pkgname}"
-
 	mkdir -p build
 	cd build
 
-	CMAKE_FLAGS="-Wno-dev \
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+  ${MINGW_PREFIX}/bin/cmake \
+    -G"MSYS Makefiles" \
+    -DCMAKE_INSTALL_PREFIX="${MINGW_PREFIX}" \
+	  -Wno-dev \
     -DBUILD_ONLY=s3;core;config \
 		-DCMAKE_BUILD_TYPE=Release \
     -DENABLE_UNITY_BUILD=ON \
 		-DENABLE_TESTING=OFF \
 		-DSTATIC_LINKING=1 \
 		-DMINIMIZE_SIZE=ON \
-		-DBUILD_SHARED_LIBS=OFF"
-	cmake $CMAKE_FLAGS ..
+		-DBUILD_SHARED_LIBS=OFF \
+    ..
 	make
 }
 
