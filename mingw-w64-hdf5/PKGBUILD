@@ -64,7 +64,8 @@ build() {
     -DHDF5_ENABLE_DEPRECATED_SYMBOLS=ON \
     -DHDF5_ENABLE_SZIP_SUPPORT=OFF \
     -DHDF5_ENABLE_Z_LIB_SUPPORT=ON \
-    -DSZIP_DIR=${MINGW_PREFIX} \
+    -DHDF5_INSTALL_CMAKE_DIR="lib/cmake" \
+    -DHDF5_INSTALL_DATA_DIR="share" \
     ../${_realname}-${_ver}${patch}
 
   make
