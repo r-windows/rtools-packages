@@ -77,7 +77,7 @@ package() {
   make DESTDIR=${pkgdir} install
 
   local PREFIX_WIN=$(cygpath -wm ${MINGW_PREFIX})
-  for _f in "${pkgdir}${MINGW_PREFIX}"/share/cmake/*.cmake; do
+  for _f in "${pkgdir}${MINGW_PREFIX}"/lib/cmake/hdf5/*.cmake; do
     sed -e "s|${PREFIX_WIN}|\$\{_IMPORT_PREFIX\}|g" -i ${_f}
   done
 }
