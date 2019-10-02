@@ -61,7 +61,7 @@ build() {
     -DENABLE_DAP=ON \
     -DENABLE_TESTS=OFF \
     -DENABLE_NETCDF_4=ON \
-    "${srcdir}/${_realname}-${pkgver}"
+    "${srcdir}/${_realname}-c-${pkgver}"
   make -j1 SHELL='sh -x'
 
   [[ -d ${srcdir}/build-nodap-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-nodap-${MINGW_CHOST}
@@ -78,7 +78,7 @@ build() {
     -DENABLE_DAP=OFF \
     -DENABLE_TESTS=OFF \
     -DENABLE_NETCDF_4=ON \
-    "${srcdir}/${_realname}-${pkgver}"
+    "${srcdir}/${_realname}-c-${pkgver}"
   make
 }
 
@@ -86,7 +86,7 @@ package() {
   cd ${srcdir}/build-dap-${MINGW_CHOST}
   make DESTDIR=${pkgdir} install
 
-  install -Dm644 ${srcdir}/${_realname}-${pkgver}/COPYRIGHT \
+  install -Dm644 ${srcdir}/${_realname}-c-${pkgver}/COPYRIGHT \
     ${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYRIGHT
 
   local PREFIX_DEPS=$(cygpath -am ${MINGW_PREFIX})
