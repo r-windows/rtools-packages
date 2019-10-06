@@ -25,7 +25,7 @@ build() {
       -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_SHARED_LIBS=OFF \
-      ../UDUNITS-${pkgver}
+      ../UDUNITS-2-${pkgver}
 
   make
 }
