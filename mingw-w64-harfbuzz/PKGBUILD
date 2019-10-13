@@ -4,8 +4,8 @@
 _realname=harfbuzz
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=2.2.0
-pkgrel=9100
+pkgver=2.6.2
+pkgrel=9500
 pkgdesc="OpenType text shaping engine (mingw-w64)"
 arch=('any')
 url="https://www.freedesktop.org/wiki/Software/HarfBuzz"
@@ -15,8 +15,8 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "python3")
 depends=("${MINGW_PACKAGE_PREFIX}-freetype")
 options=('strip' 'staticlibs')
-source=("https://www.freedesktop.org/software/harfbuzz/release/${_realname}-${pkgver}.tar.bz2")
-sha256sums=('b7ccfcbd56b970a709e8b9ea9fb46c922c606c2feef8f086fb6a8492e530f810')
+source=("https://www.freedesktop.org/software/harfbuzz/release/${_realname}-${pkgver}.tar.xz")
+sha256sums=('3b4c6a72f7f2b05d54f6c3112b3ebee5131c199fe4de4cf9bbbf71a56666f624')
 
 prepare() {
   cd "${srcdir}/${_realname}-${pkgver}"
@@ -46,4 +46,3 @@ package() {
   make DESTDIR="${pkgdir}" install
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
 }
-
