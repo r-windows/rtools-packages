@@ -1,5 +1,5 @@
---- zstd-1.3.8/build/cmake/lib/CMakeLists.txt.orig  2019-03-11 10:23:49.374227000 +0300
-+++ zstd-1.3.8/build/cmake/lib/CMakeLists.txt 2019-03-11 10:24:14.334270800 +0300
+--- zstd-1.3.8/build/cmake/lib/CMakeLists.txt.orig	2019-03-11 10:23:49.374227000 +0300
++++ zstd-1.3.8/build/cmake/lib/CMakeLists.txt	2019-03-11 10:24:14.334270800 +0300
 @@ -165,7 +165,7 @@
              OUTPUT_NAME ${STATIC_LIBRARY_BASE_NAME})
  endif ()

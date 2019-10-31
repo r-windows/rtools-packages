@@ -1,6 +1,6 @@
 diff -Naur zstd-1.4.0.orig/contrib/pzstd/Logging.h zstd-1.4.0/contrib/pzstd/Logging.h
---- zstd-1.4.0.orig/contrib/pzstd/Logging.h 2019-04-17 08:39:25.480683500 -0400
-+++ zstd-1.4.0/contrib/pzstd/Logging.h  2019-04-17 08:50:22.814999100 -0400
+--- zstd-1.4.0.orig/contrib/pzstd/Logging.h	2019-04-17 08:39:25.480683500 -0400
++++ zstd-1.4.0/contrib/pzstd/Logging.h	2019-04-17 08:50:22.814999100 -0400
 @@ -13,10 +13,10 @@
  
  namespace pzstd {
@@ -17,8 +17,8 @@ diff -Naur zstd-1.4.0.orig/contrib/pzstd/Logging.h zstd-1.4.0/contrib/pzstd/Logg
  class Logger {
    std::mutex mutex_;
 diff -Naur zstd-1.4.0.orig/contrib/pzstd/Pzstd.cpp zstd-1.4.0/contrib/pzstd/Pzstd.cpp
---- zstd-1.4.0.orig/contrib/pzstd/Pzstd.cpp 2019-04-17 08:39:25.480683500 -0400
-+++ zstd-1.4.0/contrib/pzstd/Pzstd.cpp  2019-04-17 08:52:22.445926500 -0400
+--- zstd-1.4.0.orig/contrib/pzstd/Pzstd.cpp	2019-04-17 08:39:25.480683500 -0400
++++ zstd-1.4.0/contrib/pzstd/Pzstd.cpp	2019-04-17 08:52:22.445926500 -0400
 @@ -94,12 +94,12 @@
      if (!options.decompress) {
        double ratio = static_cast<double>(bytesWritten) /
@@ -112,8 +112,8 @@ diff -Naur zstd-1.4.0.orig/contrib/pzstd/Pzstd.cpp zstd-1.4.0/contrib/pzstd/Pzst
      }
    }
 diff -Naur zstd-1.4.0.orig/contrib/pzstd/Pzstd.h zstd-1.4.0/contrib/pzstd/Pzstd.h
---- zstd-1.4.0.orig/contrib/pzstd/Pzstd.h 2019-04-17 08:39:25.480683500 -0400
-+++ zstd-1.4.0/contrib/pzstd/Pzstd.h  2019-04-17 08:52:47.487047400 -0400
+--- zstd-1.4.0.orig/contrib/pzstd/Pzstd.h	2019-04-17 08:39:25.480683500 -0400
++++ zstd-1.4.0/contrib/pzstd/Pzstd.h	2019-04-17 08:52:47.487047400 -0400
 @@ -41,7 +41,7 @@
        auto parameters = options.determineParameters();
        cStreamPool.reset(new ResourcePool<ZSTD_CStream>{

@@ -1,6 +1,6 @@
 diff -Naur zstd-1.4.1.orig/programs/fileio.c zstd-1.4.1/programs/fileio.c
---- zstd-1.4.1.orig/programs/fileio.c 2019-07-21 19:40:48.505725500 -0400
-+++ zstd-1.4.1/programs/fileio.c  2019-07-21 19:42:36.837022600 -0400
+--- zstd-1.4.1.orig/programs/fileio.c	2019-07-21 19:40:48.505725500 -0400
++++ zstd-1.4.1/programs/fileio.c	2019-07-21 19:42:36.837022600 -0400
 @@ -242,40 +242,9 @@
  /*-************************************************************
  * Avoid fseek()'s 2GiB barrier with MSVC, macOS, *BSD, MinGW
@@ -43,4 +43,3 @@ diff -Naur zstd-1.4.1.orig/programs/fileio.c zstd-1.4.1/programs/fileio.c
  #else
  #   define LONG_SEEK fseek
  #   define LONG_TELL ftell
- 
