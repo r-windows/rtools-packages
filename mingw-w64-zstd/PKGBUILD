@@ -16,9 +16,9 @@ source=(${_realname}-${pkgver}.tar.gz::"https://github.com/facebook/${_realname}
         zstd-1.4.3-fileio-mingw.patch
         zstd-1.4.3-fix-build-pzstd.patch)
 sha256sums=('5eda3502ecc285c3c92ee0cc8cd002234dee39d539b3f692997a0e80de1d33de'
-            '9a8864dd11ad6f1eaf1e11ee19adfdbc4e023f20b14b429b8af2b387ffffdef4'
-            '210e57fc4bff62e1af1ca8a3da3960de32a91255ba62b057c6bed5b3a7ebb3d5'
-            '5095624a5d59054053a257c6b8ec2156b410a44e0e491b259c276c4b7650f499')
+            'D25F9CE407A64FAFFE77D945E18800B409740E49DD858FA66C8E452A841F8F79'
+            '613B9953B96D8AEE0827FAE3C35543D4F98E91DDDD3CDFEA91874D79A680148E'
+            'F5808BE259276F7AE40934262EB551B20F8D407A9477CB673329E2155E51AFE1')
 
 prepare() {
   cd "${srcdir}/${_realname}-${pkgver}"
