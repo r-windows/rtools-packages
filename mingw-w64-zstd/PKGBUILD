@@ -45,7 +45,6 @@ build() {
       -G'MSYS Makefiles' \
       -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
       "${extra_config[@]}" \
-      -DZSTD_BUILD_CONTRIB=ON \
       ../${_realname}-${pkgver}/build/cmake
 
   make
