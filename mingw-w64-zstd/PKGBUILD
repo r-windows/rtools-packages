@@ -37,9 +37,8 @@ build() {
   else
     extra_config+=("-DCMAKE_BUILD_TYPE=Debug")
   fi
-  extra_config+=("-DCMAKE_FIND_LIBRARY_SUFFIXES='.a'")
-  extra_config+=("-DBUILD_SHARED_LIBS=OFF")
-  extra_config+=("-DCMAKE_EXE_LINKER_FLAGS='-static'")
+  extra_config+=("-DZSTD_BUILD_STATIC=ON")
+  extra_config+=("-DZSTD_BUILD_SHARED=OFF")
 
     MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
     ${MINGW_PREFIX}/bin/cmake \
