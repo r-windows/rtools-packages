@@ -11,7 +11,7 @@ pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=8.3.0
 _srcver=8.3.0
 #_srcver=8.3.0-RC-20190215
-pkgrel=9301
+pkgrel=9500
 pkgdesc="GCC for the MinGW-w64"
 arch=('any')
 url="https://gcc.gnu.org"
@@ -187,7 +187,7 @@ build() {
     --with-system-zlib \
     --with-{gmp,mpfr,mpc,isl}=${MINGW_PREFIX} \
     --with-pkgversion="Built by Jeroen for the R-project" \
-    --with-bugurl="https://cran.r-project.org/bin/windows/Rtools" \
+    --with-bugurl="https://github.com/r-windows" \
     --with-gnu-as --with-gnu-ld \
     ${_conf}
 
