@@ -4,29 +4,30 @@
 _realname=OpenBLAS
 pkgbase=mingw-w64-openblas
 pkgname="${MINGW_PACKAGE_PREFIX}-openblas"
-pkgver=0.3.5
+pkgver=0.3.7
 pkgrel=1
 pkgdesc="An optimized BLAS library based on GotoBLAS2 1.13 BSD, providing optimized blas, lapack, and cblas (mingw-w64)"
 arch=('any')
-url="http://www.openblas.net/"
+url="https://www.openblas.net/"
 license=('BSD')
 provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 conflicts=("${MINGW_PACKAGE_PREFIX}-openblas-git")
 replaces=("${MINGW_PACKAGE_PREFIX}-${_realname}"
           "${MINGW_PACKAGE_PREFIX}-${_realname}-git")
 makedepends=("perl"
+             #"${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-gcc-fortran")
 options=('!buildflags')
 source=(${_realname}-${pkgver}.tar.gz::https://github.com/xianyi/OpenBLAS/archive/v${pkgver}.tar.gz
         001-defaultlib-not-for-gcc.patch
         002-lgfortran-requires-lquadmath.patch)
 install=${_realname}.install
-sha256sums=('0950c14bd77c90a6427e26210d6dab422271bc86f9fc69126725833ecdaa0e85'
+sha256sums=('bde136122cef3dd6efe2de1c6f65c10955bbb0cc01a520c2342f5287c28f9379'
             'd9192818d0b0a9e7cbed7cc2572dfd380aa311be5ce4d012c0cb55211013db37'
             'ab1c10a66b4d0332f2339f1169c0e3ebd48d9b8bf7afaec3f6a0d62099b52941')
 
 prepare() {
-  cd ${_realname}-${pkgver}
+  cd ${srcdir}/${_realname}-${pkgver}
   patch -p1 -i ${srcdir}/001-defaultlib-not-for-gcc.patch
   patch -p1 -i ${srcdir}/002-lgfortran-requires-lquadmath.patch
 }
@@ -38,18 +39,19 @@ build() {
   unset CFLAGS
   unset CXXFLAGS
 
-  make LIBNAME=libopenblasp.a NO_LAPACK=0 NO_AVX512=1 DYNAMIC_ARCH=1   \
+  make LIBNAME=libopenblasp.a NO_LAPACK=0 DYNAMIC_ARCH=1   \
+       NO_SHARED=1 NO_AVX512=1 \
        CC=${MINGW_PREFIX}/bin/gcc                                      \
        FC=${MINGW_PREFIX}/bin/gfortran                                 \
        OPENBLAS_INCLUDE_DIR=${MINGW_PREFIX}/include/${_realname}       \
-       USE_THREAD=1 NUM_THREADS=64 \
-	   NO_SHARED=1
+       USE_THREAD=1 NUM_THREADS=64
 }
 
 package() {
   cd "${srcdir}"/build-${CARCH}
 
   mkdir -p "${pkgdir}${MINGW_PREFIX}/lib"
+
   make LIBNAME=libopenblasp.a \
        DESTDIR="${pkgdir}" PREFIX="${MINGW_PREFIX}"  \
        OPENBLAS_INCLUDE_DIR=${MINGW_PREFIX}/include/${_realname} \
@@ -63,4 +65,8 @@ package() {
     echo "Static library not found" >&2
     exit 1
   fi
+
+  # Install License
+  install -Dm0644 ${srcdir}/${_realname}-${pkgver}/LICENSE ${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE
+  install -Dm0644 ${srcdir}/${_realname}-${pkgver}/lapack-netlib/LICENSE ${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE-lapack
 }
