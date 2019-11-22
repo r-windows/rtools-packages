@@ -29,10 +29,8 @@ jobs:
           BINTRAY_TARGET: rtools
           BINTRAY_REPOSITORY: $(MINGW_INSTALLS)
           PACMAN_REPOSITORY: $(MINGW_INSTALLS)
-      - task: PublishBuildArtifacts@1
-        displayName: Publish packages
-        continueOnError: true
-        condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false))
+      - task: PublishPipelineArtifact@1
+        displayName: Storing artifacts
         inputs:
-          pathtoPublish: artifacts
+          targetPath: artifacts
           artifactName: $(MINGW_INSTALLS)
