@@ -1,0 +1,36 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+
+_realname=libvorbis
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=1.3.6
+pkgrel=1
+pkgdesc="Vorbis codec library (mingw-w64)"
+arch=('any')
+url="https://xiph.org/"
+license=('custom')
+depends=("${MINGW_PACKAGE_PREFIX}-libogg")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-pkg-config")
+options=('strip' 'staticlibs')
+source=(https://downloads.xiph.org/releases/vorbis/${_realname}-${pkgver}.tar.gz)
+sha256sums=('6ed40e0241089a42c48604dc00e362beee00036af2d8b3f46338031c9e0351cb')
+
+build() {
+  [[ -d "build-${MINGW_CHOST}" ]] && rm -rf "build-${MINGW_CHOST}"
+  mkdir -p "${srcdir}/build-${MINGW_CHOST}"
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  ../${_realname}-${pkgver}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --disable-shared \
+    --enable-static
+
+  make
+}
+
+package() {
+  cd ${srcdir}/build-${MINGW_CHOST}
+  make DESTDIR="${pkgdir}" install
+}
