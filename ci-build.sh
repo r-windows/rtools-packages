@@ -62,14 +62,14 @@ for package in "${packages[@]}"; do
     execute 'List output contents' ls -ltr
     execute 'Installing' yes:pacman --noprogressbar --upgrade *.pkg.tar.xz
     execute 'Checking Binaries' find ./pkg -regex ".*\.\(exe\|dll\|a\|pc\)"
-    deploy_enabled && mv "${package}"/*.pkg.tar.xz artifacts
-    deploy_enabled && mv "${package}"/*.src.tar.gz sourcepkg
+    execute 'Copying binary package' mv *.pkg.tar.xz ../artifacts
+    execute 'Copying source package' mv *.src.tar.gz ../sourcepkg
     unset package
 done
 
-# Deploy
+# Prepare for deploy
 deploy_enabled && cd artifacts || success 'All packages built successfully'
-execute 'Generating pacman repository' create_pacman_repository "${PACMAN_REPOSITORY:-ci-build}"
+execute 'Updating pacman repository index' create_pacman_repository "${PACMAN_REPOSITORY:-ci-build}"
 execute 'Generating build references'  create_build_references  "${PACMAN_REPOSITORY:-ci-build}"
 execute 'SHA-256 checksums' sha256sum *
 success 'All artifacts built successfully'
