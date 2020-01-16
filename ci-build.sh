@@ -54,10 +54,12 @@ execute 'Approving recipe quality' check_recipe_quality
 rm -f /mingw32/lib/*.dll.a
 rm -f /mingw64/lib/*.dll.a
 export PKG_CONFIG="/${MINGW_INSTALLS}/bin/pkg-config --static"
+export PKGEXT='.pkg.tar.xz'
 
 for package in "${packages[@]}"; do
     execute 'Building binary' makepkg-mingw --noconfirm --noprogressbar --skippgpcheck --nocheck --syncdeps --rmdeps --cleanbuild
     execute 'Building source' makepkg --noconfirm --noprogressbar --skippgpcheck --allsource --config '/etc/makepkg_mingw64.conf'
+    execute 'List output contents' ls -ltr
     execute 'Installing' yes:pacman --noprogressbar --upgrade *.pkg.tar.xz
     execute 'Checking Binaries' find ./pkg -regex ".*\.\(exe\|dll\|a\|pc\)"
     deploy_enabled && mv "${package}"/*.pkg.tar.xz artifacts
