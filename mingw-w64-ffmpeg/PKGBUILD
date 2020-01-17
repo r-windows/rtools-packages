@@ -14,6 +14,8 @@ license=('GPL')
 options=('staticlibs' 'strip')
 depends=("${MINGW_PACKAGE_PREFIX}-bzip2"
         "${MINGW_PACKAGE_PREFIX}-lame"
+        "${MINGW_PACKAGE_PREFIX}-libvorbis"
+        "${MINGW_PACKAGE_PREFIX}-libvpx"
         "${MINGW_PACKAGE_PREFIX}-x264"
         "${MINGW_PACKAGE_PREFIX}-xvidcore"
         "${MINGW_PACKAGE_PREFIX}-zlib")
@@ -53,11 +55,14 @@ build() {
     --enable-libmp3lame \
     --enable-libx264 \
     --enable-libxvid \
+    --enable-libvorbis \
+    --enable-libvpx \
     --enable-hardcoded-tables \
     --enable-version3 \
     --enable-zlib \
     --disable-lzma \
-    --disable-doc
+    --disable-doc \
+    --extra-libs="$(${PKG_CONFIG:-pkgconfig} --libs-only-l --static vorbis)"
 
   make
 }
