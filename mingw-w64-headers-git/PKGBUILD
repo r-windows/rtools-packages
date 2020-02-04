@@ -7,7 +7,7 @@ pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 replaces=("${MINGW_PACKAGE_PREFIX}-${_realname}-svn")
 pkgdesc="MinGW-w64 headers for Windows"
 pkgver=5.0.4
-pkgrel=9500
+pkgrel=9600
 arch=('any')
 url="https://mingw-w64.sourceforge.io/"
 license=('custom')
@@ -17,10 +17,12 @@ provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 options=('!strip' '!libtool' '!emptydirs')
 source=("https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/mingw-w64-v${pkgver}.tar.bz2"
+        "https://github.com/mingw-w64/mingw-w64/commit/463f0.patch"
         0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
         0002-DirectX-9-fixes-for-VLC.patch
         0003-DirectX-11-fixes-for-VLC.patch)
 sha256sums=('5527e1f6496841e2bb72f97a184fc79affdcd37972eaa9ebf7a5fd05c31ff803'
+            '6c0d93499e21d09fb8c19d09ec798f4294f794da41556e45743d168ef1a05dc4'
             'd641257f7e1469aff89adc33e57702b75fe9667ca035978f890eae1020b6814c'
             '7ec97c9c02827aedc8c922784cb998e1175769bf0c8f7bd18a79d64002620330'
             'e80b76aa3eef6d0206c4d99ac340a60cfd92ea80392a6ec5122dc3851fbd3286')
@@ -36,6 +38,7 @@ apply_patch_with_msg() {
 prepare() {
   cd ${srcdir}/mingw-w64-v${pkgver}
 
+  apply_patch_with_msg 463f0.patch
   apply_patch_with_msg 0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
   apply_patch_with_msg 0002-DirectX-9-fixes-for-VLC.patch
   #apply_patch_with_msg 0003-DirectX-11-fixes-for-VLC.patch
