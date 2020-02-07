@@ -10,10 +10,11 @@ arch=("any")
 url="https://arrow.apache.org/"
 license=("Apache-2.0")
 depends=("${MINGW_PACKAGE_PREFIX}-boost"
-         "${MINGW_PACKAGE_PREFIX}-zlib"
-         "${MINGW_PACKAGE_PREFIX}-double-conversion"
+         "${MINGW_PACKAGE_PREFIX}-lz4"
          "${MINGW_PACKAGE_PREFIX}-snappy"
-         "${MINGW_PACKAGE_PREFIX}-thrift")
+         "${MINGW_PACKAGE_PREFIX}-thrift"
+         "${MINGW_PACKAGE_PREFIX}-zlib"
+         "${MINGW_PACKAGE_PREFIX}-zstd")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-gcc")
 options=("staticlibs" "strip" "!buildflags")
@@ -44,28 +45,25 @@ build() {
     ${MINGW_PREFIX}/bin/cmake.exe \
     ../${source_dir}/cpp \
     -G "MSYS Makefiles" \
-    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
-    -DCMAKE_BUILD_TYPE="release" \
-    -DARROW_BUILD_STATIC=ON \
-    -DARROW_BUILD_TESTS=OFF \
-    -DARROW_PARQUET=ON \
-    -DARROW_PLASMA=OFF \
-    -DARROW_HDFS=OFF \
-    -DARROW_PYTHON=OFF \
     -DARROW_BOOST_USE_SHARED=OFF \
-    -DARROW_WITH_SNAPPY=ON \
-    -DARROW_WITH_ZSTD=OFF \
-    -DARROW_WITH_LZ4=OFF \
+    -DARROW_BUILD_STATIC=ON \
+    -DARROW_BUILD_SHARED=OFF \
+    -DARROW_BUILD_UTILITIES=OFF \
+    -DARROW_COMPUTE=ON \
+    -DARROW_CSV=ON \
+    -DARROW_DATASET=ON \
+    -DARROW_FILESYSTEM=ON \
+    -DARROW_HDFS=OFF \
     -DARROW_JEMALLOC=OFF \
-    -DARROW_BUILD_SHARED=OFF\
-    -DARROW_WITH_ZLIB=ON \
-    -DARROW_WITH_BROTLI=OFF \
+    -DARROW_JSON=ON \
+    -DARROW_PARQUET=ON \
     -DARROW_USE_GLOG=OFF \
-    -DARROW_BUILD_UTILITIES=ON \
-    -DPARQUET_BUILD_EXECUTABLES=ON \
-    -DARROW_TEST_LINKAGE="static" \
-    -DBOOST_SOURCE="SYSTEM" \
-    -DBOOST_ROOT="${MINGW_PREFIX}" \
+    -DARROW_WITH_LZ4=ON \
+    -DARROW_WITH_SNAPPY=ON \
+    -DARROW_WITH_ZLIB=ON \
+    -DARROW_WITH_ZSTD=ON \
+    -DCMAKE_BUILD_TYPE="release" \
+    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
     -DThrift_ROOT="${MINGW_PREFIX}"
 
   make
