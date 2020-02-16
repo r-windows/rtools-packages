@@ -1,0 +1,80 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+
+_realname=libgeotiff
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=1.5.1
+pkgrel=1
+pkgdesc="TIFF based interchange format for georeferenced raster imagery (mingw-w64)"
+arch=(any)
+url="https://trac.osgeo.org/geotiff/"
+license=('MIT')
+depends=("${MINGW_PACKAGE_PREFIX}-libtiff"
+         "${MINGW_PACKAGE_PREFIX}-libjpeg"
+         "${MINGW_PACKAGE_PREFIX}-proj"
+         "${MINGW_PACKAGE_PREFIX}-zlib")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-libtool")
+options=('staticlibs' 'strip')
+source=("https://download.osgeo.org/geotiff/${_realname}/${_realname}-${pkgver}.tar.gz"
+    'libgeotiff_buildsys.patch')
+sha256sums=('f9e99733c170d11052f562bcd2c7cb4de53ed405f7acdde4f16195cd3ead612c'
+            '0639212e7dee968ec303c70e98eb074e0ac31596388d3a62c10f3ab76c072ed5')
+
+prepare() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+  patch -p1 -i ${srcdir}/libgeotiff_buildsys.patch
+
+  # fix wrongly encoded files from tarball
+  for f in $(find . -type f); do
+    if file $f | grep -q ISO-8859 ; then
+      /bin/iconv -f ISO-8859-1 -t UTF-8 $f > ${f}.tmp && \
+        mv -f ${f}.tmp $f
+    fi
+    if file $f | grep -q CRLF ; then
+      sed -i -e 's|\r$||g' $f
+    fi
+  done
+
+  #autoreconf -fiv
+  ./autogen.sh
+}
+
+build() {
+  [[ -d "${srcdir}/build-${MINGW_CHOST}" ]] && rm -rf "${srcdir}/build-${MINGW_CHOST}"
+  mkdir "${srcdir}/build-${MINGW_CHOST}" && cd "${srcdir}/build-${MINGW_CHOST}"
+  
+  ../${_realname}-${pkgver}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --enable-static \
+    --disable-shared \
+    --with-proj \
+    --with-jpeg \
+    --with-zip
+
+  make
+}
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  make DESTDIR="${pkgdir}" install
+
+  mkdir -p ${pkgdir}${MINGW_PREFIX}/lib/pkgconfig/
+
+cat > ${pkgdir}${MINGW_PREFIX}/lib/pkgconfig/${_realname}.pc <<EOF
+prefix=${MINGW_PREFIX}
+exec_prefix=\${prefix}
+libdir=\${prefix}/lib
+includedir=\${prefix}/include
+
+Name: ${_realname}
+Description: GeoTIFF file format library
+Version: ${pkgver}
+Libs: -L\${libdir} -lgeotiff
+Cflags: -I\${includedir}
+EOF
+
+  find "${pkgdir}${MINGW_PREFIX}" -name '*.def' -o -name '*.exp' | xargs -rtl1 rm
+}
