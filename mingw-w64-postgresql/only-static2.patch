@@ -1,0 +1,41 @@
+diff -aurp postgresql-11.1-orig/src/Makefile.shlib postgresql-11.1/src/Makefile.shlib
+--- postgresql-11.1-orig/src/Makefile.shlib	2019-01-02 15:24:11.266981500 +0000
++++ postgresql-11.1/src/Makefile.shlib	2019-01-02 15:44:55.701049000 +0000
+@@ -265,7 +265,7 @@ ifeq ($(PORTNAME), win32)
+   ifdef SO_MAJOR_VERSION
+     shlib		= lib$(NAME)$(DLSUFFIX)
+   endif
+-  haslibarule   = yes
++  haslibarule   =
+ endif
+ 
+ 
+@@ -365,8 +365,8 @@ else
+ # Win32 case
+ 
+ # See notes in src/backend/parser/Makefile about the following two rules
+-$(stlib): $(shlib)
+-	touch $@
++#$(stlib): $(shlib)
++#	touch $@
+ 
+ # XXX A backend that loads a module linked with libgcc_s_dw2-1.dll will exit
+ # uncleanly, hence -static-libgcc.  (Last verified with MinGW-w64 compilers
+@@ -383,7 +383,7 @@ else
+ DLL_DEFFILE = lib$(NAME)dll.def
+ 
+ $(shlib): $(OBJS) $(DLL_DEFFILE) | $(SHLIB_PREREQS)
+-	$(CC) $(CFLAGS)  -shared -static-libgcc -o $@  $(OBJS) $(DLL_DEFFILE) $(LDFLAGS) $(LDFLAGS_SL) $(SHLIB_LINK) $(LIBS) -Wl,--out-implib=$(stlib)
++	$(CC) $(CFLAGS)  -shared -static-libgcc -o $@  $(OBJS) $(DLL_DEFFILE) $(LDFLAGS) $(LDFLAGS_SL) $(SHLIB_LINK) $(LIBS)
+ endif
+ 
+ endif # PORTNAME == cygwin
+@@ -438,7 +438,7 @@ endif # SHLIB_EXPORTS
+ ##
+ 
+ .PHONY: install-lib install-lib-static install-lib-shared installdirs-lib
+-install-lib: install-lib-shared
++#install-lib: install-lib-shared
+ ifdef soname
+ install-lib: install-lib-static
+ install-lib: install-lib-pc
