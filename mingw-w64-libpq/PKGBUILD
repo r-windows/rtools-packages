@@ -3,28 +3,31 @@
 _realname=libpq
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=11.1
-pkgrel=2
+pkgver=12.2
+pkgrel=1
 pkgdesc="Libraries for use with PostgreSQL (mingw-w64)"
 arch=('any')
 url="https://www.postgresql.org/"
 license=('custom:PostgreSQL')
-makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
-             "winpty")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
 depends=("${MINGW_PACKAGE_PREFIX}-openssl"
-         "${MINGW_PACKAGE_PREFIX}-zlib")
+         "${MINGW_PACKAGE_PREFIX}-zlib"
+         "winpty")
 options=('staticlibs' 'strip')
 source=("https://ftp.postgresql.org/pub/source/v${pkgver}/postgresql-${pkgver}.tar.bz2"
         only-static2.patch)
-sha256sums=('90815e812874831e9a4bf6e1136bf73bc2c5a0464ef142e2dfea40cda206db08'
+sha256sums=('ad1dcc4c4fc500786b745635a9e1eba950195ce20b8913f50345bb7d5369b5de'
             'SKIP')
 
 prepare() {
 
   cd ${srcdir}/postgresql-${pkgver}
   patch -p1 -i ${srcdir}/only-static2.patch
-
-  #autoreconf -fiv
+  
+  # Broken autoconf test for openssl
+  if [ "${MINGW_PREFIX}" = "/mingw32" ]; then
+  sed -i.bak 's/ -Wl,--disable-auto-import//g' src/template/win32
+  fi
 }
 
 build() {
@@ -62,6 +65,8 @@ package() {
   mkdir -p "${pkgdir}${MINGW_PREFIX}/"{bin,include,lib}
 
   make DESTDIR="${pkgdir}" -C "src/interfaces" install
+  make DESTDIR="${pkgdir}" -C "src/common" install
+  make DESTDIR="${pkgdir}" -C "src/port" install
   make DESTDIR="${pkgdir}" -C "src/include" install
 
   # Move dll's to bin directory
@@ -73,4 +78,7 @@ package() {
   install -m644 ${srcdir}/postgresql-${pkgver}/src/include/port.h "${pkgdir}${MINGW_PREFIX}/include/postgresql/internal/"
   install -m644 ${srcdir}/postgresql-${pkgver}/src/include/postgres_fe.h "${pkgdir}${MINGW_PREFIX}/include/postgresql/internal/"
   install -m644 ${srcdir}/postgresql-${pkgver}/src/include/libpq/pqcomm.h "${pkgdir}${MINGW_PREFIX}/include/postgresql/internal/libpq/"
+
+  # Fix pkg-config file
+  sed -i 's/-lpq/-lpq -lpgport -lpgcommon/g' "${pkgdir}${MINGW_PREFIX}/lib/pkgconfig/libpq.pc"
 }
