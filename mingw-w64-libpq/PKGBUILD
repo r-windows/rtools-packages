@@ -3,7 +3,7 @@
 _realname=libpq
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=12.1
+pkgver=12.2
 pkgrel=1
 pkgdesc="Libraries for use with PostgreSQL (mingw-w64)"
 arch=('any')
@@ -16,7 +16,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-openssl"
 options=('staticlibs' 'strip')
 source=("https://ftp.postgresql.org/pub/source/v${pkgver}/postgresql-${pkgver}.tar.bz2"
         only-static2.patch)
-sha256sums=('a09bf3abbaf6763980d0f8acbb943b7629a8b20073de18d867aecdb7988483ed'
+sha256sums=('ad1dcc4c4fc500786b745635a9e1eba950195ce20b8913f50345bb7d5369b5de'
             'SKIP')
 
 prepare() {
