@@ -80,5 +80,5 @@ package() {
   install -m644 ${srcdir}/postgresql-${pkgver}/src/include/libpq/pqcomm.h "${pkgdir}${MINGW_PREFIX}/include/postgresql/internal/libpq/"
 
   # Fix pkg-config file
-  sed -i 's/-lpq/-lpq -lpgport -lpgcommon/g' "${pkgdir}${MINGW_PREFIX}/lib/libpq.pc"
+  sed -i 's/-lpq/-lpq -lpgport -lpgcommon/g' "${pkgdir}${MINGW_PREFIX}/lib/pkgconfig/libpq.pc"
 }
