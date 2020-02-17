@@ -3,7 +3,7 @@
 _realname=libwebp
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=1.0.2
+pkgver=1.1.0
 pkgrel=1
 pkgdesc="the WebP library. Includes conversion tools (mingw-w64)"
 arch=('any')
@@ -15,7 +15,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-giflib"
          "${MINGW_PACKAGE_PREFIX}-libtiff")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
 source=(https://storage.googleapis.com/downloads.webmproject.org/releases/webp/${_realname}-${pkgver}.tar.gz)
-sha256sums=('3d47b48c40ed6476e8047b2ddb81d93835e0ca1b8d3e8c679afbb3004dd564b1')
+sha256sums=('98a052268cc4d5ece27f76572a7f50293f439c17a98e67c4ea0c7ed6f50ef043')
 validpgpkeys=('6B0E6B70976DE303EDF2F601F9C3D6BDB8232B5D')
 
 build() {
