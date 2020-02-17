@@ -3,20 +3,20 @@
 _realname=libpq
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=11.1
-pkgrel=2
+pkgver=12.1
+pkgrel=1
 pkgdesc="Libraries for use with PostgreSQL (mingw-w64)"
 arch=('any')
 url="https://www.postgresql.org/"
 license=('custom:PostgreSQL')
-makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
-             "winpty")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
 depends=("${MINGW_PACKAGE_PREFIX}-openssl"
-         "${MINGW_PACKAGE_PREFIX}-zlib")
+         "${MINGW_PACKAGE_PREFIX}-zlib"
+         "winpty")
 options=('staticlibs' 'strip')
 source=("https://ftp.postgresql.org/pub/source/v${pkgver}/postgresql-${pkgver}.tar.bz2"
         only-static2.patch)
-sha256sums=('90815e812874831e9a4bf6e1136bf73bc2c5a0464ef142e2dfea40cda206db08'
+sha256sums=('a09bf3abbaf6763980d0f8acbb943b7629a8b20073de18d867aecdb7988483ed'
             'SKIP')
 
 prepare() {
@@ -62,6 +62,8 @@ package() {
   mkdir -p "${pkgdir}${MINGW_PREFIX}/"{bin,include,lib}
 
   make DESTDIR="${pkgdir}" -C "src/interfaces" install
+  make DESTDIR="${pkgdir}" -C "src/common" install
+  make DESTDIR="${pkgdir}" -C "src/port" install
   make DESTDIR="${pkgdir}" -C "src/include" install
 
   # Move dll's to bin directory
