@@ -44,7 +44,7 @@ build() {
   
   # Remove CPPFLAGS for spatialite 5.0 (which should support proj6)
   CPPFLAGS+=" -DACCEPT_USE_OF_DEPRECATED_PROJ_API_H=1"
-  LIBS="-lsqlite3" \
+  LIBS="-lsqlite3 -lstdc++" \
   LIBXML2_LIBS="$(pkg-config --libs-only-l --static libxml-2.0)" \
   ../${_realname}-${_ver}${_rel//./}/configure \
     --host=${MINGW_CHOST} \
