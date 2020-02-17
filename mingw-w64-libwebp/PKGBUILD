@@ -15,7 +15,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-giflib"
          "${MINGW_PACKAGE_PREFIX}-libtiff")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
 source=(https://storage.googleapis.com/downloads.webmproject.org/releases/webp/${_realname}-${pkgver}.tar.gz)
-sha256sums=('424faab60a14cb92c2a062733b6977b4cc1e875a6398887c5911b3a1a6c56c51')
+sha256sums=('98a052268cc4d5ece27f76572a7f50293f439c17a98e67c4ea0c7ed6f50ef043')
 validpgpkeys=('6B0E6B70976DE303EDF2F601F9C3D6BDB8232B5D')
 
 build() {
