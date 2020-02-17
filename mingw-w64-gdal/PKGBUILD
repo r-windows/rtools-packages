@@ -1,0 +1,140 @@
+# Maintainer: Alexey Kasatkin <alexeikasatkin@gmail.com>
+# ArchLinux maintainer: Jaroslav Lichtblau <dragonlord@aur.archlinux.org>
+# Contributor: dibblethewrecker dibblethewrecker.at.jiwe.dot.org
+# Contributor: William Rea <sillywilly@gmail.com>
+# Contributor: Petri Moisio <petri.k.moisio@gmail.com>
+
+_realname=gdal
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=3.0.4
+pkgrel=2
+pkgdesc="A translator library for raster geospatial data formats (mingw-w64)"
+arch=('any')
+url="https://gdal.org/"
+license=('custom')
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config")
+depends=("${MINGW_PACKAGE_PREFIX}-cfitsio"
+         "${MINGW_PACKAGE_PREFIX}-curl"
+         "${MINGW_PACKAGE_PREFIX}-expat"
+         "${MINGW_PACKAGE_PREFIX}-geos"
+         "${MINGW_PACKAGE_PREFIX}-giflib"
+         "${MINGW_PACKAGE_PREFIX}-hdf4"
+         "${MINGW_PACKAGE_PREFIX}-hdf5"
+         "${MINGW_PACKAGE_PREFIX}-jasper"
+         "${MINGW_PACKAGE_PREFIX}-json-c"
+         "${MINGW_PACKAGE_PREFIX}-libfreexl"
+         "${MINGW_PACKAGE_PREFIX}-libgeotiff"
+         "${MINGW_PACKAGE_PREFIX}-libiconv"
+         "${MINGW_PACKAGE_PREFIX}-libjpeg"
+         "${MINGW_PACKAGE_PREFIX}-libmariadbclient"
+         "${MINGW_PACKAGE_PREFIX}-libpng"
+         "${MINGW_PACKAGE_PREFIX}-libspatialite"
+         "${MINGW_PACKAGE_PREFIX}-libtiff"
+         "${MINGW_PACKAGE_PREFIX}-libwebp"
+         "${MINGW_PACKAGE_PREFIX}-libxml2"
+         "${MINGW_PACKAGE_PREFIX}-netcdf"
+         "${MINGW_PACKAGE_PREFIX}-openjpeg2"
+         "${MINGW_PACKAGE_PREFIX}-pcre"
+         "${MINGW_PACKAGE_PREFIX}-libpq"
+         "${MINGW_PACKAGE_PREFIX}-proj"
+         "${MINGW_PACKAGE_PREFIX}-sqlite3"
+         "${MINGW_PACKAGE_PREFIX}-xz")
+#optdepends=("${MINGW_PACKAGE_PREFIX}-postgresql")
+options=('strip' 'staticlibs')
+source=(https://download.osgeo.org/${_realname}/${pkgver}/${_realname}-${pkgver}.tar.gz)
+sha256sums=('fc15d2b9107b250305a1e0bd8421dd9ec1ba7ac73421e4509267052995af5e83')
+
+prepare() {
+  #cd ${_realname}-${pkgver}
+  #patch -p2 -i ${srcdir}/0002-poppler-compatibility.patch
+
+  cd ${srcdir}
+  [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
+  cp -rf ${_realname}-${pkgver} build-${MINGW_CHOST}
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  
+  sed -i "s|/usr/local|${MINGW_PREFIX}|g" configure.ac
+  sed -i "s|/usr|${MINGW_PREFIX}|g" configure.ac
+  sed -i "s|mandir='\${prefix}/man'|mandir='\${prefix}/share/man'|g" configure.ac
+  for p in m4/*.m4
+  do
+    sed -i "s|/usr|${MINGW_PREFIX}|g" $p
+  done
+  # bug: http://osgeo-org.1560.x6.nabble.com/gdal-dev-jpeg2000-jasper-error-compiling-gdal-2-1-from-git-release-branch-td5299100.html
+  sed -i -e 's@uchar@unsigned char@' frmts/jpeg2000/jpeg2000_vsil_io.cpp
+
+  # HDF4
+  sed -i 's/-ldf/-lhdf -lxdr/g' configure.ac
+
+  # GEOS
+  sed -i 's/-lgeos_c/-lgeos_c -lgeos -lstdc++ -lm/g' m4/geos.m4
+
+  # NetCDF
+  sed -i 's/NCCONFIG --libs/NCCONFIG --libs --static | sed "s#-l-l#-l#g" /g' configure.ac
+  #sed -i "s/-lnetcdf/(pkg-config --libs-only-l --static netcdf)/g"  configure.ac
+
+  ./autogen.sh
+}
+
+build() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+
+  export PKGCONFIG="${MINGW_PREFIX}/bin/pkgconfig --static"
+  CFLAGS+=" -fno-strict-aliasing"
+  PQ_LIBS="-lpq -lpgport -lpgcommon -lssl -lcrypto -lwsock32 -lsecur32 -lws2_32 -lgdi32 -lcrypt32 -lwldap32" \
+  LIBS="-lproj -lgeos_c -lgeos -lsqlite3 -lfreexl -ljpeg -lssl -lcrypto -lxml2 -lz -liconv -lstdc++ -lodbc32 -lodbccp32 -liconv -lpsapi -lws2_32 -lcrypt32 -lwldap32 -lsecur32 -lgdi32" \
+  ./configure \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --prefix=${MINGW_PREFIX} \
+    --enable-static \
+    --disable-shared \
+    --disable-debug \
+    --without-python \
+    --without-perl \
+    --without-threads \
+    --without-libkml \
+    --without-poppler \
+    --without-xerces \
+    --with-png \
+    --with-liblzma \
+    --with-webp="${MINGW_PREFIX}" \
+    --with-spatialite="${MINGW_PREFIX}" \
+    --with-expat-inc="${MINGW_PREFIX}/include" \
+    --with-expat-lib="-L${MINGW_PREFIX}/lib -lexpat" \
+    --with-jasper="${MINGW_PREFIX}" \
+    --with-pg \
+    --with-jpeg="${MINGW_PREFIX}" \
+    --with-freexl="${MINGW_PREFIX}" \
+    --with-proj="${MINGW_PREFIX}" \
+    --with-geos="${MINGW_PREFIX}/bin/${MINGW_CHOST}-geos-config" \
+    --with-openjpeg="${MINGW_PREFIX}" \
+    --with-mysql="${MINGW_PREFIX}/bin/mariadb_config" \
+    --with-netcdf="${MINGW_PREFIX}/bin/nc-config" \
+    --with-hdf5="${MINGW_PREFIX}" \
+    --with-hdf4="${MINGW_PREFIX}" \
+    --with-netcdf="${MINGW_PREFIX}" \
+    --with-crypto \
+    --with-spatialite="yes" \
+    --with-liblzma \
+
+  sed -i GDALmake.opt -e "s|EXE_DEP_LIBS.*|EXE_DEP_LIBS = \$\(GDAL_SLIB\)|g"
+  sed -i GNUmakefile -e "s|\$(GDAL_ROOT)\/||g"
+
+ # read -n1 -r -p "Press any key to continue..." key
+
+  make
+  # make man
+}
+
+package () {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  make DESTDIR="${pkgdir}" install
+  make DESTDIR="${pkgdir}" install-man
+
+  # install license
+  install -D -m644 LICENSE.TXT "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE"
+}
