@@ -59,6 +59,9 @@ prepare() {
    0004-mingw-disable-java.patch \
    0005-sock-jpip.all.patch
   #patch -p1 -i ${srcdir}/0006-openjpeg-2.1.0-stdcall-for-all-win.patch
+
+  # Hack for static linking libtiff
+  sed -i 's/${TIFF_LIBRARIES}/"tiff -ljpeg -lz"/g' thirdparty/CMakeLists.txt
 }
 
 build() {
