@@ -37,12 +37,15 @@ prepare() {
 
   #autoreconf -fiv
   ./autogen.sh
+
+  # Jeroen:workaround for static libtiff
+  sed -i.bak "s/-ltiff/$(pkg-config --libs-only-l --static libtiff-4)/g" configure
 }
 
 build() {
   [[ -d "${srcdir}/build-${MINGW_CHOST}" ]] && rm -rf "${srcdir}/build-${MINGW_CHOST}"
   mkdir "${srcdir}/build-${MINGW_CHOST}" && cd "${srcdir}/build-${MINGW_CHOST}"
-  LIBS="-lsqlite3 -ljpeg -lz -lstdc++" \
+  LIBS="-lsqlite3 -lstdc++" \
   ../${_realname}-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
