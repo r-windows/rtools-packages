@@ -23,8 +23,11 @@ prepare() {
 
   cd ${srcdir}/postgresql-${pkgver}
   patch -p1 -i ${srcdir}/only-static2.patch
-
-  #autoreconf -fiv
+  
+  # Broken autoconf test for openssl
+  if [ "${MINGW_PREFIX}" = "/mingw32" ]; then
+  sed -i.bak 's/ -Wl,--disable-auto-import//g' src/template/win32
+  fi
 }
 
 build() {
@@ -75,4 +78,7 @@ package() {
   install -m644 ${srcdir}/postgresql-${pkgver}/src/include/port.h "${pkgdir}${MINGW_PREFIX}/include/postgresql/internal/"
   install -m644 ${srcdir}/postgresql-${pkgver}/src/include/postgres_fe.h "${pkgdir}${MINGW_PREFIX}/include/postgresql/internal/"
   install -m644 ${srcdir}/postgresql-${pkgver}/src/include/libpq/pqcomm.h "${pkgdir}${MINGW_PREFIX}/include/postgresql/internal/libpq/"
+
+  # Fix pkg-config file
+  sed -i 's/-lpq/-lpq -lpgport -lpgcommon/g' "${pkgdir}${MINGW_PREFIX}/lib/libpq.pc"
 }
