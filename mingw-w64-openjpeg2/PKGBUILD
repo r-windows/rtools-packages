@@ -23,14 +23,16 @@ source=(${_realname}-${pkgver}.tar.gz::https://github.com/uclouvain/openjpeg/arc
         0003-versioned-dlls.mingw.patch
         0004-mingw-disable-java.patch
         0005-sock-jpip.all.patch
-        0006-openjpeg-2.1.0-stdcall-for-all-win.patch)
+        0006-openjpeg-2.1.0-stdcall-for-all-win.patch
+        static-pc.patch)
 sha256sums=('63f5a4713ecafc86de51bfad89cc07bb788e9bba24ebbf0c4ca637621aadb6a9'
             '3f3bde353ca3432f157258164c5e3c345af82ca3a9d5a68f815c3030b01cbc32'
             '31b2cc6824b07b705ba1c05b38904c8c4fc6ba39acefebda3e6ec85dbef9a174'
             '0f95f52b6fd662acb84b481a998ec4170369fe94247e0fa227fcda1f6ba18f1b'
             'adade9b29e4292b642d547644e26fab6e193bbfe31d25f07d89a8c35e4d0993d'
             '9df169f03e6e69cba0d7d33592f9eba373a02cd9554b456d3eb9ff3d9135391b'
-            'e8c375faa317c819174b50aa43b6be61c108872661b014738c4a0cfa95aac919')
+            'e8c375faa317c819174b50aa43b6be61c108872661b014738c4a0cfa95aac919'
+            'SKIP')
 
 # Helper macros to help make tasks easier #
 apply_patch_with_msg() {
@@ -57,7 +59,8 @@ prepare() {
    0002-cmake-files-destination.patch \
    0003-versioned-dlls.mingw.patch \
    0004-mingw-disable-java.patch \
-   0005-sock-jpip.all.patch
+   0005-sock-jpip.all.patch \
+   static-pc.patch
   #patch -p1 -i ${srcdir}/0006-openjpeg-2.1.0-stdcall-for-all-win.patch
 
   # Hack for static linking libtiff

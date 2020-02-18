@@ -1,0 +1,27 @@
+diff -aurp openjpeg-2.3.1-orig/src/lib/openjp2/libopenjp2.pc.cmake.in openjpeg-2.3.1/src/lib/openjp2/libopenjp2.pc.cmake.in
+--- openjpeg-2.3.1-orig/src/lib/openjp2/libopenjp2.pc.cmake.in	2020-02-18 13:47:04.000000000 +0100
++++ openjpeg-2.3.1/src/lib/openjp2/libopenjp2.pc.cmake.in	2020-02-18 13:49:03.000000000 +0100
+@@ -11,4 +11,4 @@ URL: http://www.openjpeg.org/
+ Version: @OPENJPEG_VERSION@
+ Libs: -L${libdir} -lopenjp2
+ Libs.private: -lm
+-Cflags: -I${includedir}
++Cflags: -DOPJ_STATIC -I${includedir}
+diff -aurp openjpeg-2.3.1-orig/src/lib/openjp3d/libopenjp3d.pc.cmake.in openjpeg-2.3.1/src/lib/openjp3d/libopenjp3d.pc.cmake.in
+--- openjpeg-2.3.1-orig/src/lib/openjp3d/libopenjp3d.pc.cmake.in	2020-02-18 13:47:04.000000000 +0100
++++ openjpeg-2.3.1/src/lib/openjp3d/libopenjp3d.pc.cmake.in	2020-02-18 13:50:56.000000000 +0100
+@@ -11,4 +11,4 @@ URL: http://www.openjpeg.org/
+ Version: @OPENJPEG_VERSION@
+ Libs: -L${libdir} -lopenjp3d
+ Libs.private: -lm
+-Cflags: -I${includedir}
++Cflags: -DOPJ_STATIC -I${includedir}
+diff -aurp openjpeg-2.3.1-orig/src/lib/openjpwl/libopenjpwl.pc.cmake.in openjpeg-2.3.1/src/lib/openjpwl/libopenjpwl.pc.cmake.in
+--- openjpeg-2.3.1-orig/src/lib/openjpwl/libopenjpwl.pc.cmake.in	2020-02-18 13:47:04.000000000 +0100
++++ openjpeg-2.3.1/src/lib/openjpwl/libopenjpwl.pc.cmake.in	2020-02-18 13:52:01.000000000 +0100
+@@ -12,4 +12,4 @@ Version: @OPENJPEG_VERSION@
+ Requires: libopenjp2
+ Libs: -L${libdir} -lopenjpwl
+ Libs.private: -lm
+-Cflags: -I${includedir}
++Cflags: -DOPJ_STATIC -I${includedir}
