@@ -34,6 +34,7 @@ prepare() {
   GEOSLIBS="-lgeos_c -lgeos -lstdc++ -lm"
   XML2LIBS="$(pkg-config --libs-only-l --static libxml-2.0)" \
   sed -i 's/--ldflags`/--static-clibs`" -lstdc++"/g' configure.ac
+  sed -i "s/-lgeos_c/${GEOSLIBS}/g" configure.ac
   sed -i "s/-lspatialite/-lspatialite ${PROJLIBS} ${GEOSLIBS} ${XML2LIBS}/" spatialite.pc.in
   autoreconf
 }
