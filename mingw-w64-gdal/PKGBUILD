@@ -81,7 +81,9 @@ prepare() {
 build() {
   cd "${srcdir}/build-${MINGW_CHOST}"
 
-  export PKGCONFIG="${MINGW_PREFIX}/bin/pkgconfig --static"
+  export PKG_CONFIG="${MINGW_PREFIX}/bin/pkgconfig --static"
+  ##-DCURL_STATICLIB -DLIBXML_STATIC -DPCRE_STATIC -DOPJ_STATIC -DJAS_DLL=0
+  export CPPFLAGS="-DPCRE_STATIC -DOPJ_STATIC -DJAS_DLL=0"
   CFLAGS+=" -fno-strict-aliasing"
   PQ_LIBS="-lpq -lpgport -lpgcommon -lssl -lcrypto -lwsock32 -lsecur32 -lws2_32 -lgdi32 -lcrypt32 -lwldap32" \
   LIBS="-lgeos_c -lgeos -lsqlite3 -ljpeg -lxml2 -lfreexl -lz -liconv -lstdc++ -lws2_32" \
