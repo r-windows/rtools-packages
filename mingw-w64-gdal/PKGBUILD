@@ -84,7 +84,7 @@ build() {
   export PKGCONFIG="${MINGW_PREFIX}/bin/pkgconfig --static"
   CFLAGS+=" -fno-strict-aliasing"
   PQ_LIBS="-lpq -lpgport -lpgcommon -lssl -lcrypto -lwsock32 -lsecur32 -lws2_32 -lgdi32 -lcrypt32 -lwldap32" \
-  LIBS="-lproj -lgeos_c -lgeos -lsqlite3 -lfreexl -ljpeg -lssl -lcrypto -lxml2 -lz -liconv -lstdc++ -lodbc32 -lodbccp32 -liconv -lpsapi -lws2_32 -lcrypt32 -lwldap32 -lsecur32 -lgdi32" \
+  LIBS="-lgeos_c -lgeos -lsqlite3 -ljpeg -lxml2 -lfreexl -lz -liconv -lstdc++ -lws2_32" \
   ./configure \
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST} \
@@ -126,9 +126,13 @@ build() {
 
   # mariadb_config seems broken
   sed -i GDALmake.opt -e "s|-lmariadb|-lmariadbclient -lssl -lcrypto -lcrypt32 -lgdi32 -lz -lws2_32 -pthread|g"
+  grep -o "[^/]*\.a.*undefined reference to.*$" config.log | sed 's/(.*)//g'
+  if [[ "$(grep '\.a.*undefined reference to' config.log)" ]]; then
+    echo "Configure script had linking errors, please fix these first"
+    exit 1
+  fi
 
- # read -n1 -r -p "Press any key to continue..." key
-
+  #read -n1 -r -p "Press any key to continue..." key
   make
   # make man
 }
