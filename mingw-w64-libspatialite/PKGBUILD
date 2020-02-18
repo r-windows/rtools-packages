@@ -37,7 +37,7 @@ prepare() {
   sed -i "s/-lproj/${PROJLIBS}/g" configure.ac
   sed -i "s/-geos_c/${GEOSLIBS}/g" configure.ac
   sed -i "s/-xlm2/${XML2LIBS}/g" configure.ac
-  sed -i "s/-lspatialite/-lspatialite ${PROJLIBS} ${GEOSLIBS} ${XML2LIBS}/"
+  sed -i "s/-lspatialite/-lspatialite ${PROJLIBS} ${GEOSLIBS} ${XML2LIBS}/g" configure.ac
   autoreconf
 }
 
