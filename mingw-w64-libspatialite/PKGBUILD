@@ -31,11 +31,14 @@ prepare() {
   cd "${srcdir}/${_realname}-${_ver}${_rel//./}"
   sed -i configure.ac -e "s|mingw32|${MINGW_CHOST}|g"
   patch -p1 -i ${srcdir}/01-fix-pkgconfig.patch
-  
-  # Jeroen: hacks for linking static geos
+
+  # Jeroen: workaround for static proj/geos
+  PROJLIBS=$(pkg-config --libs-only-l --static proj)
+  GEOSLIBS="-lgeos_c -lgeos -lstdc++ -lm"
   sed -i 's/--ldflags`/--static-clibs`" -lstdc++"/g' configure.ac
-  sed -i 's/-lgeos_c/-lgeos_c -lgeos -lstdc++ -lm/' configure.ac
-  autoreconf
+  sed -i "s/-lproj/${PROJLIBS}/g" configure.ac
+  sed -i "s/-geos_c/${GEOSLIBS}/g" configure.ac
+  ./autogen.sh
 }
 
 build() {
@@ -44,7 +47,6 @@ build() {
   
   # Remove CPPFLAGS for spatialite 5.0 (which should support proj6)
   CPPFLAGS+=" -DACCEPT_USE_OF_DEPRECATED_PROJ_API_H=1"
-  #LIBS="-lsqlite3 -lstdc++" \
   LIBXML2_LIBS="$(pkg-config --libs-only-l --static libxml-2.0)" \
   ../${_realname}-${_ver}${_rel//./}/configure \
     --host=${MINGW_CHOST} \
