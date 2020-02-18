@@ -4,5 +4,5 @@
  Description: Spatial SQL database engine based on SQLite
  Version: @VERSION@
  Libs: -L${libdir} -lspatialite
-+Libs.private: -liconv -lz -lm
++Libs.private: -lproj -lgeos_c -lgeos -lsqlite3 -ljpeg -lfreexl -lstdc++ -lxml2 -liconv -lz -lm -lws2_32
  Cflags: -I${includedir}
