@@ -165,4 +165,8 @@ package () {
 
   # install license
   install -D -m644 LICENSE.TXT "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE"
+
+  # Jeroen: do not ship gdal executables in the package because they are HUGE
+  echo "Not including executables in rtools40 package:"
+  rm -v ${pkgdir}${MINGW_PREFIX}/bin/*.exe
 }
