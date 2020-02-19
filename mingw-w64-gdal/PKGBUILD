@@ -75,18 +75,37 @@ prepare() {
   sed -i 's/NCCONFIG --libs/NCCONFIG --libs --static | sed "s#-l-l#-l#g" /g' configure.ac
   #sed -i "s/-lnetcdf/(pkg-config --libs-only-l --static netcdf)/g"  configure.ac
 
+  # LibTiff
+  TIFFLIBS=$(pkg-config --libs-only-l --static libtiff-4)
+  #sed -i "s/-ltiff/${TIFFLIBS}/g" configure.ac
+
+  # PROJ
+  PROJLIBS=$(pkg-config --libs-only-l --static proj)
+  #sed -i "s/-lproj/${PROJLIBS}/g" configure.ac
+
+  # Spatialite
+  SPATIALLIBS=$(pkg-config --libs-only-l --static spatialite)
+  #sed -i "s/-lspatialite/${SPATIALLIBS}/g" configure.ac
+
   ./autogen.sh
+
+  sed -i "s/-lspatialite/${SPATIALLIBS}/g" configure
+  sed -i "s/-lproj/${PROJLIBS}/g" configure
+  sed -i "s/-ltiff/${TIFFLIBS}/g" configure
+  sed -i "s/-lfreexl/-lfreexl -liconv/g" configure
+
 }
 
 build() {
   cd "${srcdir}/build-${MINGW_CHOST}"
 
-  export PKG_CONFIG="${MINGW_PREFIX}/bin/pkgconfig --static"
+  export PKG_CONFIG="${MINGW_PREFIX}/bin/pkg-config --static"
   ##-DCURL_STATICLIB -DLIBXML_STATIC -DPCRE_STATIC -DOPJ_STATIC -DJAS_DLL=0
-  export CPPFLAGS="-DPCRE_STATIC -DOPJ_STATIC -DJAS_DLL=0"
+  export CPPFLAGS="-DPCRE_STATIC"
   CFLAGS+=" -fno-strict-aliasing"
+  #LIBS="-lgeos_c -lgeos -lsqlite3 -lfreexl -lz -liconv -lstdc++ -lws2_32" \
+  #GEOS_LIBS="-lgeos_c -lgeos -lstdc++ -lm" \
   PQ_LIBS="-lpq -lpgport -lpgcommon -lssl -lcrypto -lwsock32 -lsecur32 -lws2_32 -lgdi32 -lcrypt32 -lwldap32" \
-  LIBS="-lgeos_c -lgeos -lsqlite3 -ljpeg -lxml2 -lfreexl -lz -liconv -lstdc++ -lws2_32" \
   ./configure \
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST} \
