@@ -4,7 +4,7 @@ _realname=netcdf
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=4.7.3
-pkgrel=9000
+pkgrel=9001
 pkgdesc="Interface for scientific data access to large binary data (mingw-w64)"
 arch=('any')
 license=('custom')
@@ -61,6 +61,7 @@ build() {
     -DENABLE_DAP=ON \
     -DENABLE_TESTS=OFF \
     -DENABLE_NETCDF_4=ON \
+    -DENABLE_DYNAMIC_LOADING=OFF \
     "${srcdir}/${_realname}-c-${pkgver}"
   make -j1 SHELL='sh -x'
 
@@ -78,12 +79,13 @@ build() {
     -DENABLE_DAP=OFF \
     -DENABLE_TESTS=OFF \
     -DENABLE_NETCDF_4=ON \
+    -DENABLE_DYNAMIC_LOADING=OFF \
     "${srcdir}/${_realname}-c-${pkgver}"
   make
 }
 
 package() {
-  cd ${srcdir}/build-dap-${MINGW_CHOST}
+  cd ${srcdir}/build-nodap-${MINGW_CHOST}
   make DESTDIR=${pkgdir} install
 
   install -Dm644 ${srcdir}/${_realname}-c-${pkgver}/COPYRIGHT \
@@ -93,7 +95,5 @@ package() {
   find ${pkgdir}${MINGW_PREFIX}/lib/pkgconfig -name *.pc -exec sed -i -e"s|${PREFIX_DEPS}|${MINGW_PREFIX}|g" {} \;
 
   # Default to the NODAP build
-  mv ${pkgdir}${MINGW_PREFIX}/lib/libnetcdf.a ${pkgdir}${MINGW_PREFIX}/lib/libnetcdf-dap.a
-  cp ${srcdir}/build-nodap-${MINGW_CHOST}/liblib/libnetcdf.a ${pkgdir}${MINGW_PREFIX}/lib/libnetcdf.a
-  cp ${srcdir}/build-nodap-${MINGW_CHOST}/liblib/libnetcdf.a ${pkgdir}${MINGW_PREFIX}/lib/libnetcdf4.a
+  cp ${srcdir}/build-dap-${MINGW_CHOST}/liblib/libnetcdf.a ${pkgdir}${MINGW_PREFIX}/lib/libnetcdf-dap.a
 }
