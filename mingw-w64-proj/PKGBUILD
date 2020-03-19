@@ -3,25 +3,28 @@
 _realname=proj
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=6.3.1
+pkgver=7.0.0
 pkgrel=1
 pkgdesc="Cartographic projection software (PROJ.4) (mingw-w64)"
 arch=(any)
 url="https://trac.osgeo.org/proj/"
 license=('MIT')
-depends=("${MINGW_PACKAGE_PREFIX}-sqlite3")
-makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-libtool")
+depends=("${MINGW_PACKAGE_PREFIX}-sqlite3"
+         "${MINGW_PACKAGE_PREFIX}-libtiff"
+         "${MINGW_PACKAGE_PREFIX}-curl")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-libtool")
 options=('staticlibs' 'strip')
 source=("http://download.osgeo.org/proj/${_realname}-${pkgver}.tar.gz"
-        "https://patch-diff.githubusercontent.com/raw/OSGeo/PROJ/pull/1936.patch")
-sha256sums=('6de0112778438dcae30fcc6942dee472ce31399b9e5a2b67e8642529868c86f8'
+        "https://github.com/OSGeo/PROJ/commit/d8835.patch")
+sha256sums=('ee0e14c1bd2f9429b1a28999240304c0342ed739ebaea3d4ff44c585b1097be8'
             'SKIP')
 
 groups=("rtools-${_realname}")
 
 prepare() {
   cd ${_realname}-${pkgver}
-  patch -p1 -i "${srcdir}/1936.patch"
+  patch -p1 -i "${srcdir}/d8835.patch"
 }
 
 build() {
