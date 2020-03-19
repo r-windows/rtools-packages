@@ -41,6 +41,10 @@ prepare() {
   sed -i "s/-ltiff/${TIFFLIBS}/g" configure.ac
   sed -i "s/-lproj/${PROJLIBS}/g" configure.ac
   ./autogen.sh
+
+  # Debugging
+  echo "TIFFLIBS: ${TIFFLIBS}"
+  echo "PROJLIBS: ${PROJLIBS}"
 }
 
 build() {
