@@ -3,13 +3,13 @@
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/r-windows/rtools-packages?branch=master)](https://ci.appveyor.com/project/jeroen/rtools-packages)
 [![Azure Build Status](https://dev.azure.com/r-windows/rtools-packages/_apis/build/status/r-windows.rtools-packages?branchName=master)](https://dev.azure.com/r-windows/rtools-packages/_build/latest?definitionId=1&branchName=master)
 
-A repository of pacman packages for use with the new experimental [rtools 4.0](https://cloud.r-project.org/bin/windows/testing/rtools40.html). Builds from the master branch are automatically deployed on [bintray](https://dl.bintray.com/rtools/) and become directly available in the `pacman` tool in Rtools 4.0.
+A repository of pacman packages for use with the new [rtools 4.0](https://cran.r-project.org/bin/windows/Rtools/) build system. Successful builds from the master branch of this repository are automatically deployed on [bintray](https://dl.bintray.com/rtools/) and become directly available in the `pacman` tool in Rtools 4.0.
 
 ## Enable Rtools40 to build libs
 
-By default, the rtools40 build environment is frozen in a stable state for building R packages. If you want to build C/C++ libs, you first need to enable the (unstable) upstream msys2 repos. This can actually interfere with your rtools40 installation, so don't do this on important servers used to build R packages.
+By default, the rtools40 build environment is frozen in a stable state for building R packages. If you want to build C/C++ libs, you first need to enable the (unstable) upstream msys2 repos. This may alter your rtools40 installation, so don't do this on important R package build servers.
 
-To enable the upstream repo, open the file `c:\rtools40\etc\pacman.conf` in a text editor and uncomment the following 2 lines at the very end of the file:
+To enable the upstream msys2 repo, open the file `c:\rtools40\etc\pacman.conf` in a text editor and uncomment the following 2 lines at the very end of the file:
 
 ```
 ## 3rd party msys2 packages (rtools hackers only!)
@@ -17,7 +17,7 @@ To enable the upstream repo, open the file `c:\rtools40\etc\pacman.conf` in a te
 Include = /etc/pacman.d/mirrorlist.msys
 ```
 
-Then open the rtools40 shell and run `pacman -Syu`. Then close the shell and restart the rtools40 shell.
+Then open the rtools40 shell and run `pacman -Syu`. This may upgrade the msys2 runtime or bash that you are currently using, in which case the terminal will freeze. Don't worry, this only happens once. Close the window and restart the rtools40 shell, and run `pacman -Syu` again.
 
 Now the upstream msys repo repo is enabled, you can install to all extra tools needed to build libraries and other software. For example you can install autoconf or vim and so on:
 
