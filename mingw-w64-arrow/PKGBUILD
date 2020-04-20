@@ -21,8 +21,7 @@ options=("staticlibs" "strip" "!buildflags")
 # Uncomment to build from master
 #source=("${_realname}"::"git+https://github.com/apache/arrow")
 #source_dir=${_realname}
-# source=("${_realname}-${pkgver}.tar.gz"::"http://apache.osuosl.org/arrow/arrow-${pkgver}/apache-arrow-${pkgver}.tar.gz")
-source=("${_realname}-${pkgver}.tar.gz"::"https://dist.apache.org/repos/dist/dev/arrow/apache-arrow-${pkgver}-rc0/apache-arrow-${pkgver}.tar.gz")
+source=("${_realname}-${pkgver}.tar.gz"::"http://apache.osuosl.org/arrow/arrow-${pkgver}/apache-arrow-${pkgver}.tar.gz")
 source_dir="apache-${_realname}-${pkgver}"
 sha256sums=("2c46b4c3e1f88aad510214e633a6f4ce459708f3db78cd0daf549a135cbe8e6d")
 
