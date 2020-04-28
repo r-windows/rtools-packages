@@ -33,6 +33,7 @@ build() {
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
     -DCMAKE_PREFIX_PATH=${MINGW_PREFIX} \
+    -DBUILD_CLAR=OFF \
     -DTHREADSAFE=OFF \
     -DWINHTTP=ON \
     ../${_realname}-${pkgver}
