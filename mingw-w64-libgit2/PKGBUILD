@@ -33,7 +33,6 @@ build() {
     -G"MSYS Makefiles" \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
-    -DPKG_CONFIG_WITHOUT_PREFIX=ON \
     -DTHREADSAFE=OFF \
     -DWINHTTP=ON \
     ../${_realname}-${pkgver}
