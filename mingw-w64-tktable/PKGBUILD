@@ -1,0 +1,44 @@
+# Maintainer: Oscar Fuentes <ofv@wanadoo.es>
+# Contributor: Ray Donnelly <mingw.android@gmail.com>
+# Based on Arch's PKGBUILD
+
+_realname=tktable
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+_pkgnameactual=Tktable
+pkgver=2.10
+pkgrel=4
+pkgdesc="A full-featured 2D table widget for Tk (mingw-w64)"
+arch=('any')
+url="https://tktable.sourceforge.io/"
+license=('custom')
+depends=("${MINGW_PACKAGE_PREFIX}-tk")
+source=("https://sourceforge.net/projects/tktable/files/${_realname}/${pkgver}/${_pkgnameactual}${pkgver}.tar.gz"
+        001-fix-detect-mingw.patch)
+sha256sums=('c335117fa1be45fe4d3032e96fd4b4641fff6a4f8467878608dabed11198a4cb'
+            '1decff05ed2e09f62a44e1e6d15e32904f331e83c4e1170f5f1140f7d9f9bb1f')
+
+prepare() {
+  cd ${_pkgnameactual}${pkgver}
+  patch -p1 -i ${srcdir}/001-fix-detect-mingw.patch
+
+  autoreconf -fiv
+}
+
+build() {
+  [[ -d "${srcdir}/build-${CARCH}" ]] && rm -rf "${srcdir}/build-${CARCH}"
+  mkdir -p "${srcdir}/build-${CARCH}"
+  cd "${srcdir}/build-${CARCH}"
+
+  [[ "${MINGW_CHOST}" = 'x86_64-w64-mingw32' ]] && enable64bit='--enable-64bit'
+
+  ../${_pkgnameactual}${pkgver}/configure \
+    --prefix=${MINGW_PREFIX} \
+    $enable64bit
+  make
+}
+
+package() {
+  cd "${srcdir}/build-${CARCH}"
+  make DESTDIR="${pkgdir}" install
+}
