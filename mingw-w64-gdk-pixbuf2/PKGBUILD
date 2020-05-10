@@ -1,0 +1,81 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+# Maintainer: Ray Donnelly <mingw.android@gmail.com>
+# Contributor: Renato Silva <br.renatosilva@gmail.com>
+
+_realname=gdk-pixbuf2
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=2.36.12
+pkgrel=1
+pkgdesc="An image loading library (mingw-w64)"
+arch=('any')
+url="https://www.gtk.org/"
+license=(LGPL2)
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config")
+depends=("${MINGW_PACKAGE_PREFIX}-glib2"
+         "${MINGW_PACKAGE_PREFIX}-libjpeg-turbo"
+         "${MINGW_PACKAGE_PREFIX}-libpng"
+         "${MINGW_PACKAGE_PREFIX}-libtiff")
+options=('emptydirs')
+source=("https://download.gnome.org/sources/gdk-pixbuf/${pkgver%.*}/gdk-pixbuf-${pkgver}.tar.xz"
+        0003-fix-dllmain.patch
+        0001-windows-rework-loaders-cache-relocation-support.patch
+        0004-build-all-loaders-plus-gdi.patch)
+sha256sums=('fff85cf48223ab60e3c3c8318e2087131b590fd6f1737e42cb3759a3b427a334'
+            '21bd9b2ba1447267c84f1b445cbcf50c62299254856c1c227cc7ba4babc9f27e'
+            '50e5e0f9d6ab91809c1c96522240b0519b70f101c98689c51d493833d3859a5d'
+            '9b47961aa97518c0a136bfe1c0d2d6386d94e0a4a2054ca1882b386de2def89f')
+
+prepare() {
+  cd ${srcdir}/gdk-pixbuf-${pkgver}
+  msg2 "0003-fix-dllmain.patch"
+  patch -p1 -i "${srcdir}"/0003-fix-dllmain.patch
+  msg2 "0001-windows-rework-loaders-cache-relocation-support.patch"
+  patch -p1 -i "${srcdir}"/0001-windows-rework-loaders-cache-relocation-support.patch
+
+  # build all loaders + all gdi loaders static and just don't register
+  # the gdi loaders we don't need so the external ones get used
+  # (everything except wmf/emf atm)
+  patch -p1 -i "${srcdir}"/0004-build-all-loaders-plus-gdi.patch
+  autoreconf -fi
+}
+
+build() {
+  [[ -d "${srcdir}/build-${MINGW_CHOST}" ]] && rm -rf "${srcdir}/build-${MINGW_CHOST}"
+  mkdir -p "${srcdir}/build-${MINGW_CHOST}"
+  cd "${srcdir}/build-${MINGW_CHOST}"
+
+  mkdir -p docs/reference/gdk-pixbuf/html
+  cp -rf ../gdk-pixbuf-${pkgver}/docs/reference/gdk-pixbuf/html/* docs/reference/gdk-pixbuf/html
+
+  export LIBS="$(pkg-config --libs-only-l --static gio-windows-2.0) -lgdiplus -liphlpapi -ldnsapi"
+  #export CFLAGS="-DGLIB_STATIC_COMPILATION"
+  ../gdk-pixbuf-${pkgver}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --enable-static \
+    --disable-shared \
+    --disable-introspection \
+    --enable-relocations \
+    --without-libjasper \
+    --disable-nls \
+    --disable-glibtest \
+    --disable-gtk-doc-html \
+    --disable-dependency-tracking \
+    --disable-maintainer-mode \
+    --enable-debug=no \
+    --with-gdiplus \
+    --disable-modules \
+    --with-included-loaders=yes
+
+  make
+}
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+
+  make DESTDIR="${pkgdir}" install
+  install -Dm644 "${srcdir}/gdk-pixbuf-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
+}
