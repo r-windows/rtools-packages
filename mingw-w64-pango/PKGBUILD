@@ -4,7 +4,7 @@
 _realname=pango
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=1.42.1
+pkgver=1.42.4
 pkgrel=1
 pkgdesc="A library for layout and rendering of text (mingw-w64)"
 arch=('any')
@@ -30,14 +30,14 @@ options=('staticlibs' 'strip' 'emptydirs')
 source=("https://download.gnome.org/sources/pango/${pkgver:0:4}/${_realname}-${pkgver}.tar.xz"
         0001-no-unconditional-xft-please.all.patch
         0001-build-move-usp10-before-gdi32.patch)
-sha256sums=('915a6756b298578ff27c7a6393f8c2e62e6e382f9411f2504d7af1a13c7bce32'
+sha256sums=('1d2b74cd63e8bd41961f2f8d952355aa0f9be6002b52c8aa7699d9f5da597c9d'
             'bebab6128258d300e677df0751177f5c30235d0a49c150d97987d0f00b309f35'
             'f07bfd26bc4eabb03ea0294d2d428e617a6fb505afec0d1c40dc8af659d22a97')
 
 prepare() {
   cd "${srcdir}/${_realname}-${pkgver}"
   patch -p1 -i ${srcdir}/0001-no-unconditional-xft-please.all.patch
-  patch -p1 -i ${srcdir}/0001-build-move-usp10-before-gdi32.patch
+  #patch -p1 -i ${srcdir}/0001-build-move-usp10-before-gdi32.patch
   sed -i.bak '/GOBJECT_INTROSPECTION_CHECK/d' configure.ac
   #autoreconf -fi
   sed -i.bak 's/HAVE_INTROSPECTION/HAVE_CORE_TEXT/g' pango/Makefile.am
