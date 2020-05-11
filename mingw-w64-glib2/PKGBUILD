@@ -25,12 +25,14 @@ source=("https://download.gnome.org/sources/glib/${pkgver%.*}/glib-${pkgver}.tar
         0001-Use-CreateFile-on-Win32-to-make-sure-g_unlink-always.patch
         0001-win32-Make-the-static-build-work-with-MinGW-when-pos.patch
         0001-disable-some-tests-when-static.patch
-        0001-Revert-tests-W32-ugly-fix-for-sscanf-format.patch)
+        0001-Revert-tests-W32-ugly-fix-for-sscanf-format.patch
+        vista.patch)
 sha256sums=('8f43c31767e88a25da72b52a40f3301fefc49a665b56dc10ee7cc9565cbe7481'
             'ff0d3df5d57cf621cac79f5bea8bd175e6c18b3fbf7cdd02df38c1eab9f40ac3'
             '838abaeab8ca4978770222ef5f88c4b464545dd591b2d532c698caa875b46931'
             '0f44135a139e3951c4b5fa7d4628d75226e0666d891faf524777e1d1ec3b440b'
-            '601b4da43aeccfa522ea46fcb9c33ec9530b8c4b965b8964abd3f4972b769cdd')
+            '601b4da43aeccfa522ea46fcb9c33ec9530b8c4b965b8964abd3f4972b769cdd'
+            'SKIP')
 
 prepare() {
   cd "${srcdir}/glib-${pkgver}"
@@ -39,6 +41,7 @@ prepare() {
   patch -Np1 -i "${srcdir}"/0001-win32-Make-the-static-build-work-with-MinGW-when-pos.patch
   patch -Np1 -i "${srcdir}"/0001-disable-some-tests-when-static.patch
   patch -Np1 -i "${srcdir}"/0001-Revert-tests-W32-ugly-fix-for-sscanf-format.patch
+  patch -Np1 -i "${srcdir}"/vista.patch
 
   NOCONFIGURE=1 ./autogen.sh
 }
