@@ -1,0 +1,26 @@
+diff -aurp glib-2.58.3/gmodule/gmodule-win32.c glib-2.58.3-patched/gmodule/gmodule-win32.c
+--- glib-2.58.3/gmodule/gmodule-win32.c	2019-01-21 13:38:50.000000000 +0000
++++ glib-2.58.3-patched/gmodule/gmodule-win32.c	2020-05-11 13:16:31.343776400 +0000
+@@ -71,7 +71,6 @@ _g_module_open (const gchar *file_name,
+   HINSTANCE handle;
+   wchar_t *wfilename;
+   DWORD old_mode;
+-  BOOL success;
+ #ifdef G_WITH_CYGWIN
+   gchar tmp[MAX_PATH];
+ 
+@@ -81,12 +80,9 @@ _g_module_open (const gchar *file_name,
+   wfilename = g_utf8_to_utf16 (file_name, -1, NULL, NULL, NULL);
+ 
+   /* suppress error dialog */
+-  success = SetThreadErrorMode (SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS, &old_mode);
+-  if (!success)
+-    set_error ("");
++  old_mode = SetErrorMode (SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS);
+   handle = LoadLibraryW (wfilename);
+-  if (success)
+-    SetThreadErrorMode (old_mode, NULL);
++  SetErrorMode (old_mode);
+   g_free (wfilename);
+       
+   if (!handle)
