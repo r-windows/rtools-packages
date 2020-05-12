@@ -3,7 +3,7 @@
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/r-windows/rtools-packages?branch=master)](https://ci.appveyor.com/project/jeroen/rtools-packages)
 [![Azure Build Status](https://dev.azure.com/r-windows/rtools-packages/_apis/build/status/r-windows.rtools-packages?branchName=master)](https://dev.azure.com/r-windows/rtools-packages/_build/latest?definitionId=1&branchName=master)
 
-A repository of pacman packages for use with the new [rtools 4.0](https://cran.r-project.org/bin/windows/Rtools/) build system. Successful builds from the master branch of this repository are automatically deployed on [bintray](https://dl.bintray.com/rtools/) and become directly available in the `pacman` tool in Rtools 4.0.
+A repository of pacman packages for use with the new [rtools 4.0](https://cran.r-project.org/bin/windows/Rtools/) build system. Successful builds from the master branch of this repository are automatically deployed on [bintray](https://dl.bintray.com/rtools/) and become eventually available via `pacman` in Rtools 4.0.
 
 
 ## Building an rtools package
@@ -17,7 +17,7 @@ makepkg-mingw --syncdeps
 
 The `--syncdeps` flag will automatically install package dependencies (see the next section if you need additional non-rtools build tools). Add `--noconfirm` to the command to skip the interactive confirmation prompt.
 
-![](https://user-images.githubusercontent.com/216319/81672943-2c9a7700-944b-11ea-9d62-f47e083a9c11.png)
+![](https://user-images.githubusercontent.com/216319/81677699-74bc9800-9451-11ea-8abc-d980cf5afeaa.png)
 
 This will first build the 64-bit package `mingw-w64-x86_64-arrow`, and after that start the entire process from scratch to build the 32-bit package `mingw-w64-i686-arrow`. If you only want to build for a single architecture you can control this with the `MINGW_INSTALLS` environment variable.
 
