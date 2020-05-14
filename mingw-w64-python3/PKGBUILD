@@ -17,7 +17,7 @@ _realname=python3
 pkgbase="mingw-w64-${_realname}"
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 _pybasever=3.7
-pkgver=${_pybasever}.5
+pkgver=${_pybasever}.7
 pkgrel=1
 pkgdesc="A high-level scripting language (mingw-w64)"
 arch=('any')
@@ -267,8 +267,8 @@ prepare() {
   # a terminal output.
   # https://github.com/Alexpux/MINGW-packages/issues/2645
   # https://github.com/Alexpux/MINGW-packages/issues/2656
-  apply_patch_with_msg \
-    1700-cygpty-isatty.patch
+  #apply_patch_with_msg \
+  #  1700-cygpty-isatty.patch
 
   # gdbm is broken and as a result breaks dbm/shelve.
   # Don't include it so the dbm.dumb backend is used instead,
@@ -486,7 +486,7 @@ package() {
 
 }
 
-sha256sums=('e85a76ea9f3d6c485ec1780fca4e500725a4a7bbc63c78ebc44170de9b619d94'
+sha256sums=('06a0a9f1bf0d8cd1e4121194d666c4e28ddae4dd54346de6c343206599f02136'
             'a2e92cf57985b93bb6203b26c84140610378bd1eb57e8ab8f00e0c0f9afb7b75'
             '8b2c7d6b3d0efec48f44c1e46be25fcfb4ba6711ca49b93cf9fa40fb4f0966b6'
             'b2111d31e812b33e5cec85f6505bd730975dd242f8eb138307f71ffe0d7fdf6b'
