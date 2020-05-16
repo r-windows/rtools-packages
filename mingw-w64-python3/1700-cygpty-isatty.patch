@@ -46,7 +46,7 @@ diff -Naur Python-3.7.0-orig/Include/iscygpty.h Python-3.7.0/Include/iscygpty.h
 diff -Naur Python-3.7.0-orig/Makefile.pre.in Python-3.7.0/Makefile.pre.in
 --- Python-3.7.0-orig/Makefile.pre.in	2018-07-12 10:22:43.802498400 +0300
 +++ Python-3.7.0/Makefile.pre.in	2018-07-12 10:22:48.966107500 +0300
-@@ -350,6 +350,7 @@
+@@ -354,6 +354,7 @@
  		Python/graminit.o \
  		Python/import.o \
  		Python/importdl.o \
