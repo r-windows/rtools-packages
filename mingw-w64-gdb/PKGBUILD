@@ -14,7 +14,7 @@ groups=("${MINGW_PACKAGE_PREFIX}-toolchain")
 depends=("${MINGW_PACKAGE_PREFIX}-expat"
          "${MINGW_PACKAGE_PREFIX}-libiconv"
          "${MINGW_PACKAGE_PREFIX}-ncurses"
-         "${MINGW_PACKAGE_PREFIX}-python"
+#         "${MINGW_PACKAGE_PREFIX}-python"
          "${MINGW_PACKAGE_PREFIX}-readline"
 #         "${MINGW_PACKAGE_PREFIX}-xxhash"
          "${MINGW_PACKAGE_PREFIX}-zlib")
@@ -94,7 +94,7 @@ build() {
     --with-curses \
     --with-system-gdbinit=${MINGW_PREFIX}/etc/gdbinit \
     --with-system-readline \
-    --with-python=${MINGW_PREFIX}/bin/python \
+    --without-python \
     --with-expat \
     --with-libiconv-prefix=${MINGW_PREFIX} \
     --with-zlib \
