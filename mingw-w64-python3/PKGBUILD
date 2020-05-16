@@ -267,8 +267,8 @@ prepare() {
   # a terminal output.
   # https://github.com/Alexpux/MINGW-packages/issues/2645
   # https://github.com/Alexpux/MINGW-packages/issues/2656
-  #apply_patch_with_msg \
-  #  1700-cygpty-isatty.patch
+  apply_patch_with_msg \
+    1700-cygpty-isatty.patch
 
   # gdbm is broken and as a result breaks dbm/shelve.
   # Don't include it so the dbm.dumb backend is used instead,
@@ -564,7 +564,7 @@ sha256sums=('06a0a9f1bf0d8cd1e4121194d666c4e28ddae4dd54346de6c343206599f02136'
             '6a6e2de169adcf5d9f13b4ae31171f11f29d82fd1dd29b406fd248044b6d3776'
             '56a68e711806062161a1ddf4a7f16f1141bada46ef5f64f526ecda460edf299d'
             'bc8057f54cb377d9fe3cf4e2a7d00980d32249a57471af7f94234f6258486c61'
-            '204b1e14b4a9614182a68074bd66c33a4ae84134210458079d22d61d8526ff1c'
+            '36a833bec1c45dd0e300d68dc22644de1857e044e7ad4e31e77e927f097d8772'
             '0d76ffdca82b978e9fda07e12351cd61f23973af204e65db69ebafce71aa7880'
             '9785322e90050ad9019ce7edd1f3c549ac4ae78d0ed240ca1bffffe9de588d2e'
             'b193ebe9541013e3b223b468159697257df535ed9ac780fb1ef5f990f6251f71'
