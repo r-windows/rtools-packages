@@ -92,7 +92,6 @@ build() {
     --disable-win32-registry \
     --disable-rpath \
     --with-curses \
-    --with-system-gdbinit=${MINGW_PREFIX}/etc/gdbinit \
     --with-system-readline \
     --without-python \
     --with-expat \
