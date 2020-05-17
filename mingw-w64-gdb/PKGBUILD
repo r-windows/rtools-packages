@@ -50,7 +50,7 @@ prepare() {
   patch -p1 -i ${srcdir}/gdb-fix-using-gnu-print.patch
 
   # https://sourceware.org/bugzilla/show_bug.cgi?id=21078
-  patch -p1 -i ${srcdir}/gdb-7.12-dynamic-libs.patch
+  # patch -p1 -i ${srcdir}/gdb-7.12-dynamic-libs.patch
 
   patch -p1 -i ${srcdir}/python-configure-path-fixes.patch
 
