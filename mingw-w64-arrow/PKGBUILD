@@ -3,7 +3,7 @@
 _realname=arrow
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=0.17.0
+pkgver=0.17.1
 pkgrel=1
 pkgdesc="Apache Arrow is a cross-language development platform for in-memory data (mingw-w64)"
 arch=("any")
@@ -19,11 +19,15 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
 options=("staticlibs" "strip" "!buildflags")
 
 # Uncomment to build from master
-#source=("${_realname}"::"git+https://github.com/apache/arrow")
-#source_dir=${_realname}
-source=("${_realname}-${pkgver}.tar.gz"::"http://apache.osuosl.org/arrow/arrow-${pkgver}/apache-arrow-${pkgver}.tar.gz")
+# source=("${_realname}"::"git+https://github.com/apache/arrow")
+# source_dir=${_realname}
+
+# Uncomment to build from rc
+# source=("${_realname}-${pkgver}.tar.gz"::"https://dist.apache.org/repos/dist/dev/arrow/apache-arrow-${pkgver}-rc0/apache-arrow-${pkgver}.tar.gz")
+# This is the official release
+source=("${_realname}-${pkgver}.tar.gz"::"https://www.apache.org/dyn/closer.lua?action=download&filename=arrow/arrow-${pkgver}/apache-arrow-${pkgver}.tar.gz")
 source_dir="apache-${_realname}-${pkgver}"
-sha256sums=("2c46b4c3e1f88aad510214e633a6f4ce459708f3db78cd0daf549a135cbe8e6d")
+sha256sums=("cbc51c343bca08b10f7f1b2ef15cb15057c30e5e9017cfcee18337b7e2da9ea2")
 
 pkgver() {
   cd "$source_dir"

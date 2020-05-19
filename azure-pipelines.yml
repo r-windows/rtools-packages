@@ -16,7 +16,8 @@ jobs:
       - powershell: |
           Import-Module '.\scripts.ps1'
           InstallMSYS64
-          C:\msys64\usr\bin\pacman --noconfirm --ask 20 --sync --refresh --refresh --sysupgrade --sysupgrade
+          C:\msys64\usr\bin\pacman -Syy --noconfirm pacman
+          C:\msys64\usr\bin\pacman -Suu --noconfirm --ask 20
         displayName: Installing msys64 build environment
       - script: |
           rmdir /s /Q "C:\Program Files\Boost"
