@@ -18,6 +18,16 @@ Function InstallMSYS64 {
 
 	Write-Host "Initiating pacman..."
 	C:\msys64\usr\bin\bash.exe --login -c exit
+
+	# Workaround: revert to working version of pacman right now (avoid zstd/runtime breakage) remove when this is fixed upstream
+	Write-Host "Downloading newer pacman..."
+	C:\msys64\usr\bin\pacman.exe -Sy zstd --noconfirm	
+	(New-Object Net.WebClient).DownloadFile('http://repo.msys2.org/msys/x86_64/pacman-5.2.1-6-x86_64.pkg.tar.xz', 'pacman-5.2.1-6-x86_64.pkg.tar.xz')
+	(New-Object Net.WebClient).DownloadFile('http://repo.msys2.org/msys/x86_64/msys2-runtime-3.0.7-6-x86_64.pkg.tar.xz', 'msys2-runtime-3.0.7-6-x86_64.pkg.tar.xz')
+	C:\msys64\usr\bin\pacman.exe -U --noconfirm msys2-runtime-3.0.7-6-x86_64.pkg.tar.xz
+	C:\msys64\usr\bin\pacman.exe -U --noconfirm pacman-5.2.1-6-x86_64.pkg.tar.xz
+	del pacman-5.2.1-6-x86_64.pkg.tar.xz
+	del msys2-runtime-3.0.7-6-x86_64.pkg.tar.xz
 }
 
 ##### Old stuff ###
