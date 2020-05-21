@@ -22,8 +22,10 @@ environment:
 
 build_script:
   - rmdir /s /Q C:\OpenSSL-Win32 C:\OpenSSL-Win64
-  - C:\msys64\usr\bin\pacman -Syy --noconfirm pacman
-  - C:\msys64\usr\bin\pacman -Suu --noconfirm --ask 20
+  - ps: Start-FileDownload 'http://repo.msys2.org/msys/x86_64/pacman-5.2.1-6-x86_64.pkg.tar.xz'
+  - C:\msys64\usr\bin\pacman -U --noconfirm pacman-5.2.1-6-x86_64.pkg.tar.xz
+  - del pacman-5.2.1-6-x86_64.pkg.tar.xz
+  - C:\msys64\usr\bin\pacman -Syu --noconfirm
   - C:\msys64\usr\bin\bash --login -c "$(cygpath ${APPVEYOR_BUILD_FOLDER})/ci-build.sh"
 #  - C:\msys64\usr\bin\bash --login -c "$(cygpath ${APPVEYOR_BUILD_FOLDER})/fullindex.sh"
 
