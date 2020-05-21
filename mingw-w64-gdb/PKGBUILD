@@ -5,7 +5,7 @@ _realname=gdb
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=9.1
-pkgrel=4
+pkgrel=9000
 pkgdesc="GNU Debugger (mingw-w64)"
 arch=('any')
 url="https://www.gnu.org/software/gdb/"
@@ -13,7 +13,7 @@ license=('GPL')
 groups=("${MINGW_PACKAGE_PREFIX}-toolchain")
 depends=("${MINGW_PACKAGE_PREFIX}-expat"
          "${MINGW_PACKAGE_PREFIX}-libiconv"
-         "${MINGW_PACKAGE_PREFIX}-ncurses"
+#         "${MINGW_PACKAGE_PREFIX}-ncurses"
 #         "${MINGW_PACKAGE_PREFIX}-python"
          "${MINGW_PACKAGE_PREFIX}-readline"
 #         "${MINGW_PACKAGE_PREFIX}-xxhash"
@@ -81,6 +81,8 @@ build() {
   CXXFLAGS+=" -I${MINGW_PREFIX}/include/ncurses"
   LDFLAGS+=" -fstack-protector"
 
+  # Jeroen 2020: curses/tui seems to break readline in gdb console
+  # so for now we use --without-curses --disable-tui
   ../${_realname}-${pkgver}/configure \
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST} \
@@ -91,14 +93,14 @@ build() {
     --disable-werror \
     --disable-win32-registry \
     --disable-rpath \
-    --with-curses \
+    --without-curses \
     --with-system-readline \
     --without-python \
     --with-expat \
     --with-libiconv-prefix=${MINGW_PREFIX} \
     --with-zlib \
     --with-lzma \
-    --enable-tui \
+    --disable-tui \
     --enable-source-highlight=no
 
   make
