@@ -1,0 +1,105 @@
+# Maintainer: Jeroen Ooms <jeroen@berkeley.edu>
+
+_realname=r-debug
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=4.0.0
+pkgrel=1
+pkgdesc="The R Programming Language"
+arch=('any')
+depends=("${MINGW_PACKAGE_PREFIX}-tcl"
+         "${MINGW_PACKAGE_PREFIX}-tk"
+         "${MINGW_PACKAGE_PREFIX}-bwidget"
+         "${MINGW_PACKAGE_PREFIX}-tktable")
+makedepends=("${MINGW_PACKAGE_PREFIX}-bzip2"
+             "${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-gcc-fortran"
+             "${MINGW_PACKAGE_PREFIX}-cairo"
+             "${MINGW_PACKAGE_PREFIX}-curl"
+             "${MINGW_PACKAGE_PREFIX}-icu"
+             "${MINGW_PACKAGE_PREFIX}-libtiff"
+             "${MINGW_PACKAGE_PREFIX}-libjpeg"
+             "${MINGW_PACKAGE_PREFIX}-libpng"
+             "${MINGW_PACKAGE_PREFIX}-pcre2"
+             "${MINGW_PACKAGE_PREFIX}-xz"
+             "${MINGW_PACKAGE_PREFIX}-zlib"
+             "texinfo"
+             "texinfo-tex"
+             "sed"
+             "zip"
+             "unzip")
+options=('staticlibs')
+license=("GPL")
+url="https://www.r-project.org/"
+
+# Default source is R-devel (override via $rsource_url)
+install="${_realname}-${CARCH}.install"
+source=(R-source.tar.gz::"${rsource_url:-https://cran.r-project.org/src/base/R-4/R-${pkgver}.tar.gz}"
+    MkRules.local.in
+    https://curl.haxx.se/ca/cacert.pem
+    https://patch-diff.githubusercontent.com/raw/r-devel/r-svn/pull/4.patch
+    https://patch-diff.githubusercontent.com/raw/r-devel/r-svn/pull/5.patch
+    https://patch-diff.githubusercontent.com/raw/r-devel/r-svn/pull/6.patch
+    shortcut.sh)
+
+# Automatic untar fails due to embedded symlinks
+noextract=(R-source.tar.gz)
+
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
+
+prepare() {
+  # Put pdflatex on the path (assume Miktex 2.9)
+  #export PATH="$PATH:/c/progra~1/MiKTeX 2.9/miktex/bin/x64"
+  #pdflatex --version
+
+  # Extract tarball with symlink workarounds
+  builddir="build-${CARCH}"
+  msg2 "Extracting R source tarball..."
+  rm -rf ${builddir} && mkdir -p ${builddir}
+  MSYS="winsymlinks:lnk" tar -xf ${srcdir}/R-source.tar.gz -C ${builddir} --strip-components=1
+  cd ${builddir}
+
+  # Ship the CA bundle
+  cp "${srcdir}/cacert.pem" etc/curl-ca-bundle.crt
+
+  # Do not build docs that require latex
+  sed -i.bak 's/htmldocs docfiles/htmldocs/g' src/gnuwin32/Makefile
+
+  # Add your patches here
+  patch --binary -Np1 -i "${srcdir}/4.patch"
+  patch --binary -Np1 -i "${srcdir}/5.patch"
+  patch --binary -Np1 -i "${srcdir}/6.patch"
+
+  # Mark the build
+  echo "DEBUGGING BUILD" > VERSION-NICK
+}
+
+build() {
+  WIN=${MINGW_PREFIX#/mingw}
+  msg2 "Building ${WIN}-bit R..."
+  cd "${builddir}/src/gnuwin32"
+  sed -e "s|@win@|${WIN}|" "${srcdir}/MkRules.local.in" > MkRules.local
+  make -j1 all cairodevices recommended
+  msg2 "Done building R!"
+
+  # Create the installation bundle
+  touch ../../doc/manual/dummy.pdf ../../doc/manual/rw-FAQ
+  make -j1 -C installer imagedir
+}
+
+package() {
+  mkdir -p "${pkgdir}${MINGW_PREFIX}/bin"
+  mkdir -p "${pkgdir}${MINGW_PREFIX}/lib"
+  cp -R "${builddir}/src/gnuwin32/installer/R-${pkgver}" "${pkgdir}${MINGW_PREFIX}/lib/R"
+  rm -Rf "${pkgdir}${MINGW_PREFIX}/lib/R/tests"
+  rm -Rf "${pkgdir}${MINGW_PREFIX}/lib/R/doc"
+  rm -Rf "${pkgdir}${MINGW_PREFIX}/lib/R/src"
+  cp "${srcdir}/shortcut.sh" "${pkgdir}${MINGW_PREFIX}/bin/R"
+  cp "${srcdir}/shortcut.sh" "${pkgdir}${MINGW_PREFIX}/bin/Rscript"
+}

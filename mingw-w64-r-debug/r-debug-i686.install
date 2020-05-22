@@ -1,0 +1,3 @@
+pre_remove() {
+  rm -Rf /mingw32/lib/R/library
+}
