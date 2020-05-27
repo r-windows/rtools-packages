@@ -27,6 +27,13 @@ optdepends=("${MINGW_PACKAGE_PREFIX}-opencv: ITK-OpenCV bridge"
 source=("${_realname}-${pkgver}.tar.gz"::"https://github.com/InsightSoftwareConsortium/ITK/archive/v${pkgver}.tar.gz")
 sha256sums=('7cd0849f8f6769de8c5e90dd4de019a2c4b447d907b5d2193a95a3ec6267e76d')
 
+prepare() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+
+  patch -Np1 -i "${srcdir}/itk-PKGBUILD.patch"
+
+}
+
 build() {
   CFLAGS+=" ${CPPFLAGS}"
   CXXFLAGS+=" ${CPPFLAGS} -std=gnu++11"
