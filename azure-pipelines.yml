@@ -15,13 +15,16 @@ jobs:
     steps:
       - powershell: |
           Import-Module '.\scripts.ps1'
-          InstallMSYS64
-          C:\msys64\usr\bin\pacman -Suu --noconfirm --ask 20
+          InstallRtoolsExe
         displayName: Installing msys64 build environment
       - script: |
+          SET PATH=c:\rtools40\usr\bin;%PATH%
           rmdir /s /Q "C:\Program Files\Boost"
-          C:\msys64\usr\bin\pacman --noconfirm --needed -S git
-          C:\msys64\usr\bin\bash --login -c "$(cygpath ${SYSTEM_DEFAULTWORKINGDIRECTORY})/ci-build.sh"
+          copy /y pacman.conf C:\rtools40\etc\pacman.conf
+          C:\rtools40\usr\bin\pacman -Syyuu --noconfirm --ask 20
+          C:\rtools40\usr\bin\pacman -Syyuu --noconfirm --ask 20
+          C:\rtools40\usr\bin\pacman --noconfirm --needed -S git ca-certificates
+          C:\rtools40\usr\bin\bash --login -c "$(cygpath ${SYSTEM_DEFAULTWORKINGDIRECTORY})/ci-build.sh"
         displayName: Building Packages
         env:
           BUILD_URL: dummy

@@ -18,14 +18,15 @@ deploy_enabled && mkdir sourcepkg
 # Depending on if this is an rtools40 or msys64 installation:
 if [[ $(cygpath -m /) == *"rtools40"* ]]; then
 	# rtools40: enable upstream msys2 (but keep rtools-base as primary)
-	curl -L https://raw.githubusercontent.com/r-windows/rtools-installer/master/disable-msys.patch | patch -d/ -R -p0
+	echo "Found preinstalled rtools40 compilers!"
 else
-	# msys64: remove preinstalled toolchains and swith to rtools40 repositories
+	# msys64: remove preinstalled toolchains
     pacman --noconfirm -Rcsu $(pacman -Qqe | grep "^mingw-w64-")
     pacman --noconfirm -Rcsu gcc pkg-config
-    cp -f pacman.conf /etc/pacman.conf
 fi
 
+# Enable upstream msys2 repo
+cp -f pacman.conf /etc/pacman.conf
 pacman --noconfirm -Scc
 pacman --noconfirm -Syyu
 pacman --noconfirm --needed -S git base-devel binutils
