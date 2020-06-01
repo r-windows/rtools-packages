@@ -1,0 +1,58 @@
+diff -ru oneTBB-2020.2.orig/build/big_iron.inc oneTBB-2020.2/build/big_iron.inc
+--- oneTBB-2020.2.orig/build/big_iron.inc	2020-03-30 11:38:06.000000000 +0000
++++ oneTBB-2020.2/build/big_iron.inc	2020-05-25 03:47:44.052985000 +0000
+@@ -68,5 +68,6 @@
+ LINK_MALLOC.LIB = $(MALLOC.DLL)
+ MALLOC.DEF =
+ MALLOC_NO_VERSION.DLL =
+-MALLOCPROXY.DLL =
++MALLOCPROXY.DLL = $(LIBPREF)tbbmalloc_proxy$(DEBUG_SUFFIX).$(LIBEXT)
++LINK_MALLOCPROXY.LIB = $(MALLOCPROXY.DLL)
+ MALLOCPROXY.DEF =
+diff -ru oneTBB-2020.2.orig/cmake/TBBInstallConfig.cmake oneTBB-2020.2/cmake/TBBInstallConfig.cmake
+--- oneTBB-2020.2.orig/cmake/TBBInstallConfig.cmake	2020-03-30 11:38:06.000000000 +0000
++++ oneTBB-2020.2/cmake/TBBInstallConfig.cmake	2020-05-25 04:11:48.442924400 +0000
+@@ -104,16 +104,16 @@
+         set(TBB_IMPLIB_RELEASE "")
+         set(TBB_IMPLIB_DEBUG "")
+     elseif (tbb_system_name STREQUAL "Windows")
+-        set(TBB_LIB_PREFIX "")
+-        set(TBB_LIB_EXT "dll")
++        set(TBB_LIB_PREFIX "lib")
++        set(TBB_LIB_EXT "a")
+         # .lib files installed to TBB_LIB_REL_PATH (e.g. <prefix>/lib);
+         # .dll files installed to TBB_BIN_REL_PATH (e.g. <prefix>/bin);
+         # Expand TBB_LIB_REL_PATH here in IMPORTED_IMPLIB property and
+         # redefine it with TBB_BIN_REL_PATH value to properly fill IMPORTED_LOCATION property in TBBConfig.cmake.in template.
+         set(TBB_IMPLIB_RELEASE "
+-                                      IMPORTED_IMPLIB_RELEASE \"\${CMAKE_CURRENT_LIST_DIR}/${TBB_LIB_REL_PATH}/\${_tbb_component}.lib\"")
++                                      IMPORTED_IMPLIB_RELEASE \"\${CMAKE_CURRENT_LIST_DIR}/${TBB_LIB_REL_PATH}/lib\${_tbb_component}.a\"")
+         set(TBB_IMPLIB_DEBUG "
+-                                      IMPORTED_IMPLIB_DEBUG \"\${CMAKE_CURRENT_LIST_DIR}/${TBB_LIB_REL_PATH}/\${_tbb_component}_debug.lib\"")
++                                      IMPORTED_IMPLIB_DEBUG \"\${CMAKE_CURRENT_LIST_DIR}/${TBB_LIB_REL_PATH}/lib\${_tbb_component}_debug.a\"")
+         set(TBB_LIB_REL_PATH ${TBB_BIN_REL_PATH})
+     else()
+         message(FATAL_ERROR "Unsupported OS name: ${tbb_system_name}")
+diff -ru oneTBB-2020.2.orig/cmake/TBBMakeConfig.cmake oneTBB-2020.2/cmake/TBBMakeConfig.cmake
+--- oneTBB-2020.2.orig/cmake/TBBMakeConfig.cmake	2020-03-30 11:38:06.000000000 +0000
++++ oneTBB-2020.2/cmake/TBBMakeConfig.cmake	2020-05-25 03:47:31.256371500 +0000
+@@ -91,14 +91,14 @@
+ 
+         if (tbb_MK_CONFIG_FOR_SOURCE)
+             set(TBB_IMPLIB_RELEASE "
+-                                  IMPORTED_IMPLIB_RELEASE \"${tbb_MK_TBB_RELEASE_DIR}/\${_tbb_component}.lib\"")
++                                  IMPORTED_IMPLIB_RELEASE \"${tbb_MK_TBB_RELEASE_DIR}/lib\${_tbb_component}.a\"")
+             set(TBB_IMPLIB_DEBUG "
+-                                  IMPORTED_IMPLIB_DEBUG \"${tbb_MK_TBB_DEBUG_DIR}/\${_tbb_component}_debug.lib\"")
++                                  IMPORTED_IMPLIB_DEBUG \"${tbb_MK_TBB_DEBUG_DIR}/lib\${_tbb_component}_debug.a\"")
+         else()
+             set(TBB_IMPLIB_RELEASE "
+-                                  IMPORTED_IMPLIB_RELEASE \"\${_tbb_root}/lib/\${_tbb_arch_subdir}/\${_tbb_compiler_subdir}/\${_tbb_component}.lib\"")
++                                  IMPORTED_IMPLIB_RELEASE \"\${_tbb_root}/lib/\${_tbb_arch_subdir}/\${_tbb_compiler_subdir}/lib\${_tbb_component}.a\"")
+             set(TBB_IMPLIB_DEBUG "
+-                                  IMPORTED_IMPLIB_DEBUG \"\${_tbb_root}/lib/\${_tbb_arch_subdir}/\${_tbb_compiler_subdir}/\${_tbb_component}_debug.lib\"")
++                                  IMPORTED_IMPLIB_DEBUG \"\${_tbb_root}/lib/\${_tbb_arch_subdir}/\${_tbb_compiler_subdir}/lib\${_tbb_component}_debug.a\"")
+         endif()
+ 
+         # Note: multiline variable
+Only in oneTBB-2020.2/cmake: TBBMakeConfig.cmake.orig

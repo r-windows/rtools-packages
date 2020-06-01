@@ -18,7 +18,7 @@ license=('Apache')
 source=(${_realname}-${pkgver}.tar.gz::https://github.com/intel/tbb/archive/v${pkgver}.tar.gz
         "tbb-cmake-config.patch")
 sha256sums=('4804320e1e6cbe3a5421997b52199e3c1a3829b2ecb6489641da4b8e32faf500'
-            'f5aa6bb43a69a46a0cec4d2b3e84e7e6e102b3becd1b58d496e8ee035829dc85')
+            '04e35ebbb6ff21e309d056c8d4fd3b051897c25409aa54a026dd21b66be76076')
 
 prepare () {
   cd ${srcdir}/oneTBB-${pkgver}
@@ -38,7 +38,7 @@ build() {
     parch=ia32
   fi
   unset LDFLAGS
-  mingw32-make arch=${parch} tbb_os=windows runtime=mingw compiler=gcc stdver=c++11
+  mingw32-make arch=${parch} tbb_os=windows runtime=mingw compiler=gcc stdver=c++11 extra_inc=big_iron.inc
   
   mkdir build-cmake && cd build-cmake
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
@@ -51,7 +51,7 @@ build() {
     -DTBB_VERSION_FILE=${srcdir}/oneTBB-${pkgver}/include/tbb/tbb_stddef.h \
     -DINC_REL_PATH=../../../include \
     -DLIB_REL_PATH=../../../lib \
-    -DBIN_REL_PATH=../../../bin \
+    -DBIN_REL_PATH=../../../lib \
     -P ${srcdir}/oneTBB-${pkgver}/cmake/tbb_config_installer.cmake
 }
 
@@ -69,7 +69,7 @@ package() {
   cp -a include/tbb "${pkgdir}${MINGW_PREFIX}"/include
   install -d "${pkgdir}${MINGW_PREFIX}"/bin
   #install -m755 build/windows_${parch}_gcc_mingw_debug/*.dll "${pkgdir}${MINGW_PREFIX}"/bin
-  install -m755 build/windows_${parch}_gcc_mingw_release/*.dll "${pkgdir}${MINGW_PREFIX}"/bin
+  #install -m755 build/windows_${parch}_gcc_mingw_release/*.dll "${pkgdir}${MINGW_PREFIX}"/bin
   install -d "${pkgdir}${MINGW_PREFIX}"/lib
   #install -m755 build/windows_${parch}_gcc_mingw_debug/*.a "${pkgdir}${MINGW_PREFIX}"/lib
   install -m755 build/windows_${parch}_gcc_mingw_release/*.a "${pkgdir}${MINGW_PREFIX}"/lib
