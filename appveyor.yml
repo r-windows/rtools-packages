@@ -18,8 +18,8 @@ environment:
       PACMAN_REPOSITORY: mingw64
       BINTRAY_PACKAGE: mingw64
 
-#matrix:
-#  fast_finish: true
+matrix:
+  fast_finish: true
 
 build_script:
   - rmdir /s /Q C:\OpenSSL-Win32 C:\OpenSSL-Win64
