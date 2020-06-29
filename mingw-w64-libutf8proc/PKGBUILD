@@ -1,0 +1,55 @@
+# Maintainer: J. Peter Mugaas <jpmugaas@suddenlink.net>
+
+_basname=utf8proc
+_realname=lib${_basname}
+pkgbase=mingw-w64-${_realname}
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+pkgver=2.4.0
+pkgrel=2
+pkgdesc="C library for processing UTF-8 encoded Unicode strings (mingw-w64)"
+arch=('any')
+url='https://github.com/JuliaStrings/utf8proc'
+license=('custom')
+makedepends=("${MINGW_PACKAGE_PREFIX}-cmake")
+options=('strip' 'staticlibs')
+source=("${_basname}-${pkgver}.tar.gz"::"https://github.com/JuliaStrings/utf8proc/archive/v$pkgver.tar.gz"
+        'libutf8proc.pc.in')
+sha256sums=('b2e5d547c1d94762a6d03a7e05cea46092aab68636460ff8648f1295e2cdfbd7'
+            '0fc49af11c4e77675d307bcee442c3582db805f7c17c32284d0620131b1007d1')
+
+build() {
+  sed -e "s#@VERSION@#${pkgver}#" -e "s#/usr#${MINGW_PREFIX}#" libutf8proc.pc.in > libutf8proc.pc
+
+  declare -a extra_config
+  if check_option "debug" "n"; then
+    extra_config+=("-DCMAKE_BUILD_TYPE=Release")
+  else
+    extra_config+=("-DCMAKE_BUILD_TYPE=Debug")
+  fi
+
+  [[ -d "${srcdir}"/build-${CARCH}-static ]] && rm -rf "${srcdir}"/build-${CARCH}-static
+  mkdir -p "${srcdir}"/build-${CARCH}-static && cd "${srcdir}"/build-${CARCH}-static
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+    ${MINGW_PREFIX}/bin/cmake \
+      -G'MSYS Makefiles' \
+      -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+      "${extra_config[@]}" \
+      -DBUILD_SHARED_LIBS=OFF \
+      ../${_basname}-${pkgver}
+
+  make
+}
+
+#check() {
+#  cd "${srcdir}"/build-${CARCH}
+#  make check
+#}
+
+package() {
+  cd "${srcdir}"/build-${CARCH}-static
+  make install DESTDIR="${pkgdir}"
+
+  install -Dm644 "${srcdir}/libutf8proc.pc" "${pkgdir}${MINGW_PREFIX}/lib/pkgconfig/libutf8proc.pc"
+
+  install -Dm644 ${srcdir}/${_basname}-${pkgver}/LICENSE.md ${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE
+}
