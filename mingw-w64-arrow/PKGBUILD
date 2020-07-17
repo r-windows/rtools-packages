@@ -3,7 +3,7 @@
 _realname=arrow
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=0.17.1
+pkgver=1.0.0
 pkgrel=1
 pkgdesc="Apache Arrow is a cross-language development platform for in-memory data (mingw-w64)"
 arch=("any")
@@ -23,11 +23,11 @@ options=("staticlibs" "strip" "!buildflags")
 # source_dir=${_realname}
 
 # Uncomment to build from rc
-# source=("${_realname}-${pkgver}.tar.gz"::"https://dist.apache.org/repos/dist/dev/arrow/apache-arrow-${pkgver}-rc0/apache-arrow-${pkgver}.tar.gz")
+source=("${_realname}-${pkgver}.tar.gz"::"https://dist.apache.org/repos/dist/dev/arrow/apache-arrow-${pkgver}-rc1/apache-arrow-${pkgver}.tar.gz")
 # This is the official release
-source=("${_realname}-${pkgver}.tar.gz"::"https://www.apache.org/dyn/closer.lua?action=download&filename=arrow/arrow-${pkgver}/apache-arrow-${pkgver}.tar.gz")
+# source=("${_realname}-${pkgver}.tar.gz"::"https://www.apache.org/dyn/closer.lua?action=download&filename=arrow/arrow-${pkgver}/apache-arrow-${pkgver}.tar.gz")
 source_dir="apache-${_realname}-${pkgver}"
-sha256sums=("cbc51c343bca08b10f7f1b2ef15cb15057c30e5e9017cfcee18337b7e2da9ea2")
+sha256sums=("4df75f3e544c5ffd964e3c2536c41799debfc84677db4925bd064c4ba178ca0c")
 
 pkgver() {
   cd "$source_dir"
@@ -58,14 +58,17 @@ build() {
     -DARROW_HDFS=OFF \
     -DARROW_JEMALLOC=OFF \
     -DARROW_JSON=ON \
+    -DARROW_MIMALLOC=ON \
     -DARROW_PARQUET=ON \
     -DARROW_USE_GLOG=OFF \
     -DARROW_WITH_LZ4=ON \
     -DARROW_WITH_SNAPPY=ON \
+    -DARROW_WITH_UTF8PROC=OFF \
     -DARROW_WITH_ZLIB=ON \
     -DARROW_WITH_ZSTD=ON \
     -DCMAKE_BUILD_TYPE="release" \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+    -DCMAKE_UNITY_BUILD=ON \
     -DThrift_ROOT="${MINGW_PREFIX}"
 
   make
