@@ -29,11 +29,16 @@ source=("${_realname}-${pkgver}.tar.gz"::"https://github.com/InsightSoftwareCons
 sha256sums=('7cd0849f8f6769de8c5e90dd4de019a2c4b447d907b5d2193a95a3ec6267e76d'
             '87bdbadfecaa35710bb2219016d100e0be0b24eeb4790d4a67c23e0296cdd9f0')
 
+# Helper macros to help make tasks easier #
+apply_patch_with_msg() {
+  msg2 "Applying $1"
+  patch -Nbp1 -i "${srcdir}"/$1
+}
+
 prepare() {
   cd "${srcdir}/${_realname}-${pkgver}"
 
-  patch -Np1 -i "${srcdir}/itk-PKGBUILD.patch"
-
+  apply_patch_with_msg itk-PKGBUILD.patch
 }
 
 build() {
