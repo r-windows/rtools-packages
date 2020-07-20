@@ -23,13 +23,11 @@ options=("staticlibs" "strip" "!buildflags")
 # source_dir=${_realname}
 
 # Uncomment to build from rc
-source=("${_realname}-${pkgver}.tar.gz"::"https://dist.apache.org/repos/dist/dev/arrow/apache-arrow-${pkgver}-rc1/apache-arrow-${pkgver}.tar.gz"
-        "mimalloc-vista.patch")
+source=("${_realname}-${pkgver}.tar.gz"::"https://dist.apache.org/repos/dist/dev/arrow/apache-arrow-${pkgver}-rc1/apache-arrow-${pkgver}.tar.gz")
 # This is the official release
 # source=("${_realname}-${pkgver}.tar.gz"::"https://www.apache.org/dyn/closer.lua?action=download&filename=arrow/arrow-${pkgver}/apache-arrow-${pkgver}.tar.gz")
 source_dir="apache-${_realname}-${pkgver}"
-sha256sums=("4df75f3e544c5ffd964e3c2536c41799debfc84677db4925bd064c4ba178ca0c"
-            "SKIP")
+sha256sums=("4df75f3e544c5ffd964e3c2536c41799debfc84677db4925bd064c4ba178ca0c")
 
 pkgver() {
   cd "$source_dir"
@@ -38,7 +36,6 @@ pkgver() {
 
 prepare() {
   pushd ${source_dir}
-  patch -p1 -i ${srcdir}/mimalloc-vista.patch
   popd
 }
 
