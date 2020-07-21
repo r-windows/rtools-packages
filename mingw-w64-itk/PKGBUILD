@@ -10,6 +10,7 @@ arch=('any')
 url='https://www.itk.org/'
 license=('Apache')
 depends=("${MINGW_PACKAGE_PREFIX}-expat"
+          "${MINGW_PACKAGE_PREFIX}-fftw"
           "${MINGW_PACKAGE_PREFIX}-hdf5"
           "${MINGW_PACKAGE_PREFIX}-libjpeg"
           "${MINGW_PACKAGE_PREFIX}-libpng"
@@ -18,10 +19,8 @@ depends=("${MINGW_PACKAGE_PREFIX}-expat"
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-opencv")
-source=("${_realname}-${pkgver}.tar.gz"::"https://github.com/InsightSoftwareConsortium/ITK/archive/v${pkgver}.tar.gz"
-        itk-PKGBUILD.patch)
-sha256sums=('7cd0849f8f6769de8c5e90dd4de019a2c4b447d907b5d2193a95a3ec6267e76d'
-            '87bdbadfecaa35710bb2219016d100e0be0b24eeb4790d4a67c23e0296cdd9f0')
+source=("${_realname}-${pkgver}.tar.gz"::"https://github.com/InsightSoftwareConsortium/ITK/archive/v${pkgver}.tar.gz")
+sha256sums=('7cd0849f8f6769de8c5e90dd4de019a2c4b447d907b5d2193a95a3ec6267e76d')
 
 # Helper macros to help make tasks easier #
 apply_patch_with_msg() {
@@ -63,7 +62,7 @@ build() {
     -DVNL_CONFIG_THREAD_SAFE=ON \
     -DITK_USE_GPU=OFF \
     -DITK_USE_SYSTEM_EXPAT=ON \
-    -DITK_USE_SYSTEM_FFTW=OFF \
+    -DITK_USE_SYSTEM_FFTW=ON \
     -DUSE_FFTWD=ON \
     -DUSE_FFTWF=ON \
     -DITK_USE_SYSTEM_HDF5=ON \
