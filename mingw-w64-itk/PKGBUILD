@@ -16,8 +16,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-expat"
           "${MINGW_PACKAGE_PREFIX}-libtiff"
           "${MINGW_PACKAGE_PREFIX}-zlib")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
-             "${MINGW_PACKAGE_PREFIX}-cmake"
-             "${MINGW_PACKAGE_PREFIX}-opencv")
+             "${MINGW_PACKAGE_PREFIX}-cmake")
 source=("${_realname}-${pkgver}.tar.gz"::"https://github.com/InsightSoftwareConsortium/ITK/archive/v${pkgver}.tar.gz")
 sha256sums=('7cd0849f8f6769de8c5e90dd4de019a2c4b447d907b5d2193a95a3ec6267e76d')
 
