@@ -1,0 +1,51 @@
+name: main
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        include: [
+          { msystem: mingw64 },
+          { msystem: mingw32 }
+        ]
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.msystem }}
+          install: git
+          update: true
+
+      - name: CI-Build
+        run: MINGW_INSTALLS=${{ matrix.msystem }} ./ci-build.sh
+        env:
+          BUILD_URL: dummy
+          DEPLOY_PROVIDER: bintray
+          BINTRAY_TARGET: rtools
+          BINTRAY_REPOSITORY: ${{ matrix.msystem }}
+          PACMAN_REPOSITORY: ${{ matrix.msystem }}
+          BINTRAY_PACKAGE: ${{ matrix.msystem }}
+
+      - name: "Upload binary package"
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.msystem }}-repo
+          path: artifacts/
+
+      - name: "Upload source package"
+        uses: actions/upload-artifact@v2
+        with:
+          name: sources
+          path: sourcepkg/
