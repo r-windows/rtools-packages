@@ -25,9 +25,11 @@ options=("staticlibs" "strip" "!buildflags")
 # Uncomment to build from rc
 # source=("${_realname}-${pkgver}.tar.gz"::"https://dist.apache.org/repos/dist/dev/arrow/apache-arrow-${pkgver}-rc1/apache-arrow-${pkgver}.tar.gz")
 # This is the official release
-source=("${_realname}-${pkgver}.tar.gz"::"https://downloads.apache.org/arrow/arrow-${pkgver}/apache-arrow-${pkgver}.tar.gz")
+source=("${_realname}-${pkgver}.tar.gz"::"https://downloads.apache.org/arrow/arrow-${pkgver}/apache-arrow-${pkgver}.tar.gz"
+        "cmake-ipo.patch")
 source_dir="apache-${_realname}-${pkgver}"
-sha256sums=("86ddb9feb48203a5aaf9cc4f2827525e20a2ca4d7239e492af17e74532ccf243")
+sha256sums=("86ddb9feb48203a5aaf9cc4f2827525e20a2ca4d7239e492af17e74532ccf243"
+            "SKIP")
 
 pkgver() {
   cd "$source_dir"
@@ -36,6 +38,7 @@ pkgver() {
 
 prepare() {
   pushd ${source_dir}
+  patch -p1 -i ${srcdir}/cmake-ipo.patch
   popd
 }
 
@@ -69,6 +72,7 @@ build() {
     -DCMAKE_BUILD_TYPE="release" \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
     -DCMAKE_UNITY_BUILD=ON \
+    -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=TRUE \
     -DThrift_ROOT="${MINGW_PREFIX}"
 
   make
