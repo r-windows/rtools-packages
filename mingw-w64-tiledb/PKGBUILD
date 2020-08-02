@@ -5,10 +5,10 @@ pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=2.0.8
 pkgrel=1
-pkgdesc="Apache Arrow is a cross-language development platform for in-memory data (mingw-w64)"
+pkgdesc="Storage management library for sparse and dense array data (mingw-w64)"
 arch=("any")
-url="https://arrow.apache.org/"
-license=("Apache-2.0")
+url="https://tiledb.com/"
+license=("MIT")
 depends=("${MINGW_PACKAGE_PREFIX}-lz4"
          "${MINGW_PACKAGE_PREFIX}-intel-tbb"
          "${MINGW_PACKAGE_PREFIX}-bzip2"
@@ -16,19 +16,11 @@ depends=("${MINGW_PACKAGE_PREFIX}-lz4"
          "${MINGW_PACKAGE_PREFIX}-zstd")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-gcc")
-options=("staticlibs" "strip" "!buildflags")
+options=("staticlibs" "strip")
 
-# Uncomment to build from master
-# source=("${_realname}"::"git+https://github.com/apache/arrow")
-# source_dir=${_realname}
-
-# Uncomment to build from rc
-# source=("${_realname}-${pkgver}.tar.gz"::"https://dist.apache.org/repos/dist/dev/arrow/apache-arrow-${pkgver}-rc1/apache-arrow-${pkgver}.tar.gz")
-# This is the official release
 source=(${_realname}-${pkgver}.tar.gz::"https://github.com/TileDB-Inc/TileDB/archive/${pkgver}.tar.gz"
         "winfixes.patch")
-source_dir="apache-${_realname}-${pkgver}"
-sha256sums=("SKIP"
+sha256sums=("827a38b5c676a6cf6db716885f9c9b026e5f02109ce0e30f7145182da1e9fa23"
             "SKIP")
 noextract=(${_realname}-${pkgver}.tar.gz)
 
@@ -44,26 +36,30 @@ prepare() {
 }
 
 build() {
-  [[ -d "${srcdir}"/build-${CARCH}-static ]] && rm -rf "${srcdir}"/build-${CARCH}-static
-  mkdir -p "${srcdir}"/build-${CARCH}-static && cd "${srcdir}"/build-${CARCH}-static
+  [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
+  mkdir -p ${srcdir}/build-${MINGW_CHOST} && cd ${srcdir}/build-${MINGW_CHOST}
 
   if [ "$CARCH" == "i686" ]; then
   export CFLAGS="-mfpmath=sse -msse2"
   export CXXFLAGS="-mfpmath=sse -msse2"
-  #export LIBS="-lBcrypt -lShlwapi"
   fi
-  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
-    ${MINGW_PREFIX}/bin/cmake \
-      -G'MSYS Makefiles' \
-      -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
-      -DCMAKE_BUILD_TYPE=Release \
-      -DTILEDB_STATIC=ON \
-      ../${_realname}-${pkgver}
 
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+  ${MINGW_PREFIX}/bin/cmake.exe \
+    -G"MSYS Makefiles" \
+    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DTILEDB_STATIC=ON \
+  ../${_realname}-${pkgver}
   make
+  make -C tiledb
 }
 
 package() {
-  cd "${srcdir}"/build-${CARCH}-static
-  make -C tiledb install DESTDIR="${pkgdir}"
+  cd ${srcdir}/build-${MINGW_CHOST}
+  sed -i.bak "s#set(CMAKE_INSTALL_PREFIX.*#set(CMAKE_INSTALL_PREFIX \"${MINGW_PREFIX}\")#" tiledb/cmake_install.cmake
+  make  DESTDIR="${pkgdir}" -C tiledb install
+  rm -Rf "${pkgdir}${MINGW_PREFIX}/bin"
+  rm  "${pkgdir}${MINGW_PREFIX}/lib/libtiledb.dll.a"
 }
