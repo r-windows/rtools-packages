@@ -1,0 +1,69 @@
+# Maintainer: Kouhei Sutou <kou@clear-code.com>
+
+_realname=tiledb
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=2.0.8
+pkgrel=1
+pkgdesc="Apache Arrow is a cross-language development platform for in-memory data (mingw-w64)"
+arch=("any")
+url="https://arrow.apache.org/"
+license=("Apache-2.0")
+depends=("${MINGW_PACKAGE_PREFIX}-lz4"
+         "${MINGW_PACKAGE_PREFIX}-intel-tbb"
+         "${MINGW_PACKAGE_PREFIX}-bzip2"
+         "${MINGW_PACKAGE_PREFIX}-zlib"
+         "${MINGW_PACKAGE_PREFIX}-zstd")
+makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
+             "${MINGW_PACKAGE_PREFIX}-gcc")
+options=("staticlibs" "strip" "!buildflags")
+
+# Uncomment to build from master
+# source=("${_realname}"::"git+https://github.com/apache/arrow")
+# source_dir=${_realname}
+
+# Uncomment to build from rc
+# source=("${_realname}-${pkgver}.tar.gz"::"https://dist.apache.org/repos/dist/dev/arrow/apache-arrow-${pkgver}-rc1/apache-arrow-${pkgver}.tar.gz")
+# This is the official release
+source=(${_realname}-${pkgver}.tar.gz::"https://github.com/TileDB-Inc/TileDB/archive/${pkgver}.tar.gz"
+        "winfixes.patch")
+source_dir="apache-${_realname}-${pkgver}"
+sha256sums=("SKIP"
+            "SKIP")
+noextract=(${_realname}-${pkgver}.tar.gz)
+
+prepare() {
+  MSYS="winsymlinks:lnk" tar -xf ${srcdir}/${_realname}-${pkgver}.tar.gz
+  cd "${srcdir}/${_realname}-${pkgver}"
+  patch -p1 -i ${srcdir}/winfixes.patch
+  #sed -i.bak 's/WIN32/MSVC/g' CMakeLists.txt
+  #sed -i.bak 's/ERROR/ERROR_TILEDB/g' tiledb/sm/misc/logger.h
+  #sed -i.bak 's/LOG_ERROR_TILEDB/LOG_ERROR/g' tiledb/sm/misc/logger.h
+  #sed -i.bak 's/{0}/{0,0,0,0,0}/g' tiledb/sm/filesystem/win.cc
+  #sed -i.bak 's/_length, NULL/_length, 0/g' tiledb/sm/filesystem/win.cc
+}
+
+build() {
+  [[ -d "${srcdir}"/build-${CARCH}-static ]] && rm -rf "${srcdir}"/build-${CARCH}-static
+  mkdir -p "${srcdir}"/build-${CARCH}-static && cd "${srcdir}"/build-${CARCH}-static
+
+  if [ "$CARCH" == "i686" ]; then
+  export CFLAGS="-mfpmath=sse -msse2"
+  export CXXFLAGS="-mfpmath=sse -msse2"
+  #export LIBS="-lBcrypt -lShlwapi"
+  fi
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+    ${MINGW_PREFIX}/bin/cmake \
+      -G'MSYS Makefiles' \
+      -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DTILEDB_STATIC=ON \
+      ../${_realname}-${pkgver}
+
+  make
+}
+
+package() {
+  cd "${srcdir}"/build-${CARCH}-static
+  make -C tiledb install DESTDIR="${pkgdir}"
+}
