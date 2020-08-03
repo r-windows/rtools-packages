@@ -28,11 +28,6 @@ prepare() {
   MSYS="winsymlinks:lnk" tar -xf ${srcdir}/${_realname}-${pkgver}.tar.gz
   cd "${srcdir}/${_realname}-${pkgver}"
   patch -p1 -i ${srcdir}/winfixes.patch
-  #sed -i.bak 's/WIN32/MSVC/g' CMakeLists.txt
-  #sed -i.bak 's/ERROR/ERROR_TILEDB/g' tiledb/sm/misc/logger.h
-  #sed -i.bak 's/LOG_ERROR_TILEDB/LOG_ERROR/g' tiledb/sm/misc/logger.h
-  #sed -i.bak 's/{0}/{0,0,0,0,0}/g' tiledb/sm/filesystem/win.cc
-  #sed -i.bak 's/_length, NULL/_length, 0/g' tiledb/sm/filesystem/win.cc
 }
 
 build() {
@@ -44,7 +39,7 @@ build() {
   export CXXFLAGS="-mfpmath=sse -msse2"
   fi
 
-  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+  export MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX="
   ${MINGW_PREFIX}/bin/cmake.exe \
     -G"MSYS Makefiles" \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
@@ -58,7 +53,6 @@ build() {
 
 package() {
   cd ${srcdir}/build-${MINGW_CHOST}
-  sed -i.bak "s#set(CMAKE_INSTALL_PREFIX.*#set(CMAKE_INSTALL_PREFIX \"${MINGW_PREFIX}\")#" tiledb/cmake_install.cmake
   make  DESTDIR="${pkgdir}" -C tiledb install
   rm -Rf "${pkgdir}${MINGW_PREFIX}/bin"
   rm  "${pkgdir}${MINGW_PREFIX}/lib/libtiledb.dll.a"
