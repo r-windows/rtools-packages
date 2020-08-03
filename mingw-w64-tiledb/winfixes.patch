@@ -1,6 +1,6 @@
-diff -aurp TileDB-2.0.8/CMakeLists.txt TileDB-2.0.8-new/CMakeLists.txt
---- TileDB-2.0.8/CMakeLists.txt	2020-07-31 17:44:09.000000000 +0000
-+++ TileDB-2.0.8-new/CMakeLists.txt	2020-08-02 21:28:07.898031100 +0000
+diff -aurp TileDB-2.0.8-orig/CMakeLists.txt TileDB-2.0.8/CMakeLists.txt
+--- TileDB-2.0.8-orig/CMakeLists.txt	2020-07-31 17:44:09.000000000 +0000
++++ TileDB-2.0.8/CMakeLists.txt	2020-08-03 10:27:02.968624700 +0000
 @@ -110,12 +110,12 @@ option(TILEDB_LOG_OUTPUT_ON_FAILURE "If
  
  set(TILEDB_INSTALL_LIBDIR "" CACHE STRING "If non-empty, install TileDB library to this directory instead of CMAKE_INSTALL_LIBDIR.")
@@ -25,10 +25,9 @@ diff -aurp TileDB-2.0.8/CMakeLists.txt TileDB-2.0.8-new/CMakeLists.txt
    # We disable some warnings that are not present in gcc/clang -Wall:
    #   C4101: unreferenced local variable
    #   C4146: unary minus operator applied to unsigned type
-Only in TileDB-2.0.8-new: CMakeLists.txt.bak
-diff -aurp TileDB-2.0.8/tiledb/CMakeLists.txt TileDB-2.0.8-new/tiledb/CMakeLists.txt
---- TileDB-2.0.8/tiledb/CMakeLists.txt	2020-07-31 17:44:09.000000000 +0000
-+++ TileDB-2.0.8-new/tiledb/CMakeLists.txt	2020-08-02 22:39:10.397604600 +0000
+diff -aurp TileDB-2.0.8-orig/tiledb/CMakeLists.txt TileDB-2.0.8/tiledb/CMakeLists.txt
+--- TileDB-2.0.8-orig/tiledb/CMakeLists.txt	2020-07-31 17:44:09.000000000 +0000
++++ TileDB-2.0.8/tiledb/CMakeLists.txt	2020-08-03 10:31:20.952320100 +0000
 @@ -427,9 +427,9 @@ if (WIN32)
    endif()
  
@@ -42,9 +41,28 @@ diff -aurp TileDB-2.0.8/tiledb/CMakeLists.txt TileDB-2.0.8-new/tiledb/CMakeLists
    endforeach()
  endif()
  
-diff -aurp TileDB-2.0.8/tiledb/sm/filesystem/win.cc TileDB-2.0.8-new/tiledb/sm/filesystem/win.cc
---- TileDB-2.0.8/tiledb/sm/filesystem/win.cc	2020-07-31 17:44:09.000000000 +0000
-+++ TileDB-2.0.8-new/tiledb/sm/filesystem/win.cc	2020-08-02 21:28:07.960476700 +0000
+@@ -729,9 +729,9 @@ if (NOT WIN32)
+ endif()
+ 
+ # Override CMAKE_INSTALL_LIBDIR value from GNUInstallDirs if specified.
+-if (NOT TILEDB_INSTALL_LIBDIR STREQUAL "")
+-  set(CMAKE_INSTALL_LIBDIR "${TILEDB_INSTALL_LIBDIR}" CACHE STRING "" FORCE)
+-endif()
++#if (NOT TILEDB_INSTALL_LIBDIR STREQUAL "")
++#  set(CMAKE_INSTALL_LIBDIR "${TILEDB_INSTALL_LIBDIR}" CACHE STRING "" FORCE)
++#endif()
+ 
+ # List of targets to install.
+ set(TILEDB_INSTALL_TARGETS
+@@ -807,4 +807,4 @@ configure_file(
+         @ONLY
+ )
+ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tiledb.pc
+-        DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/pkgconfig)
++        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+diff -aurp TileDB-2.0.8-orig/tiledb/sm/filesystem/win.cc TileDB-2.0.8/tiledb/sm/filesystem/win.cc
+--- TileDB-2.0.8-orig/tiledb/sm/filesystem/win.cc	2020-07-31 17:44:09.000000000 +0000
++++ TileDB-2.0.8/tiledb/sm/filesystem/win.cc	2020-08-03 10:27:02.968624700 +0000
 @@ -245,7 +245,7 @@ Status Win::filelock_lock(
      return LOG_STATUS(Status::IOError(
          std::string("Failed to lock '" + filename + "'; CreateFile error")));
@@ -99,10 +117,9 @@ diff -aurp TileDB-2.0.8/tiledb/sm/filesystem/win.cc TileDB-2.0.8-new/tiledb/sm/f
        S_OK) {
      LOG_STATUS(Status::IOError(std::string(
          "Failed to convert URI '" + uri_with_scheme + "' to path.")));
-Only in TileDB-2.0.8-new/tiledb/sm/filesystem: win.cc.bak
-diff -aurp TileDB-2.0.8/tiledb/sm/misc/logger.h TileDB-2.0.8-new/tiledb/sm/misc/logger.h
---- TileDB-2.0.8/tiledb/sm/misc/logger.h	2020-07-31 17:44:09.000000000 +0000
-+++ TileDB-2.0.8-new/tiledb/sm/misc/logger.h	2020-08-02 21:28:07.944865300 +0000
+diff -aurp TileDB-2.0.8-orig/tiledb/sm/misc/logger.h TileDB-2.0.8/tiledb/sm/misc/logger.h
+--- TileDB-2.0.8-orig/tiledb/sm/misc/logger.h	2020-07-31 17:44:09.000000000 +0000
++++ TileDB-2.0.8/tiledb/sm/misc/logger.h	2020-08-03 10:27:02.968624700 +0000
 @@ -48,7 +48,7 @@ class Logger {
    /** Verbosity level. */
    enum class Level : char {
@@ -139,4 +156,3 @@ diff -aurp TileDB-2.0.8/tiledb/sm/misc/logger.h TileDB-2.0.8-new/tiledb/sm/misc/
          return logger_->should_log(spdlog::level::err);
      }
    }
-Only in TileDB-2.0.8-new/tiledb/sm/misc: logger.h.bak
