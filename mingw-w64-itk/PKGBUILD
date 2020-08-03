@@ -1,0 +1,98 @@
+# Contributor: Sergey Popov <popov.sa@gmail.com>
+
+_realname=itk
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=5.1.0
+pkgrel=1
+pkgdesc='An open-source C++ toolkit for medical image processing (mingw-w64)'
+arch=('any')
+url='https://www.itk.org/'
+license=('Apache')
+depends=("${MINGW_PACKAGE_PREFIX}-expat"
+          "${MINGW_PACKAGE_PREFIX}-hdf5"
+          "${MINGW_PACKAGE_PREFIX}-libjpeg"
+          "${MINGW_PACKAGE_PREFIX}-libpng"
+          "${MINGW_PACKAGE_PREFIX}-libtiff"
+          "${MINGW_PACKAGE_PREFIX}-zlib")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-cmake")
+source=("${_realname}-${pkgver}.tar.gz"::"https://github.com/InsightSoftwareConsortium/ITK/archive/v${pkgver}.tar.gz")
+sha256sums=('7cd0849f8f6769de8c5e90dd4de019a2c4b447d907b5d2193a95a3ec6267e76d')
+
+# Helper macros to help make tasks easier #
+apply_patch_with_msg() {
+  msg2 "Applying $1"
+  patch -Nbp1 -i "${srcdir}"/$1
+}
+
+prepare() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+
+  # apply_patch_with_msg itk-PKGBUILD.patch
+}
+
+build() {
+  CFLAGS+=" ${CPPFLAGS}"
+  CXXFLAGS+=" ${CPPFLAGS}"
+
+  local -a _extra_config
+  if [[ "$CARCH" = 'i686' ]]; then
+    _extra_config=('-DITK_USE_64BITS_IDS=OFF'
+                   '-DVNL_CONFIG_ENABLE_SSE2_ROUNDING=OFF')
+  fi
+  if [[ "$CARCH" = 'x86_64' ]]; then
+    _extra_config=('-DITK_USE_64BITS_IDS=ON'
+                   '-DVNL_CONFIG_ENABLE_SSE2_ROUNDING=ON')
+  fi
+
+  [[ -d "${srcdir}/build-${CARCH}" ]] && rm -rf "${srcdir}/build-${CARCH}"
+  mkdir -p "${srcdir}/build-${CARCH}" && cd "${srcdir}/build-${CARCH}"
+
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+  "${MINGW_PREFIX}/bin/cmake.exe" \
+    -G"MSYS Makefiles" \
+    -DCMAKE_INSTALL_PREFIX="${MINGW_PREFIX}" \
+    -DBUILD_DOCUMENTATION=OFF \
+    -DBUILD_EXAMPLES=OFF \
+    -DBUILD_TESTING=OFF \
+    -DITK_LEGACY_REMOVE=OFF \
+    -DVNL_CONFIG_THREAD_SAFE=ON \
+    -DITK_USE_GPU=OFF \
+    -DITK_USE_SYSTEM_EXPAT=ON \
+    -DITK_USE_SYSTEM_FFTW=OFF \
+    -DUSE_FFTWD=ON \
+    -DUSE_FFTWF=ON \
+    -DITK_USE_SYSTEM_HDF5=ON \
+    -DITK_USE_SYSTEM_JPEG=ON \
+    -DITK_USE_SYSTEM_PNG=ON \
+    -DITK_USE_SYSTEM_TIFF=ON \
+    -DITK_USE_SYSTEM_ZLIB=ON \
+    -DITK_USE_SYSTEM_GDCM=OFF \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DITK_SKIP_PATH_LENGTH_CHECKS=1 \
+    "${_extra_config[@]}" \
+    "../${_realname}-${pkgver}"
+
+  make
+}
+
+package() {
+  cd "${srcdir}/build-${CARCH}"
+  make DESTDIR=${pkgdir} install
+
+  local PREFIX_DEPS=$(cygpath -am ${MINGW_PREFIX})
+
+  pushd "${pkgdir}${MINGW_PREFIX}" > /dev/null
+  sed -s "s|${PREFIX_DEPS}|\${_IMPORT_PREFIX}|g" \
+    -i "lib/cmake/${_realname}-${pkgver%.*}/ITKTargets-release.cmake"
+  find "lib/cmake/${_realname}-${pkgver%.*}" -name '*.cmake' -exec \
+    sed -s "s|${PREFIX_DEPS}|\${ITK_INSTALL_PREFIX}|g" -i {} \;
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/LICENSE" "share/licenses/${_realname}/LICENSE"
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/NOTICE" "share/licenses/${_realname}/NOTICE"
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/Modules/ThirdParty/KWSys/src/KWSys/Copyright.txt" \
+    "share/licenses/${_realname}/KWSys/Copyright.txt"
+  popd > /dev/null
+}
+
