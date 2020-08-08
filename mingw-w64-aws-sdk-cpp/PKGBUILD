@@ -1,0 +1,55 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+_realname=aws-sdk-cpp
+pkgbase=mingw-w64-${_realname}
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+pkgver=1.7.365
+pkgrel=1
+pkgdesc="AWS SDK for C++ (mingw-w64)"
+arch=('any')
+url="https://github.com/aws/aws-sdk-cpp"
+license=('Apache-2.0')
+makedepends=("${MINGW_PACKAGE_PREFIX}-cmake")
+options=('strip' 'staticlibs')
+source=("${_realname}-${pkgver}.tar.gz::https://github.com/aws/aws-sdk-cpp/archive/${pkgver}.tar.gz"
+        "https://patch-diff.githubusercontent.com/raw/aws/aws-sdk-cpp/pull/1333.diff"
+        "WinHttp-missing-flags.patch"
+        "Patch-cmake-submodules.patch"
+        "BuildAwsCCommon.patch"        
+        "BuildAwsChecksums.patch")
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
+
+prepare() {
+  cd "${_realname}-${pkgver}"
+  patch -p1 -i "${srcdir}/1333.diff"
+  patch -p1 -i "${srcdir}/WinHttp-missing-flags.patch"
+  patch -p1 -i "${srcdir}/Patch-cmake-submodules.patch"
+}
+
+build() {
+  [[ -d "${srcdir}"/build-${CARCH} ]] && rm -rf "${srcdir}"/build-${CARCH}
+  mkdir -p "${srcdir}"/build-${CARCH} && cd "${srcdir}"/build-${CARCH}
+  export CFLAGS="-D_WIN32_WINNT=0x0600"
+  export CXXFLAGS="-D_WIN32_WINNT=0x0600"
+  export MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=;-DCMAKE_PREFIX_PATH=;-DCMAKE_INSTALL_RPATH=;-DCMAKE_PREFIX_RPATH="
+    ${MINGW_PREFIX}/bin/cmake \
+      -G'MSYS Makefiles' \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_SHARED_LIBS=OFF \
+      -DSTATIC_LINKING=1 \
+      -DBUILD_ONLY="s3;core;config" \
+      -ENABLE_UNITY_BUILD=ON \
+      ../${_realname}-${pkgver}
+
+  make
+}
+
+package() {
+  cd "${srcdir}"/build-${CARCH}
+  make install DESTDIR="${pkgdir}"
+}
