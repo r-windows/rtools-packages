@@ -36,14 +36,15 @@ build() {
   mkdir -p "${srcdir}"/build-${CARCH} && cd "${srcdir}"/build-${CARCH}
   export CFLAGS="-D_WIN32_WINNT=0x0600"
   export CXXFLAGS="-D_WIN32_WINNT=0x0600"
-  export MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=;-DCMAKE_PREFIX_PATH=;-DCMAKE_INSTALL_RPATH=;-DCMAKE_PREFIX_RPATH="
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=;-DCMAKE_PREFIX_PATH=" \
     ${MINGW_PREFIX}/bin/cmake \
       -G'MSYS Makefiles' \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_SHARED_LIBS=OFF \
       -DSTATIC_LINKING=1 \
       -DBUILD_ONLY="s3;core;config" \
-      -ENABLE_UNITY_BUILD=ON \
+      -DENABLE_UNITY_BUILD=ON \
+      -DAUTORUN_UNIT_TESTS=OFF \
       ../${_realname}-${pkgver}
 
   make
