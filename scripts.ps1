@@ -58,14 +58,16 @@ Function InstallRtoolsZip {
 
 # Don't use installer when: (1) architecture doesn't match host (2) Dir C:/rtools40 already exists
 Function InstallRtoolsExe {
-	Write-Host "Installing ${RTOOLS_EXE}..." -ForegroundColor Cyan
-	$tmp = "$($env:USERPROFILE)\${RTOOLS_EXE}"	
-	(New-Object Net.WebClient).DownloadFile($RTOOLS_MIRROR + $RTOOLS_EXE, $tmp)
-	Start-Process -FilePath $tmp -ArgumentList /VERYSILENT -NoNewWindow -Wait
-#	CheckExitCode "Failed to install ${RTOOLS_EXE}"
-	Write-Host "Installation of ${RTOOLS_EXE} done!" -ForegroundColor Green
+	if ( Test-Path C:\rtools40 ) {
+		Write-Host "Existing rtools40 found. Skipping installation."
+	} else {
+		Write-Host "Installing ${RTOOLS_EXE}..." -ForegroundColor Cyan
+		$tmp = "$($env:USERPROFILE)\${RTOOLS_EXE}"
+		(New-Object Net.WebClient).DownloadFile($RTOOLS_MIRROR + $RTOOLS_EXE, $tmp)
+		Start-Process -FilePath $tmp -ArgumentList /VERYSILENT -NoNewWindow -Wait
+		Write-Host "Installation of ${RTOOLS_EXE} done!" -ForegroundColor Green
+	}
 }
-
 
 function bash($command) {
     Write-Host $command -NoNewline
