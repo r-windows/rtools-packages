@@ -16,8 +16,10 @@ source=("${_realname}-${pkgver}.tar.gz::https://github.com/aws/aws-sdk-cpp/archi
         "WinHttp-missing-flags.patch"
         "Patch-cmake-submodules.patch"
         "BuildAwsCCommon.patch"        
-        "BuildAwsChecksums.patch")
+        "BuildAwsChecksums.patch"
+        "vista.patch")
 sha256sums=('SKIP'
+            'SKIP'
             'SKIP'
             'SKIP'
             'SKIP'

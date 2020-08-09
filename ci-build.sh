@@ -58,7 +58,7 @@ export PKG_CONFIG="/${MINGW_INSTALLS}/bin/pkg-config --static"
 export PKGEXT='.pkg.tar.xz'
 
 for package in "${packages[@]}"; do
-    execute 'Building binary' makepkg-mingw --noconfirm --noprogressbar --skippgpcheck --syncdeps --rmdeps --cleanbuild
+    execute 'Building binary' makepkg-mingw --noconfirm --noprogressbar --skippgpcheck --nocheck --syncdeps --rmdeps --cleanbuild
     execute 'Building source' makepkg --noconfirm --noprogressbar --skippgpcheck --allsource --config '/etc/makepkg_mingw64.conf'
     execute 'List output contents' ls -ltr
     execute 'Installing' yes:pacman --noprogressbar --upgrade *.pkg.tar.xz

@@ -5,7 +5,7 @@ diff -aurp aws-sdk-cpp-1.7.288-orig/third-party/cmake/BuildAwsCCommon.cmake aws-
          GIT_TAG ${AWS_C_COMMON_TAG}
          BUILD_IN_SOURCE 0
          UPDATE_COMMAND ""
-+        PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/../../../BuildAwsCCommon.patch
++        PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/../../../BuildAwsCCommon.patch && patch -p1 < ${CMAKE_SOURCE_DIR}/../../../vista.patch
          CMAKE_ARGS
          -DCMAKE_INSTALL_PREFIX=${AWS_DEPS_INSTALL_DIR}
          -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
