@@ -13,6 +13,7 @@ jobs:
           { msystem: mingw64 },
           { msystem: mingw32 }
         ]
+      fail-fast: false
     defaults:
       run:
         shell: msys2 {0}
