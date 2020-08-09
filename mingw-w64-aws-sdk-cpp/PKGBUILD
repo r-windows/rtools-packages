@@ -41,6 +41,7 @@ build() {
       -G'MSYS Makefiles' \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_SHARED_LIBS=OFF \
+      -DCMAKE_INSTALL_PREFIX="c:${MINGW_PREFIX}" \
       -DSTATIC_LINKING=1 \
       -DBUILD_ONLY="s3;core;config" \
       -DENABLE_UNITY_BUILD=ON \
@@ -53,4 +54,9 @@ build() {
 package() {
   cd "${srcdir}"/build-${CARCH}
   make install DESTDIR="${pkgdir}"
+}
+
+check() {
+  cd "${srcdir}"/build-${CARCH}
+  ./aws-cpp-sdk-core-tests/aws-cpp-sdk-core-tests.exe
 }
