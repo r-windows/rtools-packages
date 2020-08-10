@@ -9,7 +9,8 @@ pkgdesc="Storage management library for sparse and dense array data (mingw-w64)"
 arch=("any")
 url="https://tiledb.com/"
 license=("MIT")
-depends=("${MINGW_PACKAGE_PREFIX}-lz4"
+depends=("${MINGW_PACKAGE_PREFIX}-aws-sdk-cpp"
+         "${MINGW_PACKAGE_PREFIX}-lz4"
          "${MINGW_PACKAGE_PREFIX}-intel-tbb"
          "${MINGW_PACKAGE_PREFIX}-bzip2"
          "${MINGW_PACKAGE_PREFIX}-zlib"
@@ -46,6 +47,7 @@ build() {
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_BUILD_TYPE=Release \
     -DTILEDB_STATIC=ON \
+    -DTILEDB_S3=ON \
   ../${_realname}-${pkgver}
   make
   make -C tiledb
