@@ -12,13 +12,13 @@ license=('Apache-2.0')
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake")
 options=('strip' 'staticlibs')
 source=("${_realname}-${pkgver}.tar.gz::https://github.com/aws/aws-sdk-cpp/archive/${pkgver}.tar.gz"
-        "https://patch-diff.githubusercontent.com/raw/aws/aws-sdk-cpp/pull/1333.diff"
+        "aws-sdk-cpp-pr-1333.patch"
         "WinHttp-missing-flags.patch"
         "Patch-cmake-submodules.patch"
         "BuildAwsCCommon.patch"        
         "BuildAwsChecksums.patch"
         "vista.patch")
-sha256sums=('SKIP'
+sha256sums=('95e3f40efaea7b232741bfb76c54c9507c02631edfc198720b0e84be0ebb5e9d'
             'SKIP'
             'SKIP'
             'SKIP'
@@ -28,7 +28,7 @@ sha256sums=('SKIP'
 
 prepare() {
   cd "${_realname}-${pkgver}"
-  patch -p1 -i "${srcdir}/1333.diff"
+  patch -p1 -i "${srcdir}/aws-sdk-cpp-pr-1333.patch"
   patch -p1 -i "${srcdir}/WinHttp-missing-flags.patch"
   patch -p1 -i "${srcdir}/Patch-cmake-submodules.patch"
 }
