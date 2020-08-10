@@ -45,7 +45,7 @@ build() {
       -DBUILD_SHARED_LIBS=OFF \
       -DCMAKE_INSTALL_PREFIX="c:${MINGW_PREFIX}" \
       -DSTATIC_LINKING=1 \
-      -DBUILD_ONLY="s3;core;config" \
+      -DBUILD_ONLY="config;s3;transfer" \
       -DENABLE_UNITY_BUILD=ON \
       -DAUTORUN_UNIT_TESTS=OFF \
       ../${_realname}-${pkgver}
