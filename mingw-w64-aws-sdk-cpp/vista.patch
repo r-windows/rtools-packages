@@ -1,0 +1,41 @@
+diff -aurp AwsCCommon-orig/source/windows/mutex.c AwsCCommon/source/windows/mutex.c
+--- AwsCCommon-orig/source/windows/mutex.c	2020-08-09 21:50:20.796090700 +0000
++++ AwsCCommon/source/windows/mutex.c	2020-08-09 21:53:54.706305900 +0000
+@@ -42,7 +42,7 @@ int aws_mutex_lock(struct aws_mutex *mut
+     AcquireSRWLockExclusive(AWSMUTEX_TO_WINDOWS(mutex));
+     return AWS_OP_SUCCESS;
+ }
+-
++/*
+ int aws_mutex_try_lock(struct aws_mutex *mutex) {
+     AWS_PRECONDITION(mutex && mutex->initialized);
+     BOOL res = TryAcquireSRWLockExclusive(AWSMUTEX_TO_WINDOWS(mutex));
+@@ -53,7 +53,7 @@ int aws_mutex_try_lock(struct aws_mutex
+ 
+     return aws_raise_error(AWS_ERROR_MUTEX_TIMEOUT);
+ }
+-
++*/
+ int aws_mutex_unlock(struct aws_mutex *mutex) {
+     AWS_PRECONDITION(mutex && mutex->initialized);
+     ReleaseSRWLockExclusive(AWSMUTEX_TO_WINDOWS(mutex));
+diff -aurp AwsCCommon-orig/source/windows/rw_lock.c AwsCCommon/source/windows/rw_lock.c
+--- AwsCCommon-orig/source/windows/rw_lock.c	2020-08-09 21:50:20.796090700 +0000
++++ AwsCCommon/source/windows/rw_lock.c	2020-08-09 21:53:25.004361400 +0000
+@@ -43,6 +43,7 @@ int aws_rw_lock_wlock(struct aws_rw_lock
+     AcquireSRWLockExclusive(AWSSRW_TO_WINDOWS(lock));
+     return AWS_OP_SUCCESS;
+ }
++/*
+ 
+ int aws_rw_lock_try_rlock(struct aws_rw_lock *lock) {
+ 
+@@ -61,7 +62,7 @@ int aws_rw_lock_try_wlock(struct aws_rw_
+ 
+     return aws_raise_error(AWS_ERROR_MUTEX_TIMEOUT);
+ }
+-
++*/
+ int aws_rw_lock_runlock(struct aws_rw_lock *lock) {
+ 
+     ReleaseSRWLockShared(AWSSRW_TO_WINDOWS(lock));
