@@ -40,20 +40,7 @@ diff -aurp TileDB-2.0.8-orig/tiledb/CMakeLists.txt TileDB-2.0.8/tiledb/CMakeList
 +    target_link_libraries(TILEDB_CORE_OBJECTS_ILIB INTERFACE -l${LIB})
    endforeach()
  endif()
- 
-@@ -729,9 +729,9 @@ if (NOT WIN32)
- endif()
- 
- # Override CMAKE_INSTALL_LIBDIR value from GNUInstallDirs if specified.
--if (NOT TILEDB_INSTALL_LIBDIR STREQUAL "")
--  set(CMAKE_INSTALL_LIBDIR "${TILEDB_INSTALL_LIBDIR}" CACHE STRING "" FORCE)
--endif()
-+#if (NOT TILEDB_INSTALL_LIBDIR STREQUAL "")
-+#  set(CMAKE_INSTALL_LIBDIR "${TILEDB_INSTALL_LIBDIR}" CACHE STRING "" FORCE)
-+#endif()
- 
- # List of targets to install.
- set(TILEDB_INSTALL_TARGETS
+
 @@ -807,4 +807,4 @@ configure_file(
          @ONLY
  )
