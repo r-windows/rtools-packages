@@ -60,3 +60,8 @@ package() {
   rm -Rf "${pkgdir}${MINGW_PREFIX}/bin"
   rm  "${pkgdir}${MINGW_PREFIX}/lib/libtiledb.dll.a"
 }
+
+check (){
+  cd ${srcdir}/build-${MINGW_CHOST}
+  make check
+}
