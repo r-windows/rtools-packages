@@ -49,6 +49,7 @@ build() {
     -DTILEDB_STATIC=ON \
     -DTILEDB_TBB=OFF \
     -DTILEDB_S3=ON \
+    -DTILEDB_WERROR=OFF \
   ../${_realname}-${pkgver}
   make
   make -C tiledb
