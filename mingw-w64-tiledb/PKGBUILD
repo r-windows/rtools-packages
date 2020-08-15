@@ -11,7 +11,6 @@ url="https://tiledb.com/"
 license=("MIT")
 depends=("${MINGW_PACKAGE_PREFIX}-aws-sdk-cpp"
          "${MINGW_PACKAGE_PREFIX}-lz4"
-         "${MINGW_PACKAGE_PREFIX}-intel-tbb"
          "${MINGW_PACKAGE_PREFIX}-bzip2"
          "${MINGW_PACKAGE_PREFIX}-zlib"
          "${MINGW_PACKAGE_PREFIX}-zstd")
@@ -48,6 +47,7 @@ build() {
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_BUILD_TYPE=Release \
     -DTILEDB_STATIC=ON \
+    -DTILEDB_TBB=OFF \
     -DTILEDB_S3=ON \
   ../${_realname}-${pkgver}
   make
