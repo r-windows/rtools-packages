@@ -45,7 +45,7 @@ build() {
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_SHARED_LIBS=OFF \
       -DCMAKE_INSTALL_PREFIX="${MINGW_PREFIX}" \
-      -DBUILD_ONLY="config;s3;transfer" \
+      -DBUILD_ONLY="config;s3;transfer;identity-management;sts" \
       -DENABLE_UNITY_BUILD=ON \
       -DAUTORUN_UNIT_TESTS=OFF \
       ../${_realname}-${pkgver}
@@ -60,5 +60,5 @@ package() {
 
 check() {
   cd "${srcdir}"/build-${CARCH}
-  ./aws-cpp-sdk-core-tests/aws-cpp-sdk-core-tests.exe
+  #./aws-cpp-sdk-core-tests/aws-cpp-sdk-core-tests.exe
 }
