@@ -57,6 +57,8 @@ Include = /etc/pacman.d/mirrorlist.msys
 
 Now update the runtime system: open the rtools40 shell and run `pacman -Syu`. In some cases, this may first upgrade `msys-runtime` or `bash` which you are currently using, which causes the terminal window to freeze after the upgrade. Don't worry, this is expected and happens only once. Close the window and restart the rtools40 shell, and run `pacman -Syu` again.
 
+__Update (July 2020):__ upstream msys2 has changed their signing keys. If you see PGP key errors after enabling msys2 repositories, follow the steps from the [msys2 website](https://www.msys2.org/news/#2020-06-29-new-packagers).
+
 Once the msys repo is enabled, you can install extra tools needed to build libraries and other software. For example you can install autoconf or vim and so on:
 
 ```
