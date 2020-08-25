@@ -48,6 +48,7 @@ prepare() {
   echo "Preparing GN source"
   cd "${srcdir}"/gn
   git apply ${srcdir}/0002-gn-ninja-deletes-objs-workaround.patch
+  sed -i.bak 's/-lkernel32/-lpsapi/g' build/gen.py
   python build/gen.py --out-path=out/${CARCH} --platform=mingw
 
   echo "Patching v8 source"
