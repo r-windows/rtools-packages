@@ -19,6 +19,7 @@ source=("bare-clones/gn::git+https://gn.googlesource.com/gn#tag=5da62d5e9d0f10cb
         "bare-clones/googletest::git+https://chromium.googlesource.com/external/github.com/google/googletest.git#commit=10b1902d893ea8cc43c69541d70868f91af3646b"
         "bare-clones/jinja2::git+https://chromium.googlesource.com/chromium/src/third_party/jinja2.git#commit=b41863e42637544c2941b574c7877d3e1f663e25"
         "bare-clones/markupsafe::git+https://chromium.googlesource.com/chromium/src/third_party/markupsafe.git#commit=8f45f5cfa0009d2a70589bcda0349b8cb2b72783"
+        "no-guard-cf-nolongjmp-in-mingw.patch"
         "0000-add-mingw-main-code-changes.patch"
         "0001-add-mingw-toolchain.patch"
         "0002-gn-ninja-deletes-objs-workaround.patch"
@@ -29,6 +30,7 @@ source=("bare-clones/gn::git+https://gn.googlesource.com/gn#tag=5da62d5e9d0f10cb
         "v8.pc"
         "gn-fixes.patch")
 sha256sums=('SKIP'
+            'SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
@@ -60,6 +62,7 @@ prepare() {
   echo "Patching build directory"
   cd "${srcdir}"/build
   git apply ${srcdir}/0001-add-mingw-toolchain.patch
+  git apply ${srcdir}/no-guard-cf-nolongjmp-in-mingw.patch
   python "${srcdir}"/build/util/lastchange.py -o "${srcdir}"/build/util/LASTCHANGE
   rm -rf "${srcdir}"/v8-${pkgver}/build
   ln -sf "${srcdir}"/build "${srcdir}"/v8-${pkgver}

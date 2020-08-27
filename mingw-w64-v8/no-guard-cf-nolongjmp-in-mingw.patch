@@ -1,0 +1,13 @@
+diff --git a/config/win/BUILD.gn b/config/win/BUILD.gn
+index 82494667b..9283980d7 100644
+--- a/config/win/BUILD.gn
++++ b/config/win/BUILD.gn
+@@ -369,7 +369,7 @@ config("cfi_linker") {
+   # ASan and CFG leads to slow process startup. Chromium's test runner uses
+   # lots of child processes, so this means things are really slow. Disable CFG
+   # for now. https://crbug.com/846966
+-  if (!is_debug && !is_component_build && !is_asan) {
++  if (!is_debug && !is_component_build && !is_asan && !is_mingw) {
+     # Turn on CFG, except for longjmp because it relies on compiler support
+     # which clang doesn't have yet.
+     ldflags = [ "/guard:cf,nolongjmp" ]
