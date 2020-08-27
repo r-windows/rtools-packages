@@ -128,7 +128,7 @@ build() {
   ninja -C out/${CARCH}
 
   cd "${srcdir}"/v8-${pkgver}
-  "${srcdir}"/gn/out/${CARCH}/gn gen "${PWD}/out/${BUILDTYPE}-${CARCH}" --args="is_debug=false v8_static_library=true enable_nacl=false symbol_level=0 clang_use_chrome_plugins=false is_component_build=false target_cpu=\"${_arch}\" is_clang=false use_custom_libcxx=false v8_enable_verify_heap=false v8_enable_i18n_support=false v8_use_external_startup_data=false"
+  "${srcdir}"/gn/out/${CARCH}/gn gen "${PWD}/out/${BUILDTYPE}-${CARCH}" --args="is_debug=false v8_static_library=true enable_nacl=false symbol_level=0 clang_use_chrome_plugins=false is_component_build=false target_cpu=\"${_arch}\" is_clang=false use_custom_libcxx=false v8_enable_verify_heap=false v8_enable_i18n_support=false v8_use_external_startup_data=false v8_monolith=true"
   ninja -C "${PWD}/out/${BUILDTYPE}-${CARCH}" :v8_libbase :v8_libplatform :v8 :d8 :torque :torque-language-server :mksnapshot
 }
 
