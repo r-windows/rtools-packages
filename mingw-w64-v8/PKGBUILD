@@ -19,7 +19,6 @@ source=("bare-clones/gn::git+https://gn.googlesource.com/gn#tag=5da62d5e9d0f10cb
         "bare-clones/googletest::git+https://chromium.googlesource.com/external/github.com/google/googletest.git#commit=10b1902d893ea8cc43c69541d70868f91af3646b"
         "bare-clones/jinja2::git+https://chromium.googlesource.com/chromium/src/third_party/jinja2.git#commit=b41863e42637544c2941b574c7877d3e1f663e25"
         "bare-clones/markupsafe::git+https://chromium.googlesource.com/chromium/src/third_party/markupsafe.git#commit=8f45f5cfa0009d2a70589bcda0349b8cb2b72783"
-        "no-guard-cf-nolongjmp-in-mingw.patch"
         "0000-add-mingw-main-code-changes.patch"
         "0001-add-mingw-toolchain.patch"
         "0002-gn-ninja-deletes-objs-workaround.patch"
@@ -30,7 +29,6 @@ source=("bare-clones/gn::git+https://gn.googlesource.com/gn#tag=5da62d5e9d0f10cb
         "v8.pc"
         "gn-fixes.patch")
 sha256sums=('SKIP'
-            'SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
@@ -52,7 +50,7 @@ prepare() {
   echo "Preparing GN source"
   cd "${srcdir}"/gn
   git apply ${srcdir}/0002-gn-ninja-deletes-objs-workaround.patch
-  patch -p1 -i ${srcdir}/gn-fixes.patch
+  git apply ${srcdir}/gn-fixes.patch
   python build/gen.py --out-path=out/${CARCH} --platform=mingw
 
   echo "Patching v8 source"
@@ -62,7 +60,6 @@ prepare() {
   echo "Patching build directory"
   cd "${srcdir}"/build
   git apply ${srcdir}/0001-add-mingw-toolchain.patch
-  git apply ${srcdir}/no-guard-cf-nolongjmp-in-mingw.patch
   python "${srcdir}"/build/util/lastchange.py -o "${srcdir}"/build/util/LASTCHANGE
   rm -rf "${srcdir}"/v8-${pkgver}/build
   ln -sf "${srcdir}"/build "${srcdir}"/v8-${pkgver}
@@ -122,13 +119,21 @@ build() {
       _arch=x64
     ;;
   esac
+  case ${BUILDTYPE} in
+    Release)
+      _is_debug=false
+    ;;
+    Debug)
+      _is_debug=true
+    ;;
+  esac
 
   export DEPOT_TOOLS_WIN_TOOLCHAIN=0
   cd "${srcdir}"/gn
   ninja -C out/${CARCH}
 
   cd "${srcdir}"/v8-${pkgver}
-  "${srcdir}"/gn/out/${CARCH}/gn gen "${PWD}/out/${BUILDTYPE}-${CARCH}" --args="is_debug=false v8_static_library=true enable_nacl=false symbol_level=0 clang_use_chrome_plugins=false is_component_build=false target_cpu=\"${_arch}\" is_clang=false use_custom_libcxx=false v8_enable_verify_heap=false v8_enable_i18n_support=false v8_use_external_startup_data=false v8_monolith=true"
+  "${srcdir}"/gn/out/${CARCH}/gn gen "${PWD}/out/${BUILDTYPE}-${CARCH}" --args="is_debug=${_is_debug} is_component_build=true target_cpu=\"${_arch}\" is_clang=false use_custom_libcxx=false v8_enable_verify_heap=false icu_use_data_file=false enable_iterator_debugging=${_is_debug} v8_use_external_startup_data=true"
   ninja -C "${PWD}/out/${BUILDTYPE}-${CARCH}" :v8_libbase :v8_libplatform :v8 :d8 :torque :torque-language-server :mksnapshot
 }
 
