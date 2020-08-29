@@ -25,6 +25,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Move Checkout
+        run: |
+          Copy-Item -Path ".\temp" -Destination "C:\_" -Recurse
+
       - uses: msys2/setup-msys2@v2
         with:
           msystem: ${{ matrix.msystem }}
@@ -32,7 +36,9 @@ jobs:
           update: true
 
       - name: CI-Build
-        run: MINGW_INSTALLS=${{ matrix.msystem }} ./ci-build.sh
+        run: |
+          cd /C/_
+          MINGW_INSTALLS=${{ matrix.msystem }} ./ci-build.sh
         env:
           BUILD_URL: dummy
           DEPLOY_PROVIDER: bintray
@@ -41,14 +47,14 @@ jobs:
           PACMAN_REPOSITORY: ${{ matrix.msystem }}
           BINTRAY_PACKAGE: ${{ matrix.msystem }}
 
-      - name: "Upload binary package"
+      - name: "Upload binaries"
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.msystem }}-repo
-          path: artifacts/
+          name: ${{ matrix.msystem }}-packages
+          path: C:/_/artifacts/*.pkg.tar.*
 
-      - name: "Upload source package"
+      - name: "Upload sources"
         uses: actions/upload-artifact@v2
         with:
           name: sources
-          path: sourcepkg/
+          path: C:/_/artifacts/*.src.tar.*
