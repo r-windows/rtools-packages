@@ -20,7 +20,7 @@ source=("bare-clones/gn::git+https://gn.googlesource.com/gn#tag=5da62d5e9d0f10cb
         "bare-clones/jinja2::git+https://chromium.googlesource.com/chromium/src/third_party/jinja2.git#commit=b41863e42637544c2941b574c7877d3e1f663e25"
         "bare-clones/markupsafe::git+https://chromium.googlesource.com/chromium/src/third_party/markupsafe.git#commit=8f45f5cfa0009d2a70589bcda0349b8cb2b72783"
         "0000-add-mingw-main-code-changes.patch"
-        "0001-add-mingw-toolchain.patch"
+        "build.patch"
         "0002-gn-ninja-deletes-objs-workaround.patch"
         "icu.gn"
         "zlib.gn"
@@ -37,7 +37,7 @@ sha256sums=('SKIP'
             'SKIP'
             'SKIP'
             'b167aaa26ad03b301740221a6964173110e4015788da3d444aca35a8920daac4'
-            '01a051d1b356d319bb4932e774e72ac1916362c2027ce3bb639eca0368ff0f1e'
+            'SKIP'
             'b831576af25b275fca72851ec275c9d21bee0be29b4eb973a3e2a2580deac003'
             '84719a160ec84ec1112bd46787f48bff2b12d642964bc6598e5b4e958ad911b5'
             '9ea4fc33630cf7e3af1e5b086909f85e5e37ab952a52568047608b9ceb891d7f'
@@ -59,7 +59,7 @@ prepare() {
 
   echo "Patching build directory"
   cd "${srcdir}"/build
-  git apply ${srcdir}/0001-add-mingw-toolchain.patch
+  git apply ${srcdir}/build.patch
   python "${srcdir}"/build/util/lastchange.py -o "${srcdir}"/build/util/LASTCHANGE
   rm -rf "${srcdir}"/v8-${pkgver}/build
   ln -sf "${srcdir}"/build "${srcdir}"/v8-${pkgver}
