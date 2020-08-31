@@ -1,5 +1,6 @@
 # Maintainer: Alexey Pavlov <alexpux@gmail.com>
 # Contributor: Mario Emmenlauer <memmenlauer@biodataanalysis.de>
+# Rtools version: Kirill Müller <krlmlr@mailbox.org>
 
 _realname=ccache
 pkgbase=mingw-w64-${_realname}
