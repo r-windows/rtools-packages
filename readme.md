@@ -78,6 +78,3 @@ To speed up repetitive builds during packaging, install and enable `ccache`:
 1. mingw32
     1. Install it in the mingw32 shell with `pacman -S mingw-w64-i686-ccache`
     1. Edit `/etc/makepkg_mingw32.conf`, add a line containing `PATH="/mingw32/lib/ccache/bin:${PATH}"`
-1. msys2
-    1. Install it in the rtools shell with `pacman -S ccache`
-    1. Edit `/etc/makepkg.conf`, add a line containing `PATH="/usr/lib/ccache/bin:${PATH}"`
