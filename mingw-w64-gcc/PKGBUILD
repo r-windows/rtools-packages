@@ -127,6 +127,11 @@ prepare() {
   apply_patch_with_msg \
     pr88568.patch
 
+  # ensure libbacktrace works with SEH
+  # https://github.com/gcc-mirror/gcc/pull/48
+  apply_patch_with_msg \
+    krlmlr-libbacktrace-seh.patch
+
   # do not expect ${prefix}/mingw symlink - this should be superceded by
   # 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
   sed -i 's/${prefix}\/mingw\//${prefix}\//g' configure
