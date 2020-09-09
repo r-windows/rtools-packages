@@ -2,6 +2,7 @@
 # Contributor: Alexey Borzenkov <snaury@gmail.com>
 # Contributor: Ray Donnelly <mingw.android@gmail.com>
 # Contributor: Renato Silva <br.renatosilva@gmail.com>
+# Contributor: Kirill Müller <krlmlr@mailbox.org>
 # Rtools: Jeroen Ooms <jeroenooms@gmail.com>
 
 _realname=gcc
@@ -11,7 +12,7 @@ pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=8.3.0
 _srcver=8.3.0
 #_srcver=8.3.0-RC-20190215
-pkgrel=9501
+pkgrel=9502
 pkgdesc="GCC for the MinGW-w64"
 arch=('any')
 url="https://gcc.gnu.org"
@@ -50,7 +51,7 @@ source=("https://ftp.gnu.org/gnu/gcc/${_realname}-${pkgver}/${_realname}-${pkgve
         0130-libstdc++-in-out.patch
         0140-gcc-8.2.0-diagnostic-color.patch
         pr88568.patch
-        pr96948.patch)
+        0150-libbacktrace-seh.patch)
 sha256sums=('ea71adc1c3d86330874b8df19611424b143308f0d6612d542472600532c96d2d'
             'SKIP'
             'dea2bbad4967280910559c6a11b865aeec19cab34647fb5894cb498b24b14462'
@@ -69,7 +70,7 @@ sha256sums=('ea71adc1c3d86330874b8df19611424b143308f0d6612d542472600532c96d2d'
             'ba2f77db605577d08e4079f08a7a9556c975b5416be8610c5be31e915637feb7'
             'e467f0ac68b349de826c79b00a45c5ad9e7c5a55d06b9b9fa7afd94c597f6376'
             '4bbcb71f7e9e25af641e7abcb12ea4cd7a5ade3a82739414c65259afcbf21256'
-            '89b4d7257b2666d74f10eab38276f9537f14918a0c00e7254117e6cf56d01515')
+            '88c1d65e763e631ad49f9a077ed631f4acac9ef4732e2818ccddaefc883b1811')
 
 _threads="posix"
 
@@ -128,9 +129,9 @@ prepare() {
     pr88568.patch
 
   # ensure libbacktrace works with SEH
-  # https://github.com/gcc-mirror/gcc/pull/48
+  # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96948
   apply_patch_with_msg \
-    pr96948.patch
+    0150-libbacktrace-seh.patch
 
   # do not expect ${prefix}/mingw symlink - this should be superceded by
   # 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
