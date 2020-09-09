@@ -50,7 +50,7 @@ source=("https://ftp.gnu.org/gnu/gcc/${_realname}-${pkgver}/${_realname}-${pkgve
         0130-libstdc++-in-out.patch
         0140-gcc-8.2.0-diagnostic-color.patch
         pr88568.patch
-        krlmlr-libbacktrace-seh.patch)
+        pr96948.patch)
 sha256sums=('ea71adc1c3d86330874b8df19611424b143308f0d6612d542472600532c96d2d'
             'SKIP'
             'dea2bbad4967280910559c6a11b865aeec19cab34647fb5894cb498b24b14462'
@@ -130,7 +130,7 @@ prepare() {
   # ensure libbacktrace works with SEH
   # https://github.com/gcc-mirror/gcc/pull/48
   apply_patch_with_msg \
-    krlmlr-libbacktrace-seh.patch
+    pr96948.patch
 
   # do not expect ${prefix}/mingw symlink - this should be superceded by
   # 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
