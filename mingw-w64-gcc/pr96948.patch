@@ -1,27 +1,22 @@
-From 685cb271ea39438c8afced53e11c2c8144197c9b Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Kirill=20M=C3=BCller?= <krlmlr@mailbox.org>
-Date: Sun, 6 Sep 2020 10:01:46 +0200
-Subject: [PATCH] =?UTF-8?q?Fix=20=5FUnwind=5FBacktrace()=20for=20SEH,=20us?=
- =?UTF-8?q?ing=20simpler=20variant=20proposed=20by=20Martin=20Storsj=C3=B6?=
- =?UTF-8?q?=20<martin@martin.st>?=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
+libgcc/Changelog:
+        * unwind-seh.c (_Unwind_Backtrace): Set the ra and cfa pointers
+        before calling the callback.
 ---
- libgcc/unwind-seh.c | 3 +++
- 1 file changed, 3 insertions(+)
+ libgcc/unwind-seh.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/libgcc/unwind-seh.c b/libgcc/unwind-seh.c
-index 8c6aade9a3b3..d40d16702a9e 100644
+index 1a70180cfaa..275d782903a 100644
 --- a/libgcc/unwind-seh.c
 +++ b/libgcc/unwind-seh.c
-@@ -466,6 +466,9 @@ _Unwind_Backtrace(_Unwind_Trace_Fn trace,
+@@ -466,6 +466,11 @@ _Unwind_Backtrace(_Unwind_Trace_Fn trace,
  			    &gcc_context.disp->HandlerData,
  			    &gcc_context.disp->EstablisherFrame, NULL);
  
-+      gcc_context.cfa = ms_context.Rsp;
++      /* Set values that the callback can inspect via _Unwind_GetIP
++       * and _Unwind_GetCFA. */
 +      gcc_context.ra = ms_context.Rip;
++      gcc_context.cfa = ms_context.Rsp;
 +
        /* Call trace function.  */
        if (trace (&gcc_context, trace_argument) != _URC_NO_REASON)
