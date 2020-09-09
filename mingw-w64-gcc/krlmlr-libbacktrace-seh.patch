@@ -1,43 +1,28 @@
-From bbc163476cab9bcaaa044d8aa9ecee824f7284f5 Mon Sep 17 00:00:00 2001
+From 685cb271ea39438c8afced53e11c2c8144197c9b Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Kirill=20M=C3=BCller?= <krlmlr@mailbox.org>
 Date: Sun, 6 Sep 2020 10:01:46 +0200
-Subject: [PATCH] Fix _Unwind_Backtrace() for SEH
+Subject: [PATCH] =?UTF-8?q?Fix=20=5FUnwind=5FBacktrace()=20for=20SEH,=20us?=
+ =?UTF-8?q?ing=20simpler=20variant=20proposed=20by=20Martin=20Storsj=C3=B6?=
+ =?UTF-8?q?=20<martin@martin.st>?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 ---
- libgcc/unwind-seh.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ libgcc/unwind-seh.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/libgcc/unwind-seh.c b/libgcc/unwind-seh.c
-index 8c6aade9a3b3..a2d51b6df02b 100644
+index 8c6aade9a3b3..d40d16702a9e 100644
 --- a/libgcc/unwind-seh.c
 +++ b/libgcc/unwind-seh.c
-@@ -450,8 +450,11 @@ _Unwind_Backtrace(_Unwind_Trace_Fn trace,
-   gcc_context.disp->ContextRecord = &ms_context;
-   gcc_context.disp->HistoryTable = &ms_history;
- 
-+  int first = 1;
-   while (1)
-     {
-+      gcc_context.cfa = ms_context.Rsp;
-+      gcc_context.ra = ms_context.Rip;
-       gcc_context.disp->ControlPc = ms_context.Rip;
-       gcc_context.disp->FunctionEntry
- 	= RtlLookupFunctionEntry (ms_context.Rip, &gcc_context.disp->ImageBase,
-@@ -466,9 +469,14 @@ _Unwind_Backtrace(_Unwind_Trace_Fn trace,
+@@ -466,6 +466,9 @@ _Unwind_Backtrace(_Unwind_Trace_Fn trace,
  			    &gcc_context.disp->HandlerData,
  			    &gcc_context.disp->EstablisherFrame, NULL);
  
--      /* Call trace function.  */
--      if (trace (&gcc_context, trace_argument) != _URC_NO_REASON)
--	return _URC_FATAL_PHASE1_ERROR;
-+      /* Call trace function, skip first call.  */
-+      if (first) {
-+	first = 0;
-+      }
-+      else {
-+	if (trace (&gcc_context, trace_argument) != _URC_NO_REASON)
-+	  return _URC_FATAL_PHASE1_ERROR;
-+      }
- 
-       /* ??? Check for invalid stack pointer.  */
-       if (ms_context.Rip == 0)
++      gcc_context.cfa = ms_context.Rsp;
++      gcc_context.ra = ms_context.Rip;
++
+       /* Call trace function.  */
+       if (trace (&gcc_context, trace_argument) != _URC_NO_REASON)
+ 	return _URC_FATAL_PHASE1_ERROR;
