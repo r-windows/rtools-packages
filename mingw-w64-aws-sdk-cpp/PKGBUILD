@@ -3,7 +3,7 @@
 _realname=aws-sdk-cpp
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
-pkgver=1.7.365
+pkgver=1.8.55
 pkgrel=1
 pkgdesc="AWS SDK for C++ (mingw-w64)"
 arch=('any')
@@ -19,7 +19,7 @@ source=("${_realname}-${pkgver}.tar.gz::https://github.com/aws/aws-sdk-cpp/archi
         "BuildAwsCCommon.patch"        
         "BuildAwsChecksums.patch"
         "vista.patch")
-sha256sums=('95e3f40efaea7b232741bfb76c54c9507c02631edfc198720b0e84be0ebb5e9d'
+sha256sums=('6295e05b44d365e15735f28cd003a01913e302bcd3ba659ef26759e650f412e9'
             'SKIP'
             'SKIP'
             'SKIP'
