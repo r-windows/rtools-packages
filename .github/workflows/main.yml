@@ -40,6 +40,7 @@ jobs:
           BINTRAY_REPOSITORY: ${{ matrix.msystem }}
           PACMAN_REPOSITORY: ${{ matrix.msystem }}
           BINTRAY_PACKAGE: ${{ matrix.msystem }}
+          DISABLE_QUALITY_CHECK: true
 
       - name: "Upload binary package"
         uses: actions/upload-artifact@v2

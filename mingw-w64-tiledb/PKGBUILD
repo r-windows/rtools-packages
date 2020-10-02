@@ -3,7 +3,8 @@
 _realname=tiledb
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=2.0.8
+pkgver=2.1.0
+srcver=2.1.0-rc5
 pkgrel=2
 pkgdesc="Storage management library for sparse and dense array data (mingw-w64)"
 arch=("any")
@@ -19,19 +20,13 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-curl")
 options=("staticlibs" "strip")
 
-source=(${_realname}-${pkgver}.tar.gz::"https://github.com/TileDB-Inc/TileDB/archive/${pkgver}.tar.gz"
-        "winfixes.patch"
-        "https://patch-diff.githubusercontent.com/raw/TileDB-Inc/TileDB/pull/1778.patch")
-sha256sums=("827a38b5c676a6cf6db716885f9c9b026e5f02109ce0e30f7145182da1e9fa23"
-            "SKIP"
-            "SKIP")
-noextract=(${_realname}-${pkgver}.tar.gz)
+source=(${_realname}-${srcver}.tar.gz::"https://github.com/TileDB-Inc/TileDB/archive/${srcver}.tar.gz")
+sha256sums=("SKIP")
+noextract=(${_realname}-${srcver}${verfix}.tar.gz)
 
 prepare() {
-  MSYS="winsymlinks:lnk" tar -xf ${srcdir}/${_realname}-${pkgver}.tar.gz
-  cd "${srcdir}/${_realname}-${pkgver}"
-  patch -p1 -i ${srcdir}/winfixes.patch
-  patch -p1 -i ${srcdir}/1778.patch
+  MSYS="winsymlinks:lnk" tar -xf ${srcdir}/${_realname}-${srcver}.tar.gz
+  cd "${srcdir}/${_realname}-${srcver}"
 }
 
 build() {
@@ -52,7 +47,7 @@ build() {
     -DTILEDB_STATIC=ON \
     -DTILEDB_TBB=OFF \
     -DTILEDB_S3=ON \
-  ../${_realname}-${pkgver}
+  ../${_realname}-${srcver}
   make
   make -C tiledb
 }
