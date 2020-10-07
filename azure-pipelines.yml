@@ -21,7 +21,7 @@ jobs:
           SET PATH=c:\rtools40\usr\bin;%PATH%
           rmdir /s /Q "C:\Program Files\Boost"
           copy /y pacman.conf C:\rtools40\etc\pacman.conf
-          C:\rtools40\usr\bin\curl -OSsl "https://mirror.yandex.ru/mirrors/msys2/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz"
+          C:\rtools40\usr\bin\curl -OSsl "http://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz"
           C:\rtools40\usr\bin\pacman -U --noconfirm msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz && rm msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
           C:\rtools40\usr\bin\pacman -Syyuu --noconfirm --ask 20
           C:\rtools40\usr\bin\pacman -Syyuu --noconfirm --ask 20
