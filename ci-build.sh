@@ -25,6 +25,9 @@ else
     pacman --noconfirm -Rcsu gcc pkg-config
 fi
 
+# Temp hack for weird msys2 flag
+sed -i 's/,--default-image-base-high//' /etc/makepkg_mingw64.conf
+
 # Enable upstream msys2 repo
 cp -f pacman.conf /etc/pacman.conf
 pacman --noconfirm -Scc
