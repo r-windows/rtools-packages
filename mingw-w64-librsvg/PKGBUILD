@@ -1,0 +1,86 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+
+_realname=librsvg
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=2.48.8
+pkgrel=1
+pkgdesc="SVG rendering library (mingw-w64)"
+arch=('any')
+url="https://wiki.gnome.org/Projects/LibRsvg"
+license=("LGPL")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config"
+             "setconf")
+depends=("${MINGW_PACKAGE_PREFIX}-gdk-pixbuf2"
+         "${MINGW_PACKAGE_PREFIX}-glib2"
+         "${MINGW_PACKAGE_PREFIX}-harfbuzz"
+         "${MINGW_PACKAGE_PREFIX}-pango"
+         "${MINGW_PACKAGE_PREFIX}-cairo"
+         "${MINGW_PACKAGE_PREFIX}-libxml2")
+options=('staticlibs' 'strip')
+source=("https://download.gnome.org/sources/librsvg/${pkgver%.*}/${_realname}-${pkgver}.tar.xz"
+        "0005-hack-unixy-paths.patch"
+        "configure.patch")
+sha256sums=('f480a325bbdf26d1874eb6fb330ebc5920ba64e3e08de61931bb4506dfef2692'
+            'b23b094c0cb65fcbbbb952350448de6f3430b30f273e05acdbf7a56d634212dc'
+            'SKIP')
+
+prepare() {
+  # Hack: use external rust for now, until we have our own
+  export PATH="$(cygpath -u $USERPROFILE)/.cargo/bin:$PATH"
+  TARGET="${MINGW_CHOST/w64-mingw32/pc-windows-gnu}"
+  if command -v rustup; then
+    echo "Found existing rustup!"
+    rustup target add $TARGET
+    rustup default "stable-$TARGET"
+  else
+    curl -L https://win.rustup.rs -o rustup-init.exe
+    ./rustup-init.exe -yv --default-toolchain stable --default-host $TARGET
+  fi
+  echo "PATH=$PATH"
+  rustc --version
+
+  # Actual patches
+  cd "${srcdir}/${_realname}-${pkgver}"
+  patch -p1 -i "${srcdir}/0005-hack-unixy-paths.patch"
+  patch -p1 -i "${srcdir}/configure.patch"
+  autoreconf -fiv
+}
+
+build() {
+  [[ -d "${srcdir}/build-${MINGW_CHOST}" ]] && rm -rf "${srcdir}/build-${MINGW_CHOST}"
+  cp -rf ${srcdir}/${_realname}-${pkgver} "${srcdir}/build-${MINGW_CHOST}"
+  cd "${srcdir}/build-${MINGW_CHOST}"
+
+  CXXFLAGS+=" -D_POSIX_SOURCE"
+  CFLAGS+=" -D_POSIX_SOURCE"
+
+  # an argument passed to glib-mkenums starts with a c++ comment
+  export MSYS2_ARG_CONV_EXCL="/*"
+  LIBS="-lgdi32 -lgdiplus -ldnsapi -liphlpapi" \
+  ../${_realname}-${pkgver}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --enable-static \
+    --disable-shared \
+    --disable-introspection \
+    --enable-tools=no \
+    --enable-pixbuf-loader=no \
+    --enable-gtk-doc=no \
+    --enable-gtk-doc-html=no \
+    --enable-silent-rules
+
+  # pass static rust package to linker
+  sed -i "s/^deplibs_check_method=.*/deplibs_check_method=\"pass_all\"/g" libtool
+  # add missing crt libs (ws2_32 and userenv) to LIBRSVG_LIBS
+  sed -i "s/^LIBRSVG_LIBS = .*/& -lws2_32 -luserenv/g" Makefile
+  make
+}
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  make DESTDIR="${pkgdir}" install || true
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING.LIB" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING.LIB"
+}

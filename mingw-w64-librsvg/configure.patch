@@ -1,0 +1,35 @@
+diff -aurp librsvg-2.48.8-orig/configure.ac librsvg-2.48.8/configure.ac
+--- librsvg-2.48.8-orig/configure.ac	2020-10-09 16:23:53.315550200 +0000
++++ librsvg-2.48.8/configure.ac	2020-10-09 17:34:34.395368700 +0000
+@@ -169,7 +169,6 @@ PKG_CHECK_MODULES(LIBRSVG,
+ 	harfbuzz >= $HARFBUZZ_REQUIRED         \
+ 	libxml-2.0 >= $LIBXML_REQUIRED         \
+ 	pangocairo >= $PANGO_REQUIRED          \
+-	pangoft2 >= $PANGO_REQUIRED	       \
+ )
+ 
+ CAIRO_VERSION=`$PKG_CONFIG --modversion cairo`
+diff -aurp librsvg-2.48.8-orig/Makefile.am librsvg-2.48.8/Makefile.am
+--- librsvg-2.48.8-orig/Makefile.am	2020-10-09 16:23:53.815038200 +0000
++++ librsvg-2.48.8/Makefile.am	2020-10-09 17:30:39.207600000 +0000
+@@ -154,7 +154,7 @@ CARGO_TARGET_DIR=$(LIBRSVG_BUILD_DIR)/ta
+ 
+ if PLATFORM_WIN32
+ # https://github.com/rust-lang/rust/issues/43749
+-RUST_LIB=$(CARGO_TARGET_DIR)/$(RUST_TARGET_SUBDIR)/rsvg_c_api.lib
++RUST_LIB=$(CARGO_TARGET_DIR)/$(RUST_TARGET_SUBDIR)/librsvg_c_api.a
+ else
+ RUST_LIB=$(CARGO_TARGET_DIR)/$(RUST_TARGET_SUBDIR)/librsvg_c_api.a
+ endif
+diff -aurp librsvg-2.48.8-orig/Makefile.in librsvg-2.48.8/Makefile.in
+--- librsvg-2.48.8-orig/Makefile.in	2020-10-09 16:23:53.721384200 +0000
++++ librsvg-2.48.8/Makefile.in	2020-10-09 17:30:56.885325000 +0000
+@@ -693,7 +693,7 @@ CARGO_TARGET_DIR = $(LIBRSVG_BUILD_DIR)/
+ @PLATFORM_WIN32_FALSE@RUST_LIB = $(CARGO_TARGET_DIR)/$(RUST_TARGET_SUBDIR)/librsvg_c_api.a
+ 
+ # https://github.com/rust-lang/rust/issues/43749
+-@PLATFORM_WIN32_TRUE@RUST_LIB = $(CARGO_TARGET_DIR)/$(RUST_TARGET_SUBDIR)/rsvg_c_api.lib
++@PLATFORM_WIN32_TRUE@RUST_LIB = $(CARGO_TARGET_DIR)/$(RUST_TARGET_SUBDIR)/librsvg_c_api.a
+ librsvg_@RSVG_API_MAJOR_VERSION@_la_CPPFLAGS = \
+ 	-I$(top_srcdir) 			\
+ 	-I$(top_builddir) 			\
