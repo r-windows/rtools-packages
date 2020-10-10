@@ -60,6 +60,7 @@ build() {
     --enable-hdri \
     --enable-static \
     --disable-shared \
+    --without-threads \
     --without-modules \
     --enable-zero-configuration \
     --enable-silent-rules \
