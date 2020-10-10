@@ -1,0 +1,106 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+
+_realname=imagemagick
+pkgbase="mingw-w64-${_realname}"
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+_basever=6.9.11
+_rc=-34
+pkgver=${_basever}${_rc//-/.} # pkgver doesn't have "," "/", "-" and space.
+pkgrel=3
+pkgdesc="An image viewing/manipulation program (mingw-w64)"
+arch=('any')
+url="https://www.imagemagick.org/"
+license=("custom")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-libtool"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config")
+depends=("${MINGW_PACKAGE_PREFIX}-bzip2"
+         "${MINGW_PACKAGE_PREFIX}-freetype"
+         "${MINGW_PACKAGE_PREFIX}-jasper"
+         "${MINGW_PACKAGE_PREFIX}-lcms2"
+         "${MINGW_PACKAGE_PREFIX}-libpng"
+         "${MINGW_PACKAGE_PREFIX}-librsvg"
+         "${MINGW_PACKAGE_PREFIX}-libtiff"
+         "${MINGW_PACKAGE_PREFIX}-libwebp"
+         "${MINGW_PACKAGE_PREFIX}-libxml2"
+         "${MINGW_PACKAGE_PREFIX}-openjpeg2"
+         "${MINGW_PACKAGE_PREFIX}-pango"
+         "${MINGW_PACKAGE_PREFIX}-xz"
+         "${MINGW_PACKAGE_PREFIX}-zlib"
+         "${MINGW_PACKAGE_PREFIX}-zstd")
+options=('staticlibs' 'strip' '!debug' 'libtool')
+source=(https://imagemagick.org/download/releases/ImageMagick-${_basever}${_rc}.tar.xz
+        6.9.11-build-fixes.patch)
+sha256sums=('SKIP'
+            'SKIP')
+#Lexie Parsimoniae (ImageMagick code signing key) <lexie.parsimoniae@imagemagick.org>
+validpgpkeys=('D8272EF51DA223E4D05B466989AB63D48277377A')
+
+prepare() {
+  cd ImageMagick-${_basever}${_rc}
+  patch -p1 -i ${srcdir}/6.9.11-build-fixes.patch
+}
+
+build() {
+  export lt_cv_deplibs_check_method='pass_all'
+  [[ $CARCH = "i686" ]] && EXTRAOPTS="--with-gcc-arch=i686"
+  [[ $CARCH = "x86_64" ]] && EXTRAOPTS="" #EXTRAOPTS="--with-gcc-arch=x86-64"
+
+  [[ -d build-${MINGW_CHOST} ]] && rm -rf build-${MINGW_CHOST}
+  mkdir -p build-${MINGW_CHOST} && cd build-${MINGW_CHOST}
+
+  #--with-lcms2, --with-opencl, --without-ltdl
+  LIBS="$(pkg-config --static --libs-only-l pango cairo-gobject) -lgdi32 -lgdiplus -ldnsapi -liphlpapi -luserenv" \
+  ../ImageMagick-${_basever}${_rc}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --disable-deprecated \
+    --disable-legacy-support \
+    --enable-hdri \
+    --enable-static \
+    --disable-shared \
+    --without-modules \
+    --enable-zero-configuration \
+    --enable-silent-rules \
+    --with-windows-font-dir=c:/Windows/fonts \
+    --with-magick-plus-plus \
+    --with-zlib \
+    --with-pango \
+    --with-xml \
+    --with-freetype \
+    --with-lzma \
+    --with-png \
+    --with-fftw \
+    --with-gslib \
+    --with-lcms \
+    --with-openjp2 \
+    --with-rsvg \
+    --with-webp \
+    --without-fontconfig \
+    --without-perl \
+    --without-x \
+    --without-gs-font-dir \
+    --without-autotrace \
+    --without-dps \
+    --without-fpx \
+    --without-jbig \
+    --without-perl \
+    --without-x
+
+  make
+}
+
+package() {
+  cd ${srcdir}/build-${MINGW_CHOST}
+  make -j1 DESTDIR="${pkgdir}" install ${MAKE_VERBOSE}
+
+  install -Dm644 ${srcdir}/ImageMagick-${_basever}${_rc}/LICENSE "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE"
+  install -Dm644 ${srcdir}/ImageMagick-${_basever}${_rc}/NOTICE  "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/NOTICE"
+
+  local PREFIX_WIN=$(cygpath -wm ${MINGW_PREFIX})
+  # fix hard-coded pathes in .pc files
+  for _f in "${pkgdir}${MINGW_PREFIX}"\/lib\/pkgconfig\/*.pc; do
+    sed -e "s|${PREFIX_WIN}|${MINGW_PREFIX}|g" -i ${_f}
+  done
+}
