@@ -51,7 +51,7 @@ diff -aurp ImageMagick-6.9.11-34-orig/magick/nt-base.c ImageMagick-6.9.11-34/mag
    entry=(DIR *) AcquireCriticalMemory(sizeof(DIR));
 diff -aurp ImageMagick-6.9.11-34-orig/magick/nt-base.h ImageMagick-6.9.11-34/magick/nt-base.h
 --- ImageMagick-6.9.11-34-orig/magick/nt-base.h	2020-10-09 23:21:57.618048600 +0000
-+++ ImageMagick-6.9.11-34/magick/nt-base.h	2020-10-09 23:24:18.246526700 +0000
++++ ImageMagick-6.9.11-34/magick/nt-base.h	2020-10-10 13:25:16.524706800 +0000
 @@ -29,7 +29,11 @@ extern "C" {
  
  #define WIN32_LEAN_AND_MEAN
@@ -64,6 +64,15 @@ diff -aurp ImageMagick-6.9.11-34-orig/magick/nt-base.h ImageMagick-6.9.11-34/mag
  #include <windows.h>
  #include <wchar.h>
  #include <winuser.h>
+@@ -288,7 +292,7 @@ extern "C" {
+   !(defined(__MSVCRT_VERSION__) && (__MSVCRT_VERSION__ < 0x800))
+ #  define wstat  _wstati64
+ #else
+-#  define wstat  _wstat
++#  define wstat  _wstati64
+ #endif
+ #endif
+ 
 diff -aurp ImageMagick-6.9.11-34-orig/magick/studio.h ImageMagick-6.9.11-34/magick/studio.h
 --- ImageMagick-6.9.11-34-orig/magick/studio.h	2020-10-09 23:21:57.649234000 +0000
 +++ ImageMagick-6.9.11-34/magick/studio.h	2020-10-09 23:28:35.683403900 +0000
