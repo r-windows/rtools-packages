@@ -1,0 +1,89 @@
+diff -aurp ImageMagick-6.9.11-34-orig/magick/distribute-cache.c ImageMagick-6.9.11-34/magick/distribute-cache.c
+--- ImageMagick-6.9.11-34-orig/magick/distribute-cache.c	2020-10-09 23:21:57.571270500 +0000
++++ ImageMagick-6.9.11-34/magick/distribute-cache.c	2020-10-10 11:29:14.928786200 +0000
+@@ -51,6 +51,10 @@
+ /*
+   Include declarations.
+ */
++#if defined(MAGICKCORE_WINDOWS_SUPPORT)
++#include <winsock2.h>
++#include <ws2tcpip.h>
++#endif
+ #include "magick/studio.h"
+ #include "magick/cache.h"
+ #include "magick/cache-private.h"
+@@ -75,10 +79,12 @@
+ #include "magick/version-private.h"
+ #undef MAGICKCORE_HAVE_DISTRIBUTE_CACHE
+ #if defined(MAGICKCORE_HAVE_SOCKET) && defined(MAGICKCORE_THREAD_SUPPORT)
++#ifndef __MINGW32__
+ #include <netinet/in.h>
+ #include <netdb.h>
+ #include <sys/socket.h>
+ #include <arpa/inet.h>
++#endif
+ #define CHAR_TYPE_CAST
+ #define CLOSE_SOCKET(socket) (void) close(socket)
+ #define HANDLER_RETURN_TYPE void *
+diff -aurp ImageMagick-6.9.11-34-orig/magick/nt-base.c ImageMagick-6.9.11-34/magick/nt-base.c
+--- ImageMagick-6.9.11-34-orig/magick/nt-base.c	2020-10-09 23:21:57.649234000 +0000
++++ ImageMagick-6.9.11-34/magick/nt-base.c	2020-10-09 23:27:50.591612400 +0000
+@@ -1812,6 +1812,11 @@ MagickPrivate DIR *NTOpenDirectory(const
+     directory_separator[MaxTextExtent],
+     file_specification[MaxTextExtent];
+ 
++  wchar_t WCDirectorySeparator[strlen(DirectorySeparator)+1];
++  MultiByteToWideChar(CP_UTF8,0,DirectorySeparator,-1,WCDirectorySeparator,
++                     strlen(DirectorySeparator)+1);
++
++
+   assert(path != (const char *) NULL);
+   length=MultiByteToWideChar(CP_UTF8,0,path,-1,file_specification,
+     MaxTextExtent);
+@@ -1821,7 +1826,7 @@ MagickPrivate DIR *NTOpenDirectory(const
+     directory_separator,(int) strlen(DirectorySeparator)+1);
+   if (length == 0)
+     return((DIR *) NULL);
+-  if (wcsncat(file_specification,directory_separator,
++  if(wcsncat(file_specification, WCDirectorySeparator,
+         MaxTextExtent-wcslen(file_specification)-1) == (wchar_t *) NULL)
+     return((DIR *) NULL);
+   entry=(DIR *) AcquireCriticalMemory(sizeof(DIR));
+diff -aurp ImageMagick-6.9.11-34-orig/magick/nt-base.h ImageMagick-6.9.11-34/magick/nt-base.h
+--- ImageMagick-6.9.11-34-orig/magick/nt-base.h	2020-10-09 23:21:57.618048600 +0000
++++ ImageMagick-6.9.11-34/magick/nt-base.h	2020-10-10 13:25:16.524706800 +0000
+@@ -29,7 +29,11 @@ extern "C" {
+ 
+ #define WIN32_LEAN_AND_MEAN
+ #define VC_EXTRALEAN
++#ifndef __MINGW32__
+ #define _CRT_SECURE_NO_DEPRECATE  1
++#endif
++#include <winsock2.h>
++#include <ws2tcpip.h>
+ #include <windows.h>
+ #include <wchar.h>
+ #include <winuser.h>
+@@ -288,7 +292,7 @@ extern "C" {
+   !(defined(__MSVCRT_VERSION__) && (__MSVCRT_VERSION__ < 0x800))
+ #  define wstat  _wstati64
+ #else
+-#  define wstat  _wstat
++#  define wstat  _wstati64
+ #endif
+ #endif
+ 
+diff -aurp ImageMagick-6.9.11-34-orig/magick/studio.h ImageMagick-6.9.11-34/magick/studio.h
+--- ImageMagick-6.9.11-34-orig/magick/studio.h	2020-10-09 23:21:57.649234000 +0000
++++ ImageMagick-6.9.11-34/magick/studio.h	2020-10-09 23:28:35.683403900 +0000
+@@ -132,8 +132,10 @@ extern "C" {
+ #include <ws2tcpip.h>
+ #endif
+ #include <windows.h>
++#ifdef _MSC_VER
+ #pragma comment (lib, "ws2_32.lib")
+ #endif
++#endif
+ #if defined(MAGICKCORE_HAVE_SYS_SYSLIMITS_H)
+ # include <sys/syslimits.h>
+ #endif
