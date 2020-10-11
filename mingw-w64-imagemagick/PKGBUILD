@@ -75,12 +75,11 @@ build() {
     --with-lzma \
     --with-png \
     --with-fftw \
-    --with-gslib \
     --with-lcms \
     --with-openjp2 \
     --with-rsvg \
     --with-webp \
-    --with-gslib \
+    --without-gslib \
     --without-fontconfig \
     --without-perl \
     --without-x \
