@@ -58,10 +58,11 @@ build() {
     --host=${MINGW_CHOST} \
     --disable-deprecated \
     --disable-legacy-support \
-    --enable-hdri \
+    --disable-hdri \
     --enable-static \
     --disable-shared \
-    --without-threads \
+    --with-threads \
+    --disable-openmp \
     --without-modules \
     --enable-zero-configuration \
     --enable-silent-rules \
