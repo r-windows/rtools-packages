@@ -56,6 +56,7 @@ build() {
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST} \
+    --disable-docs \
     --disable-deprecated \
     --disable-legacy-support \
     --disable-hdri \
@@ -106,4 +107,7 @@ package() {
   for _f in "${pkgdir}${MINGW_PREFIX}"\/lib\/pkgconfig\/*.pc; do
     sed -e "s|${PREFIX_WIN}|${MINGW_PREFIX}|g" -i ${_f}
   done
+
+  # Jeroen: delete command line utilities
+  rm -Rf ${pkgdir}${MINGW_PREFIX}/bin
 }
