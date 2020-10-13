@@ -15,9 +15,11 @@ depends=("${MINGW_PACKAGE_PREFIX}-libssh2"
          "${MINGW_PACKAGE_PREFIX}-zlib")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake" "${MINGW_PACKAGE_PREFIX}-gcc")
 source=(${_realname}-${pkgver}.tar.gz::"https://github.com/libgit2/libgit2/archive/v${pkgver}.tar.gz"
+        "https://github.com/libgit2/libgit2/pull/5594.diff"
         "winlibs.patch")
 noextract=(${_realname}-${pkgver}.tar.gz)
 sha256sums=('41a6d5d740fd608674c7db8685685f45535323e73e784062cf000a633d420d1e'
+            'SKIP'
             'SKIP')
 
 prepare() {
@@ -25,6 +27,7 @@ prepare() {
   rm ${_realname}-${pkgver}/src/win32/thread.c
   cd ${_realname}-${pkgver}
   patch -p1 -i ${srcdir}/winlibs.patch
+  patch -p1 --reverse -i ${srcdir}/5594.diff
 }
 
 build() {
@@ -42,6 +45,7 @@ build() {
     -DBUILD_CLAR=OFF \
     -DTHREADSAFE=OFF \
     -DWINHTTP=ON \
+    -DREGEX_BACKEND=builtin \
     ../${_realname}-${pkgver}
 
   make
