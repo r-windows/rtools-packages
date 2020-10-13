@@ -1,0 +1,19 @@
+diff -aurp libgit2-1.1.0-orig/cmake/FindPkgLibraries.cmake libgit2-1.1.0/cmake/FindPkgLibraries.cmake
+--- libgit2-1.1.0-orig/cmake/FindPkgLibraries.cmake	2020-10-13 12:50:15.401194700 +0000
++++ libgit2-1.1.0/cmake/FindPkgLibraries.cmake	2020-10-13 12:54:27.622825100 +0000
+@@ -14,13 +14,13 @@ FUNCTION(FIND_PKGLIBRARIES prefix packag
+ 	FOREACH(LIBRARY ${${prefix}_LIBRARIES})
+ 		FIND_LIBRARY(${LIBRARY}_RESOLVED ${LIBRARY} PATHS ${${prefix}_LIBRARY_DIRS})
+ 		IF(${${LIBRARY}_RESOLVED} STREQUAL "${LIBRARY}_RESOLVED-NOTFOUND")
+-			MESSAGE(FATAL_ERROR "could not resolve ${LIBRARY}")
++			MESSAGE(WARNING "could not resolve ${LIBRARY}")
+ 		ENDIF()
+ 		LIST(APPEND RESOLVED_LIBRARIES ${${LIBRARY}_RESOLVED})
+ 	ENDFOREACH(LIBRARY)
+ 
+ 	SET(${prefix}_FOUND 1 PARENT_SCOPE)
+-	SET(${prefix}_LIBRARIES ${RESOLVED_LIBRARIES} PARENT_SCOPE)
++	SET(${prefix}_LIBRARIES ${${prefix}_LIBRARIES} PARENT_SCOPE)
+ 	SET(${prefix}_INCLUDE_DIRS ${${prefix}_INCLUDE_DIRS} PARENT_SCOPE)
+ 	SET(${prefix}_LDFLAGS ${${prefix}_LDFLAGS} PARENT_SCOPE)
+ 
