@@ -3,7 +3,7 @@
 _realname=libssh2
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=1.8.2
+pkgver=1.9.0
 pkgrel=9200
 pkgdesc="A library implementing the SSH2 protocol as defined by Internet Drafts (mingw-w64)"
 arch=('any')
@@ -12,8 +12,15 @@ license=("BSD")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-pkg-config")
 depends=("${MINGW_PACKAGE_PREFIX}-openssl" "${MINGW_PACKAGE_PREFIX}-zlib")
 options=('staticlibs' 'strip')
-source=("${url}/download/${_realname}-${pkgver}.tar.gz")
-sha256sums=('088307d9f6b6c4b8c13f34602e8ff65d21c2dc4d55284dfe15d502c4ee190d67')
+source=("${url}/download/${_realname}-${pkgver}.tar.gz"
+        "fix-pkgconfig.patch")
+sha256sums=('d5fb8bd563305fd1074dda90bd053fb2d29fc4bce048d182f96eaa466dfadafd'
+            '7a6545f6d457ad008aacefe04a60727c02d33927c8a903745bf191f69cc8ba55')
+
+prepare() {
+  cd ${_realname}-${pkgver}
+  patch -p1 -i ${srcdir}/fix-pkgconfig.patch
+}
 
 build() {
   [[ -d "${srcdir}/build-${CARCH}" ]] && rm -rf "${srcdir}/build-${CARCH}"
@@ -29,7 +36,7 @@ build() {
     --target=${MINGW_CHOST} \
     --enable-static \
     --disable-shared \
-    --with-openssl
+    --with-crypto=openssl
 
   make
 }
