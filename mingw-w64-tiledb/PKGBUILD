@@ -3,7 +3,7 @@
 _realname=tiledb
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=2.1.0
+pkgver=2.1.1
 pkgrel=2
 pkgdesc="Storage management library for sparse and dense array data (mingw-w64)"
 arch=("any")
@@ -20,7 +20,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
 options=("staticlibs" "strip")
 
 source=(${_realname}-${pkgver}.tar.gz::"https://github.com/TileDB-Inc/TileDB/archive/${pkgver}.tar.gz")
-sha256sums=("0065e6bf4581a06d6f61b3dd5b438a8cb6985b725a604768a5c57bf0e9e79c2e")
+sha256sums=("0df697ce9ac5858c9abc3d645f0fd96903b6512b33cf09ed4fc74d0cd4d78eec")
 noextract=(${_realname}-${pkgver}.tar.gz)
 
 prepare() {
