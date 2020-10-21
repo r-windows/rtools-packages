@@ -1,0 +1,32 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f86c9b7..597ae0e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -40,7 +40,7 @@ IF(WIN32)
+     ADD_COMPILE_DEFINITIONS(_CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN)
+ ENDIF()
+ 
+-ADD_LIBRARY(hiredis SHARED ${hiredis_sources})
++ADD_LIBRARY(hiredis STATIC ${hiredis_sources})
+ 
+ SET_TARGET_PROPERTIES(hiredis
+     PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS TRUE
+@@ -97,7 +97,7 @@ IF(ENABLE_SSL)
+     FIND_PACKAGE(OpenSSL REQUIRED)
+     SET(hiredis_ssl_sources 
+         ssl.c)
+-    ADD_LIBRARY(hiredis_ssl SHARED
++    ADD_LIBRARY(hiredis_ssl STATIC
+             ${hiredis_ssl_sources})
+ 
+     IF (APPLE)
+@@ -152,6 +152,9 @@ IF(NOT DISABLE_TESTS)
+     IF(ENABLE_SSL_TESTS)
+         ADD_DEFINITIONS(-DHIREDIS_TEST_SSL=1)
+         TARGET_LINK_LIBRARIES(hiredis-test hiredis hiredis_ssl)
++        IF (WIN32 OR MINGW)
++            TARGET_LINK_LIBRARIES(hiredis-test ${OPENSSL_LIBRARIES} hiredis hiredis_ssl ws2_32 crypt32)
++        ENDIF()
+     ELSE()
+         TARGET_LINK_LIBRARIES(hiredis-test hiredis)
+     ENDIF()
