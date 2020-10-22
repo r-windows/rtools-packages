@@ -33,7 +33,8 @@ build() {
   msg2 "Configuring and building ${_realname}-${pkgver} with SSL support..."
   
   cd "${srcdir}"/build-${MINGW_CHOST}
-  ${MINGW_PREFIX}/bin/cmake \
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+    ${MINGW_PREFIX}/bin/cmake.exe \
       -G"MSYS Makefiles" \
       -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
       -DCMAKE_BUILD_TYPE=Release \
