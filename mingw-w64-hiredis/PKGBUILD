@@ -1,0 +1,51 @@
+# Maintainer: Jeremy Cohen <jeremy.cohen@imperial.ac.uk>
+
+_realname=hiredis
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="A client library for accessing the redis (https://redis.io/) data store"
+url="https://github.com/redis/hiredis"
+license=("BSD-3-Clause")
+source=(${_realname}-${pkgver}.tar.gz::https://github.com/redis/hiredis/archive/v${pkgver}.tar.gz
+        '01-cmake-static-libs.patch')
+sha256sums=('2a0b5fe5119ec973a0c1966bfc4bd7ed39dbce1cb6d749064af9121fe971936f'
+            'dc9595acf5e6d6c46d56eadf966682ccba41f322564ff0baadeee7a25c5793a5')
+arch=('any')
+depends=("${MINGW_PACKAGE_PREFIX}-openssl")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-cmake")
+options=('staticlibs' 'strip' '!libtool')
+
+prepare() {
+  cd "$srcdir"/${_realname}-${pkgver}
+  # Patch CMakeLists.txt to build static libs
+  patch -p1 -i "${srcdir}"/01-cmake-static-libs.patch
+}
+
+build() {
+  cd "${srcdir}"
+  # We'll create a build directory alongside the extracted source
+  # Remove any existing build directory and create a new one
+  rm -rf "${srcdir}"/build-${MINGW_CHOST}
+  mkdir -p "${srcdir}"/build-${MINGW_CHOST}
+
+  msg2 "Configuring and building ${_realname}-${pkgver} with SSL support..."
+  
+  cd "${srcdir}"/build-${MINGW_CHOST}
+  ${MINGW_PREFIX}/bin/cmake \
+      -G"MSYS Makefiles" \
+      -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DENABLE_SSL=ON \
+      -DENABLE_SSL_TESTS=ON \
+      ../${_realname}-${pkgver}
+  make
+}
+
+package() {
+  cd "${srcdir}"/build-${MINGW_CHOST}
+  make DESTDIR="${pkgdir}" install
+  cd "${srcdir}"/${_realname}-${pkgver}
+  install -Dm 644 COPYING "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
+}
