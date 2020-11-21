@@ -1,9 +1,9 @@
-# Maintainer: Kouhei Sutou <kou@clear-code.com>
+# Maintainer: Kouhei Sutou <kou@clear-code.com>        emacs, make this -*- mode: yaml; -*-
 
 _realname=tiledb
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=2.1.1
+pkgver=2.1.2
 pkgrel=2
 pkgdesc="Storage management library for sparse and dense array data (mingw-w64)"
 arch=("any")
@@ -20,7 +20,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
 options=("staticlibs" "strip")
 
 source=(${_realname}-${pkgver}.tar.gz::"https://github.com/TileDB-Inc/TileDB/archive/${pkgver}.tar.gz")
-sha256sums=("0df697ce9ac5858c9abc3d645f0fd96903b6512b33cf09ed4fc74d0cd4d78eec")
+sha256sums=("bc19281ef4a4629c3ca4d69007c0296ebcfd02579fed424de3b7d38391a848a8")
 noextract=(${_realname}-${pkgver}.tar.gz)
 
 prepare() {
