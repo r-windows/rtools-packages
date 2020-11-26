@@ -61,6 +61,7 @@ build() {
       -DgRPC_SSL_PROVIDER="package" \
       -DgRPC_GFLAGS_PROVIDER="package" \
       -DgRPC_BENCHMARK_PROVIDER="package" \
+      -DgRPC_BUILD_CSHARP_EXT=OFF \
       ../${_realname}-${pkgver}
 
   make
