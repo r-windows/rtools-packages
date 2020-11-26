@@ -4,16 +4,16 @@ _realname=grpc
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=1.33.2
-_abseil_ver=20200923.2
+_abseil_ver=20200225.2
 pkgrel=1
 pkgdesc="gRPC - Google's high performance, open source, general RPC framework (mingw-w64)"
 arch=('any')
 url='https://www.grpc.io/'
-license=('BSD')
+license=('Apache-2.0')
 depends=("${MINGW_PACKAGE_PREFIX}-c-ares"
          "${MINGW_PACKAGE_PREFIX}-gflags"
          "${MINGW_PACKAGE_PREFIX}-openssl"
-         "${MINGW_PACKAGE_PREFIX}-protobuf>=3.5.0"
+         "${MINGW_PACKAGE_PREFIX}-protobuf>=3.12.0"
          "${MINGW_PACKAGE_PREFIX}-re2"
          "${MINGW_PACKAGE_PREFIX}-zlib")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
@@ -23,7 +23,7 @@ options=('staticlibs' 'strip')
 source=("${_realname}-${pkgver}.tar.gz::https://github.com/google/grpc/archive/v${pkgver}.tar.gz"
         "abseil-cpp-${_abseil_ver}.tar.gz::https://github.com/abseil/abseil-cpp/archive/${_abseil_ver}.tar.gz")
 sha256sums=('2060769f2d4b0d3535ba594b2ab614d7f68a492f786ab94b4318788d45e3278a'
-            'bf3f13b13a0095d926b25640e060f7e13881bd8a792705dd9e161f3c2b9aa976')
+            'f41868f7a938605c92936230081175d1eae87f6ea2c248f41077c8f88316f111')
 noextract=(${_realname}-${pkgver}.tar.gz)
 
 prepare() {
@@ -61,14 +61,6 @@ build() {
       -DgRPC_SSL_PROVIDER="package" \
       -DgRPC_GFLAGS_PROVIDER="package" \
       -DgRPC_BENCHMARK_PROVIDER="package" \
-      -DgRPC_BUILD_GRPC_CSHARP_PLUGIN="OFF" \
-      -DgRPC_BUILD_GRPC_NODE_PLUGIN="OFF" \
-      -DgRPC_BUILD_GRPC_OBJECTIVE_C_PLUGIN="OFF" \
-      -DgRPC_BUILD_GRPC_PHP_PLUGIN="OFF" \
-      -DgRPC_BUILD_GRPC_PYTHON_PLUGIN="OFF" \
-      -DgRPC_BUILD_GRPC_RUBY_PLUGIN="OFF" \
-      -DgRPC_BUILD_TESTS="OFF" \
-      -DgRPC_INSTALL="ON" \
       ../${_realname}-${pkgver}
 
   make
