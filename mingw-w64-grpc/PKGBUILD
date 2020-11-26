@@ -71,7 +71,7 @@ build() {
       -DgRPC_INSTALL="ON" \
       ../${_realname}-${pkgver}
 
-  make VERBOSE=1
+  make
 }
 
 check() {
