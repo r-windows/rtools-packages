@@ -1,0 +1,57 @@
+# Maintainer: Diego Sogari <diego.sogari@gmail.com>
+
+_realname=gflags
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=2.2.2
+pkgrel=2
+pkgdesc="Google's Commandline flags module for C++ (mingw-w64)"
+arch=('any')
+url="https://gflags.github.io/gflags/"
+license=('New BSD License')
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-cmake")
+checkdepends=("${MINGW_PACKAGE_PREFIX}-gtest")
+source=("${_realname}-${pkgver}.tar.gz::https://github.com/gflags/gflags/archive/v${pkgver}.tar.gz"
+        "${_realname}-2.2.2.patch")
+sha256sums=('34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf'
+            'fa257fc8fb5fdef6267bf65b5355ccd967ca97d30672bddca55d64219ee848fd')
+
+prepare() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+  patch -Np1 -i "${srcdir}/${_realname}-2.2.2.patch"
+}
+
+build() {
+  if check_option "debug" "n"; then
+    extra_config+=("-DCMAKE_BUILD_TYPE=Release")
+  else
+    extra_config+=("-DCMAKE_BUILD_TYPE=Debug")
+  fi
+
+  rm -rf "${srcdir}/build-${MINGW_CHOST}"
+  mkdir "${srcdir}/build-${MINGW_CHOST}"
+  cd "${srcdir}/build-${MINGW_CHOST}"
+
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+  ${MINGW_PREFIX}/bin/cmake.exe \
+    -G"MSYS Makefiles" \
+    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+    ${extra_config} \
+    -DBUILD_STATIC_LIBS=ON \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DBUILD_TESTING=ON \
+    "../${_realname}-${pkgver}"
+
+  make
+}
+
+# check() {
+#  cd "${srcdir}/build-${MINGW_CHOST}"
+#  make test
+# }
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  make DESTDIR="${pkgdir}" install
+  INSTALL -Dm644 ${srcdir}/${_realname}-${pkgver}/COPYING.txt ${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING.txt
+}
