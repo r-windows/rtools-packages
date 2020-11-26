@@ -10,11 +10,11 @@ pkgdesc="gRPC - Google's high performance, open source, general RPC framework (m
 arch=('any')
 url='https://www.grpc.io/'
 license=('BSD')
-depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
-         "${MINGW_PACKAGE_PREFIX}-c-ares"
+depends=("${MINGW_PACKAGE_PREFIX}-c-ares"
          "${MINGW_PACKAGE_PREFIX}-gflags"
          "${MINGW_PACKAGE_PREFIX}-openssl"
          "${MINGW_PACKAGE_PREFIX}-protobuf>=3.5.0"
+         "${MINGW_PACKAGE_PREFIX}-re2"
          "${MINGW_PACKAGE_PREFIX}-zlib")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-cmake"
@@ -53,15 +53,25 @@ build() {
       -DCMAKE_BUILD_TYPE="Release" \
       -DCMAKE_SKIP_RPATH="ON" \
       -DBUILD_SHARED_LIBS="OFF" \
+      -DgRPC_ABSL_PROVIDER="module" \
+      -DgRPC_RE2_PROVIDER="package" \
       -DgRPC_ZLIB_PROVIDER="package" \
       -DgRPC_CARES_PROVIDER="package" \
       -DgRPC_PROTOBUF_PROVIDER="package" \
       -DgRPC_SSL_PROVIDER="package" \
       -DgRPC_GFLAGS_PROVIDER="package" \
       -DgRPC_BENCHMARK_PROVIDER="package" \
+      -DgRPC_BUILD_GRPC_CSHARP_PLUGIN="OFF" \
+      -DgRPC_BUILD_GRPC_NODE_PLUGIN="OFF" \
+      -DgRPC_BUILD_GRPC_OBJECTIVE_C_PLUGIN="OFF" \
+      -DgRPC_BUILD_GRPC_PHP_PLUGIN="OFF" \
+      -DgRPC_BUILD_GRPC_PYTHON_PLUGIN="OFF" \
+      -DgRPC_BUILD_GRPC_RUBY_PLUGIN="OFF" \
+      -DgRPC_BUILD_TESTS="OFF" \
+      -DgRPC_INSTALL="ON" \
       ../${_realname}-${pkgver}
 
-  make
+  make VERBOSE=1
 }
 
 check() {
