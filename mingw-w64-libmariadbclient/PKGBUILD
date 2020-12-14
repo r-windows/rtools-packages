@@ -3,40 +3,34 @@
 _realname=libmariadbclient
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=3.1.11
-pkgrel=2
+pkgver=3.1.7
+pkgrel=4
 pkgdesc="MariaDB client libraries (mingw-w64)"
 arch=('any')
 url="https://mariadb.org/"
 license=('LGPL')
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
-             "${MINGW_PACKAGE_PREFIX}-cmake")
-depends=("${MINGW_PACKAGE_PREFIX}-openssl"
+             "${MINGW_PACKAGE_PREFIX}-cmake"
+             "${MINGW_PACKAGE_PREFIX}-tools")
+depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
+         "${MINGW_PACKAGE_PREFIX}-curl"
          "${MINGW_PACKAGE_PREFIX}-zlib")
 options=('!strip' 'staticlibs')
-source=(#"https://downloads.mariadb.org/interstitial/connector-c-${pkgver}/source-tgz/mariadb-connector-c-${pkgver}-src.tar.gz"
-        http://ftp.hosteurope.de/mirror/archive.mariadb.org/connector-c-${pkgver}/mariadb-connector-c-${pkgver}-src.tar.gz{,.asc}
-        '001-2.2.3-fix-libnames-mingw.patch'
-        '002-check-also-for-__MINGW64__-definition-to-decide-targ.patch'
-        'fix-size-t-defined.patch'
-        'add-mariadb_config.patch'
-        'disable-shared.patch')
+source=(http://ftp.hosteurope.de/mirror/archive.mariadb.org/connector-c-${pkgver}/mariadb-connector-c-${pkgver}-src.tar.gz
+        001-mingw-build.patch
+        002-fix-prototype.patch
+        003-gcc-fix-use_VA_ARGS.patch)
 validpgpkeys=("199369E5404BD5FC7D2FE43BCBCB082A1BB943DB") #MariaDB Package Signing Key <package-signing-key@mariadb.org>
-sha256sums=('3e6f6c399493fe90efdc21a3fe70c30434b7480e8195642a959f1dd7a0fa5b0f'
-            'SKIP'
-            '5b4bb55b138e507a145927106681beddbaff524a3531842ad89902cd8834ade2'
-            'a4cf42477e1fbed9b3296b91c77b3e335ba16b2bde17bbcd81cb93e37a321b39'
-            'adbaf118f47a7375dec239e65f491c19f6aa8dfbaf5e8f7cae9f069b8d5a02ef'
-            '021022a695539820cc4ccc3e6118001a028e080eae143d2766680df7e82aafd1'
-            'SKIP')
+sha256sums=('64f7bc8f5df3200ba6e3080f68ee4942382a33e8371baea8ca4b9242746df59a'
+            '9c6381c522fca4bda4bbe9e3b16e929bd215ded7f4263801da739856d3d109f1'
+            '7f2231363c2b21bfd578c4600ca0fad33fb8ebf2a463bc3b42f202c9ff7ef366'
+            '18d3bd0b06906e7ac295b024f1d94d9852ede0a28f06da0d51b452c2d896b432')
 
 prepare() {
   cd ${srcdir}/mariadb-connector-c-${pkgver}-src
-  patch -p1 -i ${srcdir}/001-2.2.3-fix-libnames-mingw.patch
-  patch -p1 -i ${srcdir}/002-check-also-for-__MINGW64__-definition-to-decide-targ.patch
-  patch -p1 -i ${srcdir}/fix-size-t-defined.patch
-  patch -p1 -i ${srcdir}/add-mariadb_config.patch
-  patch -p1 -i ${srcdir}/disable-shared.patch
+  patch -p1 -i ${srcdir}/001-mingw-build.patch
+  patch -p1 -i ${srcdir}/002-fix-prototype.patch
+  patch -p1 -i ${srcdir}/003-gcc-fix-use_VA_ARGS.patch
 }
 
 build() {
