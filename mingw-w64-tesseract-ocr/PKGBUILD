@@ -56,7 +56,7 @@ build() {
 
 check() {
   cd "${srcdir}/build-${MINGW_CHOST}"
-  make -j1 check
+  #make -j1 check
 }
 
 package() {
