@@ -1,39 +1,50 @@
-diff -aurp mariadb-connector-c-2.3.7-src-orig/libmariadb/CMakeLists.txt mariadb-connector-c-2.3.7-src/libmariadb/CMakeLists.txt
---- mariadb-connector-c-2.3.7-src-orig/libmariadb/CMakeLists.txt	2018-12-30 12:24:18.322559000 +0000
-+++ mariadb-connector-c-2.3.7-src/libmariadb/CMakeLists.txt	2018-12-30 12:30:50.565850600 +0000
-@@ -398,13 +398,6 @@ ENDIF()
- ADD_LIBRARY(mariadbclient STATIC ${mariadbclient_RC} $<TARGET_OBJECTS:mariadb_obj> ${EMPTY_FILE} ${EXPORT_LINK})
+--- mariadb-connector-c-3.1.11-src/libmariadb/CMakeLists.txt.orig     2020-10-30 23:09:04.000000000 +1300
++++ mariadb-connector-c-3.1.11-src/libmariadb/CMakeLists.txt      2020-12-15 09:15:22.934517300 +1300
+@@ -397,19 +397,6 @@ ENDIF()
+ ADD_LIBRARY(mariadbclient STATIC  ${MARIADB_OBJECTS} ${EMPTY_FILE})
  TARGET_LINK_LIBRARIES(mariadbclient ${SYSTEM_LIBS})
- 
--ADD_LIBRARY(mariadb SHARED ${libmariadb_RC} $<TARGET_OBJECTS:mariadb_obj> ${EMPTY_FILE})
--TARGET_LINK_LIBRARIES(mariadb ${SYSTEM_LIBS})
+
 -IF(UNIX)
--  SET_TARGET_PROPERTIES(mariadb PROPERTIES COMPILE_FLAGS "${CMAKE_SHARED_LIBRARY_C_FLAGS}")
+-  ADD_LIBRARY(libmariadb SHARED ${libmariadb_RC} ${MARIADB_OBJECTS} ${EMPTY_FILE})
+-  SET_TARGET_PROPERTIES(libmariadb PROPERTIES COMPILE_FLAGS "${CMAKE_SHARED_LIBRARY_C_FLAGS}")
+-ELSE()
+-  ADD_LIBRARY(libmariadb SHARED ${libmariadb_RC} mariadbclient.def)
+-  TARGET_LINK_LIBRARIES(libmariadb LINK_PRIVATE mariadbclient)
+-  SET_TARGET_PROPERTIES(libmariadb PROPERTIES LINKER_LANGUAGE C)
 -ENDIF()
--SIGN_TARGET(mariadb)
 -
- IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
-   TARGET_LINK_LIBRARIES (libmariadb "-Wl,--no-undefined")
-   SET_TARGET_PROPERTIES(libmariadb PROPERTIES LINK_FLAGS "-Wl,--version-script=${EXPORT_FILE}")
-@@ -412,12 +405,6 @@ IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
-   SET_TARGET_PROPERTIES(mariadbclient PROPERTIES LINK_FLAGS "-Wl,--version-script=${EXPORT_FILE}")
+-TARGET_LINK_LIBRARIES(libmariadb LINK_PRIVATE ${SYSTEM_LIBS})
+-
+-SIGN_TARGET(libmariadb)
+-
+ IF(CMAKE_SIZEOF_VOID_P EQUAL 8 AND MSVC)
+   SET_TARGET_PROPERTIES(mariadbclient PROPERTIES STATIC_LIBRARY_FLAGS "/machine:x64")
  ENDIF()
- 
--SET_TARGET_PROPERTIES(mariadb PROPERTIES PREFIX "")
+@@ -426,7 +413,6 @@ ENDIF()
+ SET_TARGET_PROPERTIES(mariadbclient PROPERTIES IMPORTED_INTERFACE_LINK_LIBRARIES "${SYSTEM_LIBS}")
+ SET_TARGET_PROPERTIES(libmariadb PROPERTIES IMPORTED_INTERFACE_LINK_LIBRARIES "${SYSTEM_LIBS}")
+
+-SET_TARGET_PROPERTIES(libmariadb PROPERTIES PREFIX "")
+
+ #
+ # Installation
+@@ -446,11 +432,6 @@ IF(WITH_MYSQLCOMPAT)
+   ENDIF()
+ ENDIF()
+
 -
--SET_TARGET_PROPERTIES(mariadb PROPERTIES VERSION 
--   ${CPACK_PACKAGE_VERSION_MAJOR}
--   SOVERSION ${CPACK_PACKAGE_VERSION_MAJOR})
+-SET_TARGET_PROPERTIES(libmariadb PROPERTIES VERSION
+- ${CPACK_PACKAGE_VERSION_MAJOR}
+- SOVERSION ${CPACK_PACKAGE_VERSION_MAJOR})
 -
  IF(NOT WIN32)
    SET_TARGET_PROPERTIES(mariadbclient PROPERTIES OUTPUT_NAME "${LIBMARIADB_STATIC_NAME}")
  ENDIF()
-@@ -442,7 +429,7 @@ ENDIF()
- 
- 
- INSTALL(TARGETS
--          mariadb mariadbclient
-+          mariadbclient
-           RUNTIME DESTINATION "${BIN_INSTALL_DIR}"
-           LIBRARY DESTINATION "${LIB_INSTALL_DIR}"
-           ARCHIVE DESTINATION "${LIB_INSTALL_DIR}")
+@@ -458,7 +439,7 @@ ENDIF()
+ INSTALL(TARGETS mariadbclient
+           COMPONENT Development
+           DESTINATION ${INSTALL_LIBDIR})
+-INSTALL(TARGETS libmariadb
++INSTALL(TARGETS mariadb
+           COMPONENT SharedLibraries
+         DESTINATION ${INSTALL_LIBDIR})

@@ -1,9 +1,9 @@
 --- a/CMakeLists.txt.orig	2017-07-12 18:25:43.207356100 -0400
 +++ b/CMakeLists.txt	2017-07-12 18:26:09.275001600 -0400
-@@ -215,9 +215,7 @@
+@@ -393,9 +393,7 @@
+ INCLUDE(${CC_SOURCE_DIR}/plugins/CMakeLists.txt)
  ADD_SUBDIRECTORY(include)
  ADD_SUBDIRECTORY(libmariadb)
- ADD_SUBDIRECTORY(plugins)
 -IF(NOT WIN32)
 -  ADD_SUBDIRECTORY(mariadb_config)
 -ENDIF()
