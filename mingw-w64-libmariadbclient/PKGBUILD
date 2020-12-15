@@ -38,9 +38,12 @@ build() {
   mkdir -p ${srcdir}/build-${MINGW_CHOST}
   cd ${srcdir}/build-${MINGW_CHOST}
 
-  export CFLAGS="-D_WIN32_WINNT=0x0600 -D_Printf_format_string_="
 
-  # WITH_SSL=SCHANNEL REQUIRES WINDOWS 8.1
+  # Notes by Jeroen (Dec 2020):
+  # WITH_SSL=SCHANNEL require more recent mingw-w64 (and I think Windows 8.1)
+  # Plugin 'REMOTE_IO' seems unimportant and requires libcurl
+  # I couldnt' get plugins ed25519 and caching_sha2_password to work.
+  export CFLAGS="-D_WIN32_WINNT=0x0600 -D_Printf_format_string_="
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake \
     -G "MSYS Makefiles" \
