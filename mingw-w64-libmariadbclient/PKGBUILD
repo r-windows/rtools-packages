@@ -12,8 +12,7 @@ license=('LGPL')
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-tools")
-depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
-         "${MINGW_PACKAGE_PREFIX}-curl"
+depends=("${MINGW_PACKAGE_PREFIX}-curl"
          "${MINGW_PACKAGE_PREFIX}-zlib")
 options=('!strip' 'staticlibs')
 source=(http://ftp.hosteurope.de/mirror/archive.mariadb.org/connector-c-${pkgver}/mariadb-connector-c-${pkgver}-src.tar.gz
@@ -42,16 +41,12 @@ build() {
   ${MINGW_PREFIX}/bin/cmake \
     -G "MSYS Makefiles" \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
-    -DPREFIX_INSTALL_DIR=${MINGW_PREFIX} \
-    -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_BUILD_TYPE=RELEASE \
     -DWITH_EXTERNAL_ZLIB=ON \
-    -DWITH_REMOTEIO=OFF \
-    -DWITH_OPENSSL=ON \
     -DWITH_MYSQLCOMPAT=OFF \
+    -DWITH_SSL="SCHANNEL" \
     -DCLIENT_PLUGIN_AUTH_GSSAPI_CLIENT=STATIC \
     -DCLIENT_PLUGIN_DIALOG=STATIC \
-    -DCLIENT_PLUGIN_CLIENT_ED25519=STATIC \
     -DCLIENT_PLUGIN_CACHING_SHA2_PASSWORD=STATIC \
     -DCLIENT_PLUGIN_SHA256_PASSWORD=STATIC \
     -DCLIENT_PLUGIN_MYSQL_CLEAR_PASSWORD=STATIC \
