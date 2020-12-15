@@ -37,6 +37,7 @@ build() {
   mkdir -p ${srcdir}/build-${MINGW_CHOST}
   cd ${srcdir}/build-${MINGW_CHOST}
 
+  unset PKG_CONFIG
   export CFLAGS="-D_WIN32_WINNT=0x0600 -D_Printf_format_string_="
 
   # WITH_SSL=SCHANNEL REQUIRES WINDOWS 8.1
