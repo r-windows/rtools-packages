@@ -72,7 +72,7 @@ build() {
 package() {
   cd "${srcdir}/build-${MINGW_CHOST}"
   make DESTDIR=${pkgdir} install
-  rm -f ${pkgdir}${MINGW_PREFIX}/lib/*.dll*
+  rm -f ${pkgdir}${MINGW_PREFIX}/{bin,lib}/*.dll*
 
   install -D -m0755 mariadb_config/mariadb_config.exe ${pkgdir}${MINGW_PREFIX}/bin/mariadb_config.exe
 
