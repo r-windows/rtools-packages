@@ -11,7 +11,8 @@ url="https://mariadb.org/"
 license=('LGPL')
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-cmake")
-depends=("${MINGW_PACKAGE_PREFIX}-zlib")
+depends=("${MINGW_PACKAGE_PREFIX}-openssl"
+         "${MINGW_PACKAGE_PREFIX}-zlib")
 #optdepends=("${MINGW_PACKAGE_PREFIX}-curl")
 options=('!strip' 'staticlibs')
 source=("http://ftp.hosteurope.de/mirror/archive.mariadb.org/connector-c-${pkgver}/mariadb-connector-c-${pkgver}-src.tar.gz"
@@ -37,7 +38,6 @@ build() {
   mkdir -p ${srcdir}/build-${MINGW_CHOST}
   cd ${srcdir}/build-${MINGW_CHOST}
 
-  unset PKG_CONFIG
   export CFLAGS="-D_WIN32_WINNT=0x0600 -D_Printf_format_string_="
 
   # WITH_SSL=SCHANNEL REQUIRES WINDOWS 8.1
