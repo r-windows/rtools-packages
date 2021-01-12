@@ -1,6 +1,10 @@
 clone_folder: C:\msys64\home\mingw-packages
 image: Visual Studio 2019
 
+branches:
+  only:
+    - master
+
 environment:
   DISABLE_QUALITY_CHECK: true
   PATH: C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Git\cmd;C:\Program Files\7-Zip

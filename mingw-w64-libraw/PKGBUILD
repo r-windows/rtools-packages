@@ -1,0 +1,54 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+
+_realname=LibRaw
+pkgbase=mingw-w64-libraw
+pkgname="${MINGW_PACKAGE_PREFIX}-libraw"
+provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+replaces=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+pkgver=0.20.2
+pkgrel=1
+pkgdesc="Library for reading RAW files obtained from digital photo cameras (mingw-w64)"
+arch=('any')
+url="https://www.libraw.org/"
+license=("LGPL")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config")
+depends=("${MINGW_PACKAGE_PREFIX}-lcms2"
+         "${MINGW_PACKAGE_PREFIX}-libjpeg"
+         "${MINGW_PACKAGE_PREFIX}-zlib")
+options=('staticlibs' 'strip')
+source=("https://www.libraw.org/data/${_realname}-${pkgver}.tar.gz"
+        "LibRaw_obsolete-macros.patch")
+sha256sums=('dc1b486c2003435733043e4e05273477326e51c3ea554c6864a4eafaff1004a6'
+            '4a31c0ee066f43915beff6f7959b6b2cd246d390720df379bfc047d4cedb6a8f')
+
+prepare() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+  patch -p1 -i "${srcdir}/LibRaw_obsolete-macros.patch"
+
+  autoreconf -ifv
+}
+
+build() {
+  [[ -d "${srcdir}/build-${CARCH}" ]] && rm -rf "${srcdir}/build-${CARCH}"
+  mkdir -p "${srcdir}/build-${CARCH}" && cd "${srcdir}/build-${CARCH}"
+
+  export CPPFLAGS+=" -DLIBRAW_NODLL"
+  export LIBS="-lstdc++"
+  ../${_realname}-${pkgver}/configure \
+      --prefix=${MINGW_PREFIX} \
+      --build=${MINGW_CHOST} \
+      --host=${MINGW_CHOST} \
+      --enable-static \
+      --disable-shared \
+      --disable-openmp \
+      --disable-jasper
+
+  make
+}
+
+package() {
+  cd "${srcdir}/build-${CARCH}"
+  make install DESTDIR="${pkgdir}"
+}
