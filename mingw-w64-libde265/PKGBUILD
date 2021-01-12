@@ -1,0 +1,50 @@
+# Contributor: Edward E. <develinthedetail@gmail.com>
+
+_realname=libde265
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=1.0.8
+pkgrel=1
+pkgdesc="Open h.265 video codec library (mingw-w64)"
+arch=('any')
+url="https://github.com/strukturag/libde265"
+license=(LGPL3' GPL3')
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config")
+options=('strip')
+source=("https://github.com/strukturag/libde265/releases/download/v${pkgver}/${_realname}-${pkgver}.tar.gz"
+        "001-fix-VPATH.patch"
+        "003-fix-pkgconfig-provide-includedir.patch")
+sha256sums=('24c791dd334fa521762320ff54f0febfd3c09fc978880a8c5fbc40a88f21d905'
+            'b4cdce2b362fde574512c2fad2e479f27969c0fe4df241322d9915d189dcb763'
+            'b3638582753f637f458bc3a1ba701148e4147408547f90e09f171ce2882d84c3')
+
+prepare() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+
+  patch -p1 -i ${srcdir}/001-fix-VPATH.patch
+  patch -p1 -i ${srcdir}/003-fix-pkgconfig-provide-includedir.patch
+
+  ./autogen.sh
+}
+
+build() {
+  [[ -d "${srcdir}"/build-${MINGW_CHOST} ]] && rm -rf "${srcdir}"/build-${MINGW_CHOST}
+  mkdir -p "${srcdir}"/build-${MINGW_CHOST} && cd "${srcdir}"/build-${MINGW_CHOST}
+
+  ../${_realname}-${pkgver}/configure \
+    CPPFLAGS='-I$(top_srcdir)/libde265 -I$(top_srcdir) -I$(top_srcdir)/sherlock265' \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --enable-static \
+    --disable-shared
+
+  make
+}
+
+package() {
+  cd "${srcdir}"/build-${MINGW_CHOST}
+  make DESTDIR="${pkgdir}" install
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
+}
