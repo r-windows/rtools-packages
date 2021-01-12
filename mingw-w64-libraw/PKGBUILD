@@ -35,7 +35,8 @@ build() {
   [[ -d "${srcdir}/build-${CARCH}" ]] && rm -rf "${srcdir}/build-${CARCH}"
   mkdir -p "${srcdir}/build-${CARCH}" && cd "${srcdir}/build-${CARCH}"
 
-  CPPFLAGS+=" -DLIBRAW_NODLL"
+  export CPPFLAGS+=" -DLIBRAW_NODLL"
+  export LIBS="-ljasper -ljpeg -llcms2 -lstdc++"
   ../${_realname}-${pkgver}/configure \
       --prefix=${MINGW_PREFIX} \
       --build=${MINGW_CHOST} \
