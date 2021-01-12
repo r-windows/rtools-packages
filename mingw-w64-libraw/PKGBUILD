@@ -14,8 +14,7 @@ url="https://www.libraw.org/"
 license=("LGPL")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config")
-depends=("${MINGW_PACKAGE_PREFIX}-jasper"
-         "${MINGW_PACKAGE_PREFIX}-lcms2"
+depends=("${MINGW_PACKAGE_PREFIX}-lcms2"
          "${MINGW_PACKAGE_PREFIX}-libjpeg"
          "${MINGW_PACKAGE_PREFIX}-zlib")
 options=('staticlibs' 'strip')
@@ -36,13 +35,15 @@ build() {
   mkdir -p "${srcdir}/build-${CARCH}" && cd "${srcdir}/build-${CARCH}"
 
   export CPPFLAGS+=" -DLIBRAW_NODLL"
-  export LIBS="-ljasper -ljpeg -llcms2 -lstdc++"
+  export LIBS="-lstdc++"
   ../${_realname}-${pkgver}/configure \
       --prefix=${MINGW_PREFIX} \
       --build=${MINGW_CHOST} \
       --host=${MINGW_CHOST} \
       --enable-static \
-      --disable-shared
+      --disable-shared \
+      --disable-openmp \
+      --disable-jasper
 
   make
 }
