@@ -4,7 +4,7 @@ _realname=imagemagick
 pkgbase="mingw-w64-${_realname}"
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 _basever=6.9.11
-_rc=-34
+_rc=-57
 pkgver=${_basever}${_rc//-/.} # pkgver doesn't have "," "/", "-" and space.
 pkgrel=3
 pkgdesc="An image viewing/manipulation program (mingw-w64)"
@@ -19,7 +19,9 @@ depends=("${MINGW_PACKAGE_PREFIX}-bzip2"
          "${MINGW_PACKAGE_PREFIX}-freetype"
          "${MINGW_PACKAGE_PREFIX}-jasper"
          "${MINGW_PACKAGE_PREFIX}-lcms2"
+         "${MINGW_PACKAGE_PREFIX}-libheif"
          "${MINGW_PACKAGE_PREFIX}-libpng"
+         "${MINGW_PACKAGE_PREFIX}-libraw"
          "${MINGW_PACKAGE_PREFIX}-librsvg"
          "${MINGW_PACKAGE_PREFIX}-libtiff"
          "${MINGW_PACKAGE_PREFIX}-libwebp"
@@ -80,6 +82,8 @@ build() {
     --with-openjp2 \
     --with-rsvg \
     --with-webp \
+    --with-raw \
+    --with-heic \
     --without-gslib \
     --without-fontconfig \
     --without-perl \
