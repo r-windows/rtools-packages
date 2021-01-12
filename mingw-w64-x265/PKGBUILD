@@ -1,0 +1,38 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+# Contributor: Yuta Nakai <nak5124@live.jp>
+
+_realname=x265
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=3.4
+pkgrel=1
+pkgdesc='Open Source H265/HEVC video encoder (mingw-w64)'
+arch=('any')
+license=('GPL')
+makedepends=("${MINGW_PACKAGE_PREFIX}-nasm" "${MINGW_PACKAGE_PREFIX}-cmake")
+options=('strip')
+url='https://bitbucket.org/multicoreware/x265'
+source=("${_realname}-${pkgver}.tar.gz"::"https://bitbucket.org/multicoreware/x265_git/get/${pkgver}.tar.gz")
+sha256sums=('7f2771799bea0f53b5ab47603d5bea46ea2a221e047a7ff398115e9976fd5f86')
+
+build() {
+  # Single build
+  mkdir -p ${srcdir}/build-${CARCH}
+  cd "${srcdir}/build-${CARCH}"
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+  ${MINGW_PREFIX}/bin/cmake \
+    -G "MSYS Makefiles" \
+    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+    -DWINXP_SUPPORT=OFF \
+    -DHIGH_BIT_DEPTH=ON \
+    -DENABLE_CLI=OFF \
+    -DENABLE_SHARED=OFF \
+    -DENABLE_ASSEMBLY=OFF \
+  ../multicoreware-x265_git-a4f320054d67/source
+  make
+}
+
+package() {
+  cd "${srcdir}/build-${CARCH}"
+  make DESTDIR=${pkgdir} install
+}
