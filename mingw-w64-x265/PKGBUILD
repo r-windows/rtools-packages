@@ -23,7 +23,7 @@ build() {
   ${MINGW_PREFIX}/bin/cmake \
     -G "MSYS Makefiles" \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
-    -DWINXP_SUPPORT=OFF \
+    -DWINXP_SUPPORT=ON \
     -DHIGH_BIT_DEPTH=ON \
     -DENABLE_CLI=OFF \
     -DENABLE_SHARED=OFF \
