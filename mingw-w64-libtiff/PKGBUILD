@@ -4,7 +4,7 @@
 _realname=libtiff
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=4.1.0
+pkgver=4.2.0
 pkgrel=9600
 pkgdesc="Library for manipulation of TIFF images (mingw-w64)"
 arch=('any')
@@ -15,7 +15,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-libjpeg-turbo"
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
 options=('staticlibs' 'strip')
 source=("http://download.osgeo.org/libtiff/tiff-${pkgver}.tar.gz")
-sha256sums=('5d29f32517dadb6dbcd1255ea5bbc93a2b54b94fbf83653b4d65c7d6775b8634')
+sha256sums=('eb0484e568ead8fa23b513e9b0041df7e327f4ee2d22db5a533929dfc19633cb')
 
 prepare() {
   cd tiff-${pkgver}
