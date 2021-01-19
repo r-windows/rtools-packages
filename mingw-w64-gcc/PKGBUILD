@@ -302,7 +302,9 @@ package_mingw-w64-gcc() {
   install -D -m644 ${srcdir}/gdbinit ${pkgdir}${MINGW_PREFIX}/etc/gdbinit
   sed -i 's|%GCC_NAME%|gcc-'${pkgver}'|g' ${pkgdir}${MINGW_PREFIX}/etc/gdbinit
 
-  # Hack for rustc hardcoding -lgcc_eh
+  # 'gcc' when build with --disable-shared does not produce a standalone 'libgcc_eh.a'.
+  # Instead, everything is put into 'libgcc.a'.
+  # To please compilers that hardcode -lgcc_eh, such as 'rustc', 'libgcc.a' is duplicated as 'libgcc_eh.a'.
   cp ${pkgdir}${MINGW_PREFIX}/lib/gcc/${MINGW_CHOST}/${pkgver}/libgcc.a ${pkgdir}${MINGW_PREFIX}/lib/gcc/${MINGW_CHOST}/${pkgver}/libgcc_eh.a
 }
 
