@@ -146,7 +146,7 @@ build() {
   sed -i GNUmakefile -e "s|\$(GDAL_ROOT)\/||g"
 
   # mariadb_config seems broken
-  sed -i GDALmake.opt -e "s|-lmariadb|-lmariadbclient -lssl -lcrypto -lcrypt32 -lgdi32 -lz -lws2_32 -pthread|g"
+  sed -i GDALmake.opt -e "s|-lmariadb|-lmariadbclient -lssl -lcrypto -lcrypt32 -lgdi32 -lz -lws2_32 -lshlwapi -pthread|g"
   grep -o "[^/]*\.a.*undefined reference to.*$" config.log | sed 's/(.*)//g'
   if [[ "$(grep '\.a.*undefined reference to' config.log)" ]]; then
     echo "Configure script had linking errors, please fix these first"
