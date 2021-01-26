@@ -24,11 +24,11 @@ options=("staticlibs" "strip" "!buildflags")
 # source_dir=${_realname}
 
 # Uncomment to build from rc
-source=("${_realname}-${pkgver}.tar.gz"::"https://dist.apache.org/repos/dist/dev/arrow/apache-arrow-${pkgver}-rc0/apache-arrow-${pkgver}.tar.gz")
+# source=("${_realname}-${pkgver}.tar.gz"::"https://dist.apache.org/repos/dist/dev/arrow/apache-arrow-${pkgver}-rc0/apache-arrow-${pkgver}.tar.gz")
 # This is the official release
-# source=("${_realname}-${pkgver}.tar.gz"::"https://downloads.apache.org/arrow/arrow-${pkgver}/apache-arrow-${pkgver}.tar.gz")
+source=("${_realname}-${pkgver}.tar.gz"::"https://downloads.apache.org/arrow/arrow-${pkgver}/apache-arrow-${pkgver}.tar.gz")
 source_dir="apache-${_realname}-${pkgver}"
-sha256sums=("47fc0aa552ed207b45b10c1580bd21f886d77d40229d60ec48b35736607bb416")
+sha256sums=("73c2cc3be537aa1f3fd9490cfec185714168c9bfd599d23e287ab0cc0558e27a")
 
 pkgver() {
   cd "$source_dir"
