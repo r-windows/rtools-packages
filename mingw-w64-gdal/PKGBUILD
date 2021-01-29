@@ -80,8 +80,8 @@ prepare() {
   PROJLIBS=$(pkg-config --libs-only-l --static proj)
   #sed -i "s/-lproj/${PROJLIBS}/g" configure.ac
 
-  # Spatialite
-  SPATIALLIBS=$(pkg-config --libs-only-l --static spatialite)
+  # Be careful: libcrypto.a and libxml2.a contain duplicate symbols
+  SPATIALLIBS="-lspatialite -lxml2 -lproj -lgeos_c -lgeos $(pkg-config --libs-only-l --static freexl sqlite3 libtiff-4 libcurl)"
   #sed -i "s/-lspatialite/${SPATIALLIBS}/g" configure.ac
 
   ./autogen.sh
@@ -137,16 +137,22 @@ build() {
     --with-netcdf="${MINGW_PREFIX}" \
     --with-crypto \
     --with-spatialite="yes" \
-    --with-liblzma \
+    --with-liblzma
 
   sed -i GDALmake.opt -e "s|EXE_DEP_LIBS.*|EXE_DEP_LIBS = \$\(GDAL_SLIB\)|g"
   sed -i GNUmakefile -e "s|\$(GDAL_ROOT)\/||g"
 
   # mariadb_config seems broken
   sed -i GDALmake.opt -e "s|-lmariadb|-lmariadbclient -lssl -lcrypto -lcrypt32 -lgdi32 -lz -lws2_32 -lshlwapi -pthread|g"
-  grep -o "[^/]*\.a.*undefined reference to.*$" config.log | sed 's/(.*)//g'
-  if [[ "$(grep '\.a.*undefined reference to' config.log)" ]]; then
-    echo "Configure script had linking errors, please fix these first"
+
+  # Print some output for debugging
+  if grep -o "[^/]*\.a.*undefined reference to.*$" config.log; then
+    echo "Found static linking errors in config.log. Drivers may have been disabled."
+    exit 1
+  fi
+
+  if grep -o "[^/]*\.a.*multiple definition of.*$" config.log; then
+    echo "Found symbol collisions config.log. Drivers may have been disabled."
     exit 1
   fi
 
