@@ -21,23 +21,19 @@ prepare() {
 }
 
 build() {
-  for SHARED in NO; do
-    [[ -d "${srcdir}/build-${MINGW_CHOST}-${SHARED}" ]] && rm -rf "${srcdir}/build-${MINGW_CHOST}-${SHARED}"
-    cp -rf "$srcdir/dlfcn-win32-${pkgver}" "${srcdir}/build-${MINGW_CHOST}-${SHARED}"
-    cd "${srcdir}/build-${MINGW_CHOST}-${SHARED}"
-    MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
-      ${MINGW_PREFIX}/bin/cmake \
-        -G "MSYS Makefiles" \
-        -DBUILD_SHARED_LIBS=${SHARED} \
-        -DCMAKE_INSTALL_PREFIX="${MINGW_PREFIX}"  \
-        .
-    make
-  done
+  [[ -d "${srcdir}/build-${MINGW_CHOST}" ]] && rm -rf "${srcdir}/build-${MINGW_CHOST}"
+  cp -rf "$srcdir/dlfcn-win32-${pkgver}" "${srcdir}/build-${MINGW_CHOST}"
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+    ${MINGW_PREFIX}/bin/cmake \
+      -G "MSYS Makefiles" \
+      -DBUILD_SHARED_LIBS=NO \
+      -DCMAKE_INSTALL_PREFIX="${MINGW_PREFIX}"  \
+      .
+  make
 }
 
 package() {
-  for SHARED in NO; do
-    cd "${srcdir}/build-${MINGW_CHOST}-${SHARED}"
-    make DESTDIR="${pkgdir}" install
-  done
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  make DESTDIR="${pkgdir}" install
 }
