@@ -11,7 +11,7 @@ pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=8.3.0
 _srcver=8.3.0
 #_srcver=8.3.0-RC-20190215
-pkgrel=9500
+pkgrel=9501
 pkgdesc="GCC for the MinGW-w64"
 arch=('any')
 url="https://gcc.gnu.org"
@@ -302,10 +302,10 @@ package_mingw-w64-gcc() {
   install -D -m644 ${srcdir}/gdbinit ${pkgdir}${MINGW_PREFIX}/etc/gdbinit
   sed -i 's|%GCC_NAME%|gcc-'${pkgver}'|g' ${pkgdir}${MINGW_PREFIX}/etc/gdbinit
 
-  # Hack for rustc hardcoding -lgcc_eh
-  if [ "${MINGW_CHOST}" = "i686-w64-mingw32" ]; then
-    cp ${pkgdir}${MINGW_PREFIX}/lib/gcc/${MINGW_CHOST}/${pkgver}/libgcc.a ${pkgdir}${MINGW_PREFIX}/lib/gcc/${MINGW_CHOST}/${pkgver}/libgcc_eh.a
-  fi
+  # 'gcc' when build with --disable-shared does not produce a standalone 'libgcc_eh.a'.
+  # Instead, everything is put into 'libgcc.a'.
+  # To please compilers that hardcode -lgcc_eh, such as 'rustc', 'libgcc.a' is duplicated as 'libgcc_eh.a'.
+  cp ${pkgdir}${MINGW_PREFIX}/lib/gcc/${MINGW_CHOST}/${pkgver}/libgcc.a ${pkgdir}${MINGW_PREFIX}/lib/gcc/${MINGW_CHOST}/${pkgver}/libgcc_eh.a
 }
 
 package_mingw-w64-gcc-fortran() {
