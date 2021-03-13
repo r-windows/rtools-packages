@@ -7,7 +7,7 @@
 _realname=gdal
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=3.2.1
+pkgver=3.2.2
 pkgrel=1
 pkgdesc="A translator library for raster geospatial data formats (mingw-w64)"
 arch=('any')
@@ -44,7 +44,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-cfitsio"
 #optdepends=("${MINGW_PACKAGE_PREFIX}-postgresql")
 options=('strip' 'staticlibs')
 source=(https://download.osgeo.org/${_realname}/${pkgver}/${_realname}-${pkgver}.tar.gz)
-sha256sums=('43d40ba940e3927e38f9e98062ff62f9fa993ceade82f26f16fab7e73edb572e')
+sha256sums=('3313e1b0e75de58da4e15a68a9b55e7c04509d3e0e274311dfffe996f6da1a2a')
 
 prepare() {
   cd ${srcdir}
