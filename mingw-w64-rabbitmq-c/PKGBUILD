@@ -1,0 +1,61 @@
+# Maintainer: Marcin Sielski <marcin.sielski@motorolasolutions.com>
+# Contributed to rtools by: Aaron Jacobs <atheriel@gmail.com>
+
+_realname=rabbitmq-c
+pkgbase=mingw-w64-${_realname}
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+pkgver=0.10.0
+pkgrel=1
+pkgdesc="RabbitMQ C client (mingw-w64)"
+arch=('any')
+url='https://github.com/alanxz/rabbitmq-c'
+license=('MIT')
+makedepends=("${MINGW_PACKAGE_PREFIX}-cmake" "${MINGW_PACKAGE_PREFIX}-gcc")
+depends=("${MINGW_PACKAGE_PREFIX}-openssl")
+source=("${_realname}-${pkgver}.tar.gz"::"https://github.com/alanxz/${_realname}/archive/v${pkgver}.tar.gz"
+        "0001-librabbitmq-CMakeLists.txt.patch"
+        "0002-librabbitmq-CMakeLists.txt.patch")
+sha256sums=('6455efbaebad8891c59f274a852b75b5cc51f4d669dfc78d2ae7e6cc97fcd8c0'
+            '56b0c014b23e871dd25b17cca3240807a55d3baf179a9b735d1d08b85708c784'
+            '26bfd5d28ae72387becc97e0b3bcf94f4090eca28cc2273d680b78b5954b3ed7')
+
+prepare() {
+  cd "${srcdir}"/${_realname}-${pkgver}
+  patch -p2 -i ${srcdir}/0001-librabbitmq-CMakeLists.txt.patch
+  patch -p1 -i ${srcdir}/0002-librabbitmq-CMakeLists.txt.patch
+}
+
+build() {
+  [[ -d "${srcdir}"/build-${CARCH} ]] && rm -rf "${srcdir}"/build-${CARCH}
+  mkdir -p "${srcdir}"/build-${CARCH} && cd "${srcdir}"/build-${CARCH}
+
+  declare -a extra_config
+  if check_option "debug" "n"; then
+    extra_config+=("-DCMAKE_BUILD_TYPE=Release")
+  else
+    extra_config+=("-DCMAKE_BUILD_TYPE=Debug")
+  fi
+
+  CFLAGS+=" -D_WIN32_WINNT=0x0600"
+  CXXFLAGS+=" -D_WIN32_WINNT=0x0600"
+
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+    ${MINGW_PREFIX}/bin/cmake \
+      -G'MSYS Makefiles' \
+      -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+      "${extra_config[@]}" \
+      -DBUILD_STATIC_LIBS=ON \
+      -DBUILD_SHARED_LIBS=OFF \
+      -DBUILD_EXAMPLES=OFF \
+      -DBUILD_TOOLS=OFF \
+      -DBUILD_TESTS=OFF \
+      -DBUILD_API_DOCS=OFF \
+      ../${_realname}-${pkgver}
+
+  make
+}
+
+package() {
+  cd "${srcdir}"/build-${CARCH}
+  make install DESTDIR="${pkgdir}"
+}

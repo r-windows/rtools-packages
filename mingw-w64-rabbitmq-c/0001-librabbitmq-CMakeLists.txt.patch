@@ -1,0 +1,20 @@
+--- origsrc/rabbitmq-c/librabbitmq/CMakeLists.txt	2016-04-10 07:03:24.000000000 +0200
++++ src/rabbitmq-c/librabbitmq/CMakeLists.txt	2016-07-30 20:36:58.954149900 +0200
+@@ -125,7 +125,7 @@
+     target_link_libraries(rabbitmq ${RMQ_LIBRARIES})
+ 
+     if (WIN32)
+-        set_target_properties(rabbitmq PROPERTIES VERSION ${RMQ_VERSION} OUTPUT_NAME rabbitmq.${RMQ_SOVERSION})
++        set_target_properties(rabbitmq PROPERTIES VERSION ${RMQ_VERSION} OUTPUT_NAME rabbitmq)
+     else (WIN32)
+         set_target_properties(rabbitmq PROPERTIES VERSION ${RMQ_VERSION} SOVERSION ${RMQ_SOVERSION})
+     endif (WIN32)
+@@ -152,7 +152,7 @@
+     if (WIN32)
+         set_target_properties(rabbitmq-static PROPERTIES
+           VERSION ${RMQ_VERSION}
+-          OUTPUT_NAME librabbitmq.${RMQ_SOVERSION})
++          OUTPUT_NAME rabbitmq)
+ 
+         if(MSVC)
+             set_target_properties(rabbitmq-static PROPERTIES
