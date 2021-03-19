@@ -3,10 +3,10 @@
 _realname=imagemagick
 pkgbase="mingw-w64-${_realname}"
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-_basever=6.9.11
-_rc=-57
+_basever=6.9.12
+_rc=-3
 pkgver=${_basever}${_rc//-/.} # pkgver doesn't have "," "/", "-" and space.
-pkgrel=3
+pkgrel=1
 pkgdesc="An image viewing/manipulation program (mingw-w64)"
 arch=('any')
 url="https://www.imagemagick.org/"
@@ -33,8 +33,10 @@ depends=("${MINGW_PACKAGE_PREFIX}-bzip2"
          "${MINGW_PACKAGE_PREFIX}-zstd")
 options=('staticlibs' 'strip' '!debug' 'libtool')
 source=(https://imagemagick.org/download/releases/ImageMagick-${_basever}${_rc}.tar.xz
-        6.9.11-build-fixes.patch)
+        6.9.11-build-fixes.patch
+        hardcode-thresholds.diff)
 sha256sums=('SKIP'
+            'SKIP'
             'SKIP')
 #Lexie Parsimoniae (ImageMagick code signing key) <lexie.parsimoniae@imagemagick.org>
 validpgpkeys=('D8272EF51DA223E4D05B466989AB63D48277377A')
@@ -42,6 +44,7 @@ validpgpkeys=('D8272EF51DA223E4D05B466989AB63D48277377A')
 prepare() {
   cd ImageMagick-${_basever}${_rc}
   patch -p1 -i ${srcdir}/6.9.11-build-fixes.patch
+  patch -p1 -i ${srcdir}/hardcode-thresholds.diff
 }
 
 build() {
