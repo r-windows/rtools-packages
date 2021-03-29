@@ -130,7 +130,7 @@ execute(){
 
 # Update system
 update_system() {
-    repman add ci.msys 'https://dl.bintray.com/alexpux/msys2' || return 1
+    #repman add ci.msys 'https://dl.bintray.com/alexpux/msys2' || return 1
     pacman --noconfirm --noprogressbar --sync --refresh --refresh --sysupgrade || return 1
     test -n "${DISABLE_QUALITY_CHECK}" && return 0 # TODO: remove this option when not anymore needed
     pacman --noconfirm --needed --noprogressbar --sync ci.msys/pactoys

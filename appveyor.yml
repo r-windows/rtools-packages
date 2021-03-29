@@ -17,10 +17,12 @@ environment:
       BINTRAY_REPOSITORY: mingw32
       PACMAN_REPOSITORY: mingw32
       BINTRAY_PACKAGE: mingw32
+      MSYSTEM: MINGW32
     - MINGW_INSTALLS: mingw64
       BINTRAY_REPOSITORY: mingw64
       PACMAN_REPOSITORY: mingw64
       BINTRAY_PACKAGE: mingw64
+      MSYSTEM: MINGW64
 
 matrix:
   fast_finish: true
