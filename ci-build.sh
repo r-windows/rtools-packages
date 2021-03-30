@@ -26,7 +26,7 @@ else
 fi
 
 # Temp hack for weird msys2 flag
-sed -i 's/,--default-image-base-high//' /etc/makepkg_mingw64.conf
+sed -i 's/,--default-image-base-high//' /etc/makepkg_mingw.conf
 
 # Enable upstream msys2 repo
 cp -f pacman.conf /etc/pacman.conf
@@ -62,7 +62,7 @@ export PKGEXT='.pkg.tar.xz'
 
 for package in "${packages[@]}"; do
     execute 'Building binary' makepkg-mingw --noconfirm --noprogressbar --skippgpcheck --syncdeps --rmdeps --cleanbuild
-    execute 'Building source' makepkg --noconfirm --noprogressbar --skippgpcheck --allsource --config '/etc/makepkg_mingw64.conf'
+    execute 'Building source' makepkg --noconfirm --noprogressbar --skippgpcheck --allsource --config '/etc/makepkg_mingw.conf'
     execute 'List output contents' ls -ltr
     execute 'Installing' yes:pacman --noprogressbar --upgrade *.pkg.tar.xz
     execute 'Checking Binaries' find ./pkg -regex ".*\.\(exe\|dll\|a\|pc\)"
