@@ -17,7 +17,7 @@ build() {
   cd "$srcdir"/${_realname}-${pkgver}
   [[ -d "${srcdir}"/build-${CARCH} ]] && rm -rf "${srcdir}"/build-${CARCH}
   mkdir -p "${srcdir}"/build-${CARCH} && cd "${srcdir}"/build-${CARCH}
-
+  unset PKG_CONFIG
   export enable_bzlib=no
   ../Cbc-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
