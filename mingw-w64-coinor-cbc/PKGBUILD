@@ -19,11 +19,15 @@ build() {
   mkdir -p "${srcdir}"/build-${CARCH} && cd "${srcdir}"/build-${CARCH}
   unset PKG_CONFIG
   export enable_bzlib=no
-  ../Cbc-${pkgver}/configure \
+  {
+    ../Cbc-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST} \
     --target=${MINGW_CHOST}
+  } || {
+    cat ../Cbc-${pkgver}/config.log
+  }
 
   make
 }
