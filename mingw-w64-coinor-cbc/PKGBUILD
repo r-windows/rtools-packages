@@ -26,7 +26,7 @@ build() {
     --host=${MINGW_CHOST} \
     --target=${MINGW_CHOST}
   } || {
-    cat ../../Cbc-${pkgver}/config.log
+    cat "${srcdir}"/build-${CARCH}/config.log
     echo "error!"
   }
 
