@@ -27,6 +27,7 @@ build() {
     --target=${MINGW_CHOST}
   } || {
     cat ../Cbc-${pkgver}/config.log
+    echo "error!"
   }
 
   make
