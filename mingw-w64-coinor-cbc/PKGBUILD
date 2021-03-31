@@ -26,7 +26,7 @@ build() {
     --host=${MINGW_CHOST} \
     --target=${MINGW_CHOST}
   } || {
-    cat ../Cbc-${pkgver}/config.log
+    cat ../Cbc-${pkgver}/CoinUtils/config.log
     echo "error!"
   }
 
