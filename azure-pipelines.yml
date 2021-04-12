@@ -9,10 +9,12 @@ jobs:
         i686:
           RTOOLS_ARCH: x86_64
           MINGW_INSTALLS: mingw32
+          MINGW_ARCH: mingw32
           MSYSTEM: MINGW32
         x86_64:
           RTOOLS_ARCH: x86_64
           MINGW_INSTALLS: mingw64
+          MINGW_ARCH: mingw64
           MSYSTEM: MINGW64
     steps:
       - powershell: |
@@ -30,7 +32,6 @@ jobs:
         displayName: Building Packages
         env:
           BUILD_URL: dummy
-          DEPLOY_PROVIDER: bintray
           BINTRAY_TARGET: rtools
           BINTRAY_REPOSITORY: $(MINGW_INSTALLS)
           PACMAN_REPOSITORY: $(MINGW_INSTALLS)

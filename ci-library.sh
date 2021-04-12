@@ -94,10 +94,9 @@ _build_add() {
 # Download previous artifact
 _download_previous() {
     local filenames=("${@}")
-    [[ "${DEPLOY_PROVIDER}" = bintray ]] || return 1
     for filename in "${filenames[@]}"; do
-        if ! curl -fsSOL "https://dl.bintray.com/${BINTRAY_TARGET}/${BINTRAY_REPOSITORY}/${filename}"; then
-            echo "Failed to get https://dl.bintray.com/${BINTRAY_TARGET}/${BINTRAY_REPOSITORY}/${filename}"
+        if ! curl -fsSOL "https://ftp.opencpu.org/${BINTRAY_TARGET}/${BINTRAY_REPOSITORY}/${filename}"; then
+            echo "Failed to get https://ftp.opencpu.org/${BINTRAY_TARGET}/${BINTRAY_REPOSITORY}/${filename}"
             rm -f "${filenames[@]}"
             return 1
         fi
@@ -189,7 +188,6 @@ set_arch(){
 # Deployment is enabled
 deploy_enabled() {
     test -n "${BUILD_URL}" || return 1
-    [[ "${DEPLOY_PROVIDER}" = bintray ]] || return 1
     local repository_account="$(git remote get-url origin | cut -d/ -f4)"
     [[ "${repository_account,,}" = "r-windows" ]]
 }
