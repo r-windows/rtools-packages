@@ -57,12 +57,13 @@ execute 'Approving recipe quality' check_recipe_quality
 # Force static linking
 rm -f /mingw32/lib/*.dll.a
 rm -f /mingw64/lib/*.dll.a
-export PKG_CONFIG="/${MINGW_INSTALLS}/bin/pkg-config --static"
+rm -f /ucrt64/lib/*.dll.a
+export PKG_CONFIG="/${MINGW_ARCH}/bin/pkg-config --static"
 export PKGEXT='.pkg.tar.xz'
 
 for package in "${packages[@]}"; do
     execute 'Building binary' makepkg-mingw --noconfirm --noprogressbar --skippgpcheck --syncdeps --rmdeps --cleanbuild
-    execute 'Building source' makepkg --noconfirm --noprogressbar --skippgpcheck --allsource --config '/etc/makepkg_mingw.conf'
+    MINGW_ARCH=mingw64 execute 'Building source' makepkg-mingw --noconfirm --noprogressbar --allsource
     execute 'List output contents' ls -ltr
     execute 'Installing' yes:pacman --noprogressbar --upgrade *.pkg.tar.xz
     execute 'Checking Binaries' find ./pkg -regex ".*\.\(exe\|dll\|a\|pc\)"

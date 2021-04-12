@@ -12,8 +12,9 @@ jobs:
     strategy:
       matrix:
         include: [
-          { msystem: mingw64 },
-          { msystem: mingw32 }
+#          { msystem: ucrt64, arch: ucrt-x86_64 }
+          { msystem: mingw64, arch: x86_64 },
+          { msystem: mingw32, arch: i686 },
         ]
       fail-fast: false
     defaults:
@@ -27,15 +28,14 @@ jobs:
 
       - uses: msys2/setup-msys2@v2
         with:
-          msystem: ${{ matrix.msystem }}
-          install: git
+          msystem: MSYS
+          install: git mingw-w64-${{ matrix.arch }}-toolchain
           update: true
 
       - name: CI-Build
-        run: MINGW_INSTALLS=${{ matrix.msystem }} ./ci-build.sh
+        run: MINGW_ARCH=${{ matrix.msystem }} ./ci-build.sh
         env:
           BUILD_URL: dummy
-          DEPLOY_PROVIDER: bintray
           BINTRAY_TARGET: rtools
           BINTRAY_REPOSITORY: ${{ matrix.msystem }}
           PACMAN_REPOSITORY: ${{ matrix.msystem }}

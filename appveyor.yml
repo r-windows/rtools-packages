@@ -8,17 +8,16 @@ branches:
 environment:
   DISABLE_QUALITY_CHECK: true
   PATH: C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Git\cmd;C:\Program Files\7-Zip
-  DEPLOY_PROVIDER: bintray
   BINTRAY_USER: jeroen
   BINTRAY_TARGET: rtools
   BUILD_URL: https://ci.appveyor.com/project/$(APPVEYOR_ACCOUNT_NAME)/$(APPVEYOR_PROJECT_NAME)/build/$(APPVEYOR_BUILD_VERSION)
   matrix:
-    - MINGW_INSTALLS: mingw32
+    - MINGW_ARCH: mingw32
       BINTRAY_REPOSITORY: mingw32
       PACMAN_REPOSITORY: mingw32
       BINTRAY_PACKAGE: mingw32
       MSYSTEM: MINGW32
-    - MINGW_INSTALLS: mingw64
+    - MINGW_ARCH: mingw64
       BINTRAY_REPOSITORY: mingw64
       PACMAN_REPOSITORY: mingw64
       BINTRAY_PACKAGE: mingw64
@@ -42,31 +41,31 @@ artifacts:
   - path: sourcepkg\*
     name: sources
 
-deploy:
-  - provider: BinTray
-    username: $(BINTRAY_USER)
-    subject: $(BINTRAY_TARGET)
-    repo: $(BINTRAY_REPOSITORY)
-    package: $(BINTRAY_PACKAGE)
-    version: latest
-    publish: true
-    override: true
-    api_key:
-      secure: rKoNWcAgUrOM7QLX4cEvA1iKoY2DR4ps/1PRveq7rJknjQjcpKx8xGs42CJPhDwJ
-    on:
-      branch: master
-    artifact: binaries
+# deploy:
+#   - provider: BinTray
+#     username: $(BINTRAY_USER)
+#     subject: $(BINTRAY_TARGET)
+#     repo: $(BINTRAY_REPOSITORY)
+#     package: $(BINTRAY_PACKAGE)
+#     version: latest
+#     publish: true
+#     override: true
+#     api_key:
+#       secure: rKoNWcAgUrOM7QLX4cEvA1iKoY2DR4ps/1PRveq7rJknjQjcpKx8xGs42CJPhDwJ
+#     on:
+#       branch: master
+#     artifact: binaries
 
-  - provider: BinTray
-    username: $(BINTRAY_USER)
-    subject: $(BINTRAY_TARGET)
-    repo: sources
-    package: mingw
-    version: latest
-    publish: true
-    override: true
-    api_key:
-      secure: rKoNWcAgUrOM7QLX4cEvA1iKoY2DR4ps/1PRveq7rJknjQjcpKx8xGs42CJPhDwJ
-    on:
-      branch: master
-    artifact: sources
+#   - provider: BinTray
+#     username: $(BINTRAY_USER)
+#     subject: $(BINTRAY_TARGET)
+#     repo: sources
+#     package: mingw
+#     version: latest
+#     publish: true
+#     override: true
+#     api_key:
+#       secure: rKoNWcAgUrOM7QLX4cEvA1iKoY2DR4ps/1PRveq7rJknjQjcpKx8xGs42CJPhDwJ
+#     on:
+#       branch: master
+#     artifact: sources
