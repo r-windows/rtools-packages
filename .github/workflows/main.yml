@@ -42,14 +42,13 @@ jobs:
 
       - name: "Upload binary package"
         uses: actions/upload-artifact@v2
-        if: success() && matrix.msystem == 'ucrt64'
         with:
           name: ${{ matrix.msystem }}
           path: artifacts/
 
       - name: "Upload source package"
         uses: actions/upload-artifact@v2
-        if: success() && matrix.msystem == 'ucrt64'
+        if: success() && matrix.msystem == 'mingw64'
         with:
           name: sources
           path: sourcepkg/
