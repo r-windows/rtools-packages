@@ -35,6 +35,7 @@ build() {
     -DCMAKE_INSTALL_PREFIX="${MINGW_PREFIX}" \
     -DCMAKE_BUILD_TYPE=Release \
     -DFLATBUFFERS_BUILD_SHAREDLIB=OFF \
+    -DFLATBUFFERS_BUILD_TESTS=OFF \
     ../${_realname}-${pkgver}
 
   make

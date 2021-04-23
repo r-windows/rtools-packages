@@ -12,7 +12,8 @@ arch=('any')
 url="https://www.gtk.org/"
 license=(LGPL2)
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
-             "${MINGW_PACKAGE_PREFIX}-pkg-config")
+             "${MINGW_PACKAGE_PREFIX}-pkg-config"
+             "gtk-doc")
 depends=("${MINGW_PACKAGE_PREFIX}-glib2"
          "${MINGW_PACKAGE_PREFIX}-libjpeg-turbo"
          "${MINGW_PACKAGE_PREFIX}-libpng"

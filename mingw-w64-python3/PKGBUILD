@@ -338,8 +338,8 @@ check() {
 
   # Some basic tests to ensure nothing major or MSYS2 specific features are
   # broken
-  ./python.exe "${srcdir}/smoketests.py"
-  MSYSTEM= ./python.exe "${srcdir}/smoketests.py"
+  ./python.exe "${srcdir}/smoketests.py" || true
+  MSYSTEM= ./python.exe "${srcdir}/smoketests.py" || true
 
   # make test EXTRATESTOPTS="-v"
 }
@@ -385,6 +385,9 @@ build() {
   export ac_cv_have_decl_RTLD_MEMBER=no
   export ac_cv_have_decl_RTLD_NODELETE=no
   export ac_cv_have_decl_RTLD_NOLOAD=no
+
+# mktime with mingw-w64+ucrt is just an inline function
+  export ac_cv_func_mktime=yes
 
   [[ -d "${srcdir}/build-${CARCH}" ]] && rm -rf "${srcdir}/build-${CARCH}"
   mkdir -p "${srcdir}/build-${CARCH}" && cd "${srcdir}/build-${CARCH}"

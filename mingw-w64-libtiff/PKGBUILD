@@ -36,6 +36,7 @@ build() {
     --enable-static \
     --disable-shared \
     --disable-lzma \
+    --disable-zstd \
     --enable-cxx \
     --disable-jbig \
     --without-x

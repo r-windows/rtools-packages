@@ -35,6 +35,11 @@ build() {
   mkdir ${srcdir}/build-${MINGW_CHOST}
   cd ${srcdir}/build-${MINGW_CHOST}
 
+  # Workaround for gcc-10, remove when updating pkg
+  if [[ $MINGW_PACKAGE_PREFIX == *-ucrt-* ]]; then
+    CFLAGS+=" -fcommon"
+  fi
+
   ../${_realname}-${pkgver}/configure \
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST} \

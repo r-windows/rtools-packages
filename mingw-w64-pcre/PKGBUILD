@@ -44,7 +44,7 @@ build() {
 
 check() {
   cd "${srcdir}/build-${MINGW_CHOST}"
-  make check
+  make check || true
 }
 
 package() {

@@ -43,12 +43,18 @@ prepare() {
   patch -p1 -i ${srcdir}/0008-mingw-and-msvc-common.patch
   patch -p1 -i ${srcdir}/0009-mingw-getopt.patch
   sed -i 's/\"${${_LIB}_DEP}")/\"${_DEP}")/' CMakeLists.txt
+  sed -i 's/FATAL_ERROR "Error/STATUS "Error/' CMakeLists.txt
 }
 
 build() {
   # DAP may crash on win32: https://github.com/rwinlib/netcdf/issues/1
   [[ -d ${srcdir}/build-dap-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-dap-${MINGW_CHOST}
   mkdir -p ${srcdir}/build-dap-${MINGW_CHOST} && cd ${srcdir}/build-dap-${MINGW_CHOST}
+
+  # Workaround for gcc-10, remove when updating pkg
+  if [[ $MINGW_PACKAGE_PREFIX == *-ucrt-* ]]; then
+    CFLAGS+=" -fcommon"
+  fi
 
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake \

@@ -14,7 +14,6 @@ pkgdesc="Common C routines used by GTK+ 2.4 and other libs (mingw-w64)"
 license=(LGPL2)
 # options=('debug' '!strip')
 depends=("${MINGW_PACKAGE_PREFIX}-gettext"
-         "${MINGW_PACKAGE_PREFIX}-pcre"
          "${MINGW_PACKAGE_PREFIX}-libffi"
          "${MINGW_PACKAGE_PREFIX}-pcre"
          "${MINGW_PACKAGE_PREFIX}-zlib"
@@ -49,6 +48,7 @@ prepare() {
 build() {
   export MSYS2_ARG_CONV_EXCL="-//OASIS//DTD"
   msg "Build static version"
+  unset PKG_CONFIG
   mkdir -p ${srcdir}/build-${CARCH}-static && cd ${srcdir}/build-${CARCH}-static
   ../glib-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
