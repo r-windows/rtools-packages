@@ -31,14 +31,9 @@ jobs:
           C:\rtools40\usr\bin\pacman --noconfirm --needed -S git ca-certificates
           C:\rtools40\usr\bin\bash --login -c "$(cygpath ${SYSTEM_DEFAULTWORKINGDIRECTORY})/ci-build.sh"
         displayName: Building Packages
-        env:
-          BUILD_URL: dummy
-          BINTRAY_TARGET: rtools
-          BINTRAY_REPOSITORY: $(MINGW_INSTALLS)
-          PACMAN_REPOSITORY: $(MINGW_INSTALLS)
 
       - task: PublishPipelineArtifact@1
         displayName: Storing artifacts
         inputs:
           targetPath: artifacts
-          artifactName: $(MINGW_INSTALLS)-repo.zip
+          artifactName: $(MINGW_ARCH)-repo.zip
