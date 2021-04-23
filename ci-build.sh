@@ -22,10 +22,10 @@ cp -f pacman.conf /etc/pacman.conf
 pacman --noconfirm -Scc
 pacman --noconfirm -Syyu
 pacman --noconfirm --needed -S git base-devel binutils unzip
-pacman --noconfirm --needed -S mingw-w64-${MINGW_TOOLCHAIN}-{toolchain,libtre,pkg-config,xz}
+pacman --noconfirm --needed -S mingw-w64-${MINGW_TOOLCHAIN}-{gcc,libtre,pkg-config,xz}
 
 # Remove weird upstream build flags
-sed -i 's/,--default-image-base-high//' /etc/makepkg_mingw.conf
+sed -i 's/,--default-image-base-high//g' /etc/makepkg_mingw.conf
 
 # Initiate git
 git_config user.email 'ci@msys2.org'
