@@ -8,20 +8,15 @@ branches:
 environment:
   DISABLE_QUALITY_CHECK: true
   PATH: C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Git\cmd;C:\Program Files\7-Zip
-  BINTRAY_USER: jeroen
-  BINTRAY_TARGET: rtools
   BUILD_URL: https://ci.appveyor.com/project/$(APPVEYOR_ACCOUNT_NAME)/$(APPVEYOR_PROJECT_NAME)/build/$(APPVEYOR_BUILD_VERSION)
+  MSYSTEM: MSYS
   matrix:
     - MINGW_ARCH: mingw32
-      BINTRAY_REPOSITORY: mingw32
       PACMAN_REPOSITORY: mingw32
-      BINTRAY_PACKAGE: mingw32
-      MSYSTEM: MINGW32
+      MINGW_TOOLCHAIN: i686
     - MINGW_ARCH: mingw64
-      BINTRAY_REPOSITORY: mingw64
       PACMAN_REPOSITORY: mingw64
-      BINTRAY_PACKAGE: mingw64
-      MSYSTEM: MINGW64
+      MINGW_TOOLCHAIN: x86_64
 
 matrix:
   fast_finish: true
@@ -40,32 +35,3 @@ artifacts:
     name: binaries
   - path: sourcepkg\*
     name: sources
-
-# deploy:
-#   - provider: BinTray
-#     username: $(BINTRAY_USER)
-#     subject: $(BINTRAY_TARGET)
-#     repo: $(BINTRAY_REPOSITORY)
-#     package: $(BINTRAY_PACKAGE)
-#     version: latest
-#     publish: true
-#     override: true
-#     api_key:
-#       secure: rKoNWcAgUrOM7QLX4cEvA1iKoY2DR4ps/1PRveq7rJknjQjcpKx8xGs42CJPhDwJ
-#     on:
-#       branch: master
-#     artifact: binaries
-
-#   - provider: BinTray
-#     username: $(BINTRAY_USER)
-#     subject: $(BINTRAY_TARGET)
-#     repo: sources
-#     package: mingw
-#     version: latest
-#     publish: true
-#     override: true
-#     api_key:
-#       secure: rKoNWcAgUrOM7QLX4cEvA1iKoY2DR4ps/1PRveq7rJknjQjcpKx8xGs42CJPhDwJ
-#     on:
-#       branch: master
-#     artifact: sources

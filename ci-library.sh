@@ -95,8 +95,8 @@ _build_add() {
 _download_previous() {
     local filenames=("${@}")
     for filename in "${filenames[@]}"; do
-        if ! curl -fsSOL "https://ftp.opencpu.org/${BINTRAY_TARGET}/${BINTRAY_REPOSITORY}/${filename}"; then
-            echo "Failed to get https://ftp.opencpu.org/${BINTRAY_TARGET}/${BINTRAY_REPOSITORY}/${filename}"
+        if ! curl -fsSOL "https://ftp.opencpu.org/rtools/${MINGW_ARCH}/${filename}"; then
+            echo "Failed to get https://ftp.opencpu.org/rtools/${MINGW_ARCH}/${filename}"
             rm -f "${filenames[@]}"
             return 1
         fi
@@ -183,13 +183,6 @@ set_arch(){
       _arch=x86_64
     ;;
   esac
-}
-
-# Deployment is enabled
-deploy_enabled() {
-    test -n "${BUILD_URL}" || return 1
-    local repository_account="$(git remote get-url origin | cut -d/ -f4)"
-    [[ "${repository_account,,}" = "r-windows" ]]
 }
 
 # Added commits
