@@ -42,7 +42,7 @@ build() {
 
   # NB: building only static libs seems broken
   # So we build both and delete the dlls below
-  LIBS="-lcrypt32 -lws2_32"
+  export LIBS="-lcrypt32 -lws2_32"
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake.exe \
     -G"MSYS Makefiles" \
