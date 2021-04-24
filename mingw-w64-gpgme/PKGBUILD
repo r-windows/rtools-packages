@@ -72,7 +72,9 @@ build() {
     --disable-shared \
     --enable-static \
     --enable-languages=no \
-    --disable-gpgsm-test
+    --disable-gpgsm-test \
+    --disable-gpgconf-test \
+    --disable-gpg-test
 
   make
 }
