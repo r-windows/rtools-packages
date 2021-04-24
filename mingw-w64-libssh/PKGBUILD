@@ -46,7 +46,7 @@ build() {
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release \
     -DWITH_GSSAPI=OFF \
-    -DUNIT_TESTING=ON \
+    -DUNIT_TESTING=OFF \
     -DBUILD_STATIC_LIB=ON \
     -DBUILD_SHARED_LIBS=OFF \
     ../${_realname}-${pkgver}
