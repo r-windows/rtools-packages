@@ -12,7 +12,6 @@ arch=('any')
 url="https://gnupg.org/related_software/gpgme/"
 license=('LGPL')
 depends=("${MINGW_PACKAGE_PREFIX}-glib2"
-         "${MINGW_PACKAGE_PREFIX}-gnupg"
          "${MINGW_PACKAGE_PREFIX}-libassuan"
          "${MINGW_PACKAGE_PREFIX}-libgpg-error")
 makedepends=("${MINGW_PACKAGE_PREFIX}-pkg-config"
