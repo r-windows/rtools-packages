@@ -14,7 +14,6 @@ license=('LGPL')
 depends=("${MINGW_PACKAGE_PREFIX}-libassuan"
          "${MINGW_PACKAGE_PREFIX}-libgpg-error")
 makedepends=("${MINGW_PACKAGE_PREFIX}-pkg-config"
-             "${MINGW_PACKAGE_PREFIX}-python"
              "doxygen")
 options=('!emptydirs') # '!strip' 'debug')
 source=("https://www.gnupg.org/ftp/gcrypt/${_realname}/${_realname}-${pkgver}.tar.bz2"{,.sig}
@@ -63,7 +62,6 @@ build() {
   # mingw doxygen can't wrok with UNIX paths in doxyfile
   DOXYGEN=/usr/bin/doxygen \
   LIBS="-lws2_32" \
-  PYTHON=${MINGW_PREFIX}/bin/python3 \
   ../${_realname}-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
