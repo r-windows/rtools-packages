@@ -1,13 +1,13 @@
 # Maintainer: Alexey Pavlov <alexpux@gmail.com>
-# Rtools: Jeroen Ooms <jeroenooms@gmail.com>
 
 _realname=ncurses
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-_base_ver=6.1
-_date_rev=20180526
-pkgver=${_base_ver}.${_date_rev}
-pkgrel=9002
+#_base_ver=6.1
+#_date_rev=20190630
+#pkgver=${_base_ver}.${_date_rev}
+pkgver=6.2
+pkgrel=3
 pkgdesc="System V Release 4.0 curses emulation library (mingw-w64)"
 arch=('any')
 depends=("${MINGW_PACKAGE_PREFIX}-libsystre")
@@ -15,21 +15,30 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
 url="https://www.gnu.org/software/ncurses/"
 license=('MIT')
 options=('staticlibs' 'strip')
-source=("${_realname}-${pkgver}.tar.gz"::"https://invisible-mirror.net/archives/ncurses/current/${_realname}-${_base_ver}-${_date_rev}.tgz"
-        001-use-libsystre.patch)
-sha256sums=('51cec456641d2e03b8981094e2f3bc1fccf79e747e85ac233a5dc8834316f96e'
-            'eb28949297a4c1eda67da49cfbed1d60f181b83101a0b3715552a4564bd90ff3')
+source=(#"${_realname}-${pkgver}.tar.gz"::"https://invisible-mirror.net/archives/ncurses/current/${_realname}-${_base_ver}-${_date_rev}.tgz"
+        https://ftp.gnu.org/pub/gnu/ncurses/ncurses-${pkgver}.tar.gz{,.sig}
+        001-use-libsystre.patch
+        002-ncurses-config-win-paths.patch)
+sha256sums=('30306e0c76e0f9f1f0de987cf1c82a5c21e1ce6568b9227f7da5b71cbea86c9d'
+            'SKIP'
+            'd8fb37262372f3e5c9a553bdeff07c8b874bac6f3c416e2a372877cef0af1925'
+            '5367d8f49aff92884b9daa014502df13e1812f1b7ee1b3a3cb18139f10039408')
+validpgpkeys=('C52048C0C0748FEE227D47A2702353E0F7E48EDB')
 
 prepare() {
-  cd ${_realname}-${_base_ver}-${_date_rev}
+  cd ${_realname}-${pkgver}
   patch -p1 -i ${srcdir}/001-use-libsystre.patch
+  patch -p1 -i ${srcdir}/002-ncurses-config-win-paths.patch
 }
 
 build() {
   [[ -d build-${MINGW_CHOST} ]] && rm -rf build-${MINGW_CHOST}
   mkdir -p build-${MINGW_CHOST} && cd build-${MINGW_CHOST}
 
-  ../${_realname}-${_base_ver}-${_date_rev}/configure \
+  # It passes X_OK to access() on Windows which isn't supported with ucrt
+  CFLAGS+=" -D__USE_MINGW_ACCESS"
+
+  ../${_realname}-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
     --mandir=${MINGW_PREFIX}/share/man \
     --build=${MINGW_CHOST} \
@@ -63,4 +72,3 @@ package() {
   cp -r ${pkgdir}${MINGW_PREFIX}/include/ncursesw ${pkgdir}${MINGW_PREFIX}/include/ncurses
   cp ${pkgdir}${MINGW_PREFIX}/lib/libncursesw.a ${pkgdir}${MINGW_PREFIX}/lib/libncurses.a
 }
-
