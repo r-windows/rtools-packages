@@ -1,12 +1,11 @@
-name: main
+name: remove
 
 on:
-  push:
-    paths:
-      - 'mingw-w64-*/*'
-  pull_request:
-    paths:
-      - 'mingw-w64-*/*'
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Which package to remove
+        required: true
 
 jobs:
   build:
@@ -34,27 +33,19 @@ jobs:
           install: git
           update: true
 
-      - name: CI-Build
-        run: ./ci-build.sh
+      - name: Fetch and update index
+        run: ./ci-remove.sh
         env:
-          BUILD_URL: https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}
           MINGW_ARCH: ${{ matrix.msystem }}
           MINGW_TOOLCHAIN: ${{ matrix.toolchain }}
           PACMAN_REPOSITORY: ${{ matrix.msystem }}
+          PACKAGE: ${{ github.event.inputs.package }}
 
-      - name: "Upload binary package"
+      - name: "Save new package index"
         uses: actions/upload-artifact@v2
-        if: success() && (matrix.msystem == 'ucrt64' || !contains(github.event.head_commit.message, 'ucrt-only'))
         with:
           name: ${{ matrix.msystem }}
           path: artifacts/
-
-      - name: "Upload source package"
-        uses: actions/upload-artifact@v2
-        if: success() && matrix.msystem == 'mingw64' && !contains(github.event.head_commit.message, 'ucrt-only')
-        with:
-          name: sources
-          path: sourcepkg/
 
   deploy:
     name: Deploy to staging server
