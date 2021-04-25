@@ -1,0 +1,22 @@
+From 060b1ffdcc1b5bfd6e1a7bae939854568d4a69f2 Mon Sep 17 00:00:00 2001
+From: Jeroen Ooms <jeroenooms@gmail.com>
+Date: Sun, 25 Apr 2021 23:49:55 +0200
+Subject: [PATCH] Update cmThirdPartyChecks.cmake
+
+---
+ Utilities/cmThirdPartyChecks.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Utilities/cmThirdPartyChecks.cmake b/Utilities/cmThirdPartyChecks.cmake
+index 4ccfdfc7251..fd38bfb31e9 100644
+--- a/Utilities/cmThirdPartyChecks.cmake
++++ b/Utilities/cmThirdPartyChecks.cmake
+@@ -131,7 +131,7 @@ if(WIN32)
+   set(HAVE_MEMORY_H 1)
+   set(HAVE_MKDIR 1)
+   set(HAVE_MKFIFO 0)
+-  set(HAVE__MKGMTIME64 1)
++  set(HAVE__MKGMTIME64 0)
+   set(HAVE_MKNOD 0)
+   set(HAVE_MMAP 0)
+   set(HAVE_MSG_NOSIGNAL 0)
