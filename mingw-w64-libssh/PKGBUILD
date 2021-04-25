@@ -3,7 +3,7 @@
 _realname=libssh
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=0.8.6
+pkgver=0.9.5
 pkgrel=1
 pkgdesc="Library for accessing ssh client services through C libraries (mingw-w64)"
 arch=('any')
@@ -20,32 +20,42 @@ validpgpkeys=('8DFF53E18F2ABC8D8F3C92237EE0FC4DCC014E3D') # Andreas Schneider <a
 source=("https://www.libssh.org/files/${pkgver%.*}/${_realname}-${pkgver}.tar.xz"
         "https://www.libssh.org/files/${pkgver%.*}/${_realname}-${pkgver}.tar.xz.asc"
         "mingw-as-unix.patch"
-        "mingw-DATADIR-conflict.patch")
-sha256sums=('1046b95632a07fc00b1ea70ee683072d0c8a23f544f4535440b727812002fd01'
+         001-install-static-lib.patch)
+sha256sums=('acffef2da98e761fc1fd9c4fddde0f3af60ab44c4f5af05cd1b2d60a3fa08718'
             'SKIP'
-            '8db580bf64d37f3d6b9a13558696eae8586edd3195eb2e930b7e326b98a9aef9'
-            'a56298da4ff75d7c2a7f4c4068a814c67f34773ea23601b2c236b669de320af6')
+            'bac0a32f54368f55abbce14dea3dfba27a24321d590022b93bb8369a2aaa4993'
+            'eca5206ca1d3b3ff76fab5759ab1a8387655fe31c383a2d125d8e13c86098bd8')
+noextract=(${_realname}-${pkgver}.tar.xz)
 
 prepare() {
+  [[ -d ${_realname}-${pkgver} ]] && rm -rf ${_realname}-${pkgver}
+  tar -xJvf ${_realname}-${pkgver}.tar.xz -C ${srcdir} || true
+
   cd ${srcdir}/${_realname}-${pkgver}
   patch -p1 -i ${srcdir}/mingw-as-unix.patch
-  patch -p1 -i ${srcdir}/mingw-DATADIR-conflict.patch
+  patch -p1 -i ${srcdir}/001-install-static-lib.patch
 }
 
 build() {
   [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
   mkdir -p ${srcdir}/build-${MINGW_CHOST} && cd ${srcdir}/build-${MINGW_CHOST}
 
+  # NB: building only static libs seems broken
+  # So we build both and delete the dlls below
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake.exe \
     -G"MSYS Makefiles" \
+    -DCMAKE_C_STANDARD_LIBRARIES="-lws2_32 -lcrypt32" \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release \
-    -DWITH_STATIC_LIB=ON \
+    -DWITH_GSSAPI=OFF \
+    -DUNIT_TESTING=OFF \
+    -DBUILD_STATIC_LIB=ON \
     ../${_realname}-${pkgver}
 
   make all
 }
+
 
 package() {
   cd "${srcdir}/build-${MINGW_CHOST}"
