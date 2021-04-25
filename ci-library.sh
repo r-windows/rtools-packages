@@ -166,21 +166,23 @@ create_pacman_repository() {
 
 # Remove from repository
 remove_from_repository() {
-    set_arch
     local name="${1}"
     local package="${2}"
     _download_previous "${name}".{db,files}{,.tar.xz} || return 1
-    repo-remove "${name}.db.tar.xz" "mingw-w64-${_arch}-${package}"
+    repo-remove "${name}.db.tar.xz" "mingw-w64-${MINGW_TOOLCHAIN}-${package}" || rm -Rf "${name}".{db,files}{,.tar.xz}
 }
 
 # Get architecture
 set_arch(){
-  case ${MINGW_INSTALLS} in
+  case ${MINGW_ARCH} in
     mingw32)
       _arch=i686
     ;;
     mingw64)
       _arch=x86_64
+    ;;
+    ucrt64)
+      _arch=ucrt-x86_64
     ;;
   esac
 }

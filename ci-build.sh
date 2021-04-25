@@ -63,7 +63,7 @@ for package in "${packages[@]}"; do
 done
 
 # Prepare for deploy
-cd artifacts || success 'All packages built successfully'
+cd artifacts
 execute 'Updating pacman repository index' create_pacman_repository "${PACMAN_REPOSITORY:-ci-build}"
 execute 'Generating build references'  create_build_references  "${PACMAN_REPOSITORY:-ci-build}"
 execute 'SHA-256 checksums' sha256sum *
