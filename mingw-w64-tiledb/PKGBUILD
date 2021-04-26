@@ -63,3 +63,4 @@ check (){
   cd ${srcdir}/build-${MINGW_CHOST}
   #make check
 }
+
