@@ -2,7 +2,7 @@
 
 _realname=qpdf
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=10.1.0
+pkgver=10.3.1
 pkgrel=9100
 pkgdesc="QPDF is a program that does structural, content-preserving transformations on PDF files (mingw-w64)"
 arch=('any')
@@ -17,9 +17,9 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
 source=(https://github.com/qpdf/qpdf/releases/download/release-${_realname}-${pkgver}/${_realname}-${pkgver}.tar.gz
         "0002-enable-advapi32-mingw.patch"
         "0003-install-rule.patch")
-sha512sums=('f9b22d89fc62e430e6232c840ad74d220ac9eb09d7f2dfe2c42c1c943d35b5fd25e2abec9970ac19ad7ad25dc3d95c74e68e50bad395abf815cf71c432233106'
-            '485f108e96b92e76620fcf8e3ddc350d67c5458eea0adcd6a5e11d29fa980c7d9672f832aaec644b39f57674fa505a8d5748059a6b0da027be38b1a7ed01036e'
-            '4b93c1af24d5afc84445b00563da0ab60d46654830104690e53844dc1bdb278ac39d8a059c12501f34afb31411a53e2b46f3f953e690f582e3561a9eeb9131a5')
+sha256sums=('d3e6b862098c6357d04390fd30d08c94aa2cf7a3bb2dcabd3846df5eb57367d6'
+            'SKIP'
+            'SKIP')
 validpgpkeys=('C2C96B10011FE009E6D1DF828A75D10998012C7E') # Jay Berkenbilt <ejb@ql.org>
 
 prepare() {
@@ -44,6 +44,8 @@ build() {
       --disable-implicit-crypto \
       --disable-test-compare-images \
       --enable-external-libs \
+      --enable-static \
+      --disable-shared \
       --with-buildrules=mingw
   make
 }
