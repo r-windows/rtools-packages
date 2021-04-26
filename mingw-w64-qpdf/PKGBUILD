@@ -44,8 +44,6 @@ build() {
       --disable-implicit-crypto \
       --disable-test-compare-images \
       --enable-external-libs \
-      --enable-static \
-      --disable-shared \
       --with-buildrules=mingw
   make
 }
@@ -54,6 +52,7 @@ package() {
   cd "${srcdir}/build-${MINGW_CHOST}"
   make DESTDIR=${pkgdir} install
 
-  # libqpdf.a is actually an import library :(
+  # libqpdf.a is actually an import library so unusable
   rm -R ${pkgdir}${MINGW_PREFIX}/{lib,include}
+  rm ${pkgdir}${MINGW_PREFIX}/{fix-qdf,zlib-flate}.exe
 }
