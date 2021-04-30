@@ -23,8 +23,6 @@ source=("bare-clones/gn::git+https://gn.googlesource.com/gn#tag=5da62d5e9d0f10cb
         "0002-gn-ninja-deletes-objs-workaround.patch"
         "icu.gn"
         "zlib.gn"
-        "v8_libbase.pc"
-        "v8_libplatform.pc"
         "v8.pc"
         "https://github.com/v8/v8/commit/6930df0.patch")
 sha256sums=('SKIP'
@@ -40,9 +38,7 @@ sha256sums=('SKIP'
             'b831576af25b275fca72851ec275c9d21bee0be29b4eb973a3e2a2580deac003'
             'c10169e7a34e212b1a2bf0eaf45131485719f32a7c34d9a666b692f05a2aa830'
             'b99874ea904724911528a5530c14f3051c358805bd36df9d205df31458ebf8b9'
-            'fbddbe4849b623afb320472aab316c9a08b54182161b6b4911cb7ef7d65e2b0e'
-            'ca81528892f0e02fe7ecd159568610221fb8d0df109d9d0dbdfa00c1284dd0fc'
-            '579e199a798ff76b72a5b17380a3cd09d361cb7cee99403090c3a266d1b2e527'
+            'SKIP'
             'SKIP')
 options=('strip' 'staticlibs')
 
@@ -94,14 +90,6 @@ prepare() {
     ;;
   esac
 
-  sed "s/@VERSION@/$pkgver/g" -i "$srcdir/v8_libbase.pc"
-  sed "s/@CFLAGS@/$_cflags/g" -i "$srcdir/v8_libbase.pc"
-  sed "s|^prefix=.*|prefix=${MINGW_PREFIX}|g" -i "$srcdir/v8_libbase.pc"
-
-  sed "s/@VERSION@/$pkgver/g" -i "$srcdir/v8_libplatform.pc"
-  sed "s/@CFLAGS@/$_cflags/g" -i "$srcdir/v8_libplatform.pc"
-  sed "s|^prefix=.*|prefix=${MINGW_PREFIX}|g" -i "$srcdir/v8_libplatform.pc"
-
   sed "s/@VERSION@/$pkgver/g" -i "$srcdir/v8.pc"
   sed "s/@CFLAGS@/$_cflags/g" -i "$srcdir/v8.pc"
   sed "s|^prefix=.*|prefix=${MINGW_PREFIX}|g" -i "$srcdir/v8.pc"
@@ -148,11 +136,11 @@ package() {
   install -Dm644 include/libplatform/*.h "$pkgdir"/${MINGW_PREFIX}/include/libplatform
 
   install -d "$pkgdir"/${MINGW_PREFIX}/lib/pkgconfig
-  install -m644 "$srcdir/v8_libbase.pc" "$pkgdir"/${MINGW_PREFIX}/lib/pkgconfig/
-  install -m644 "$srcdir/v8_libplatform.pc" "$pkgdir"/${MINGW_PREFIX}/lib/pkgconfig/
   install -m644 "$srcdir/v8.pc" "$pkgdir"/${MINGW_PREFIX}/lib/pkgconfig/
 
   install -d "$pkgdir"/${MINGW_PREFIX}/share/licenses/v8
   install -m644 LICENSE* "$pkgdir"/${MINGW_PREFIX}/share/licenses/v8
-}
 
+  # Jeroen: fix annoying warning
+  sed -i 's/#if V8_HAS_CPP_ATTRIBUTE_NODISCARD/#if 0/' "$pkgdir"/${MINGW_PREFIX}/include/v8config.h
+}

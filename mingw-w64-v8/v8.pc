@@ -6,6 +6,6 @@ includedir=${prefix}/include
 Name: v8
 Description: V8 JavaScript Engine
 Version: @VERSION@
-Requires: zlib, icu-uc, icu-i18n, v8_libbase = @VERSION@
-Libs: -L${libdir} -lv8
+Requires: zlib
+Libs: -L${libdir} -lv8_monolith
 Cflags: -I${includedir} @CFLAGS@
