@@ -44,6 +44,7 @@ sha256sums=('SKIP'
             'ca81528892f0e02fe7ecd159568610221fb8d0df109d9d0dbdfa00c1284dd0fc'
             '579e199a798ff76b72a5b17380a3cd09d361cb7cee99403090c3a266d1b2e527'
             'SKIP')
+options=('strip' 'staticlibs')
 
 prepare() {
   echo "Preparing GN source"
