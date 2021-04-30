@@ -111,9 +111,11 @@ build() {
   case ${CARCH} in
     i686)
       _arch=x86
+      _ignorefail=true
     ;;
     x86_64)
       _arch=x64
+      _ignorefail=false
     ;;
   esac
 
@@ -122,7 +124,8 @@ build() {
   ninja -C out/${CARCH} gn.exe
 
   cd "${srcdir}"/v8-${pkgver}
-  "${srcdir}"/gn/out/${CARCH}/gn gen "${PWD}/out/${BUILDTYPE}-${CARCH}" --args="v8_monolithic=true v8_static_library=true is_debug=false use_gold=false target_cpu=\"${_arch}\" is_clang=false use_custom_libcxx=false v8_enable_verify_heap=false v8_enable_i18n_support=false enable_iterator_debugging=false v8_use_external_startup_data=false"
+  "${srcdir}"/gn/out/${CARCH}/gn gen "${PWD}/out/${BUILDTYPE}-${CARCH}" \
+    --args="v8_monolithic=true v8_static_library=true is_debug=false use_gold=false target_cpu=\"${_arch}\" is_clang=false use_custom_libcxx=false v8_enable_verify_heap=false v8_enable_i18n_support=false enable_iterator_debugging=false v8_use_external_startup_data=false" || ${_ignorefail}
   ninja -C "${PWD}/out/${BUILDTYPE}-${CARCH}" :v8_monolith :d8
 }
 
