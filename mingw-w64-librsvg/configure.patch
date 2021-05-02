@@ -10,26 +10,26 @@ diff -aurp librsvg-2.48.8-orig/configure.ac librsvg-2.48.8/configure.ac
  
  CAIRO_VERSION=`$PKG_CONFIG --modversion cairo`
 diff -aurp librsvg-2.48.8-orig/Makefile.am librsvg-2.48.8/Makefile.am
---- librsvg-2.48.8-orig/Makefile.am	2020-10-09 16:23:53.815038200 +0000
-+++ librsvg-2.48.8/Makefile.am	2020-10-09 17:30:39.207600000 +0000
-@@ -154,7 +154,7 @@ CARGO_TARGET_DIR=$(LIBRSVG_BUILD_DIR)/ta
- 
- if PLATFORM_WIN32
- # https://github.com/rust-lang/rust/issues/43749
+--- librsvg-2.50.5-orig/Makefile.am 2021-05-02 22:54:01.000000000 +0200
++++ librsvg-2.50.5/Makefile.am  2021-05-02 22:54:17.000000000 +0200
+@@ -164,7 +164,7 @@ CARGO_TARGET_DIR=$(LIBRSVG_BUILD_DIR)/ta
+ if LIB_NAME_WORKAROUND
+ # Workaround for https://github.com/rust-lang/rust/issues/69904
+ # can be removed when our minimum Rust version is at least 1.44.
 -RUST_LIB=$(CARGO_TARGET_DIR)/$(RUST_TARGET_SUBDIR)/rsvg_c_api.lib
 +RUST_LIB=$(CARGO_TARGET_DIR)/$(RUST_TARGET_SUBDIR)/librsvg_c_api.a
  else
  RUST_LIB=$(CARGO_TARGET_DIR)/$(RUST_TARGET_SUBDIR)/librsvg_c_api.a
  endif
-diff -aurp librsvg-2.48.8-orig/Makefile.in librsvg-2.48.8/Makefile.in
---- librsvg-2.48.8-orig/Makefile.in	2020-10-09 16:23:53.721384200 +0000
-+++ librsvg-2.48.8/Makefile.in	2020-10-09 17:30:56.885325000 +0000
-@@ -693,7 +693,7 @@ CARGO_TARGET_DIR = $(LIBRSVG_BUILD_DIR)/
- @PLATFORM_WIN32_FALSE@RUST_LIB = $(CARGO_TARGET_DIR)/$(RUST_TARGET_SUBDIR)/librsvg_c_api.a
- 
- # https://github.com/rust-lang/rust/issues/43749
--@PLATFORM_WIN32_TRUE@RUST_LIB = $(CARGO_TARGET_DIR)/$(RUST_TARGET_SUBDIR)/rsvg_c_api.lib
-+@PLATFORM_WIN32_TRUE@RUST_LIB = $(CARGO_TARGET_DIR)/$(RUST_TARGET_SUBDIR)/librsvg_c_api.a
+diff -aurp librsvg-2.50.5-orig/Makefile.in librsvg-2.50.5/Makefile.in
+--- librsvg-2.50.5-orig/Makefile.in 2021-05-02 22:54:01.000000000 +0200
++++ librsvg-2.50.5/Makefile.in  2021-05-02 22:54:22.000000000 +0200
+@@ -704,7 +704,7 @@ CARGO_TARGET_DIR = $(LIBRSVG_BUILD_DIR)/
+
+ # Workaround for https://github.com/rust-lang/rust/issues/69904
+ # can be removed when our minimum Rust version is at least 1.44.
+-@LIB_NAME_WORKAROUND_TRUE@RUST_LIB = $(CARGO_TARGET_DIR)/$(RUST_TARGET_SUBDIR)/rsvg_c_api.lib
++@LIB_NAME_WORKAROUND_TRUE@RUST_LIB = $(CARGO_TARGET_DIR)/$(RUST_TARGET_SUBDIR)/librsvg_c_api.a
  librsvg_@RSVG_API_MAJOR_VERSION@_la_CPPFLAGS = \
- 	-I$(top_srcdir) 			\
- 	-I$(top_builddir) 			\
+  -I$(top_srcdir)       \
+  -I$(top_builddir)       \

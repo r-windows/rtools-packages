@@ -3,7 +3,7 @@
 _realname=librsvg
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=2.48.8
+pkgver=2.50.5
 pkgrel=1
 pkgdesc="SVG rendering library (mingw-w64)"
 arch=('any')
@@ -23,7 +23,7 @@ options=('staticlibs' 'strip')
 source=("https://download.gnome.org/sources/librsvg/${pkgver%.*}/${_realname}-${pkgver}.tar.xz"
         "0005-hack-unixy-paths.patch"
         "configure.patch")
-sha256sums=('f480a325bbdf26d1874eb6fb330ebc5920ba64e3e08de61931bb4506dfef2692'
+sha256sums=('32701574c234fed352520c6d0bd5081f728184bc1a9b9c87d423dd27c32b9272'
             'b23b094c0cb65fcbbbb952350448de6f3430b30f273e05acdbf7a56d634212dc'
             'SKIP')
 
