@@ -1,7 +1,7 @@
 _realname=poppler
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=20.12.1
+pkgver=21.04.0
 pkgrel=9500
 pkgdesc="PDF rendering library based on xpdf 3.0 (mingw-w64)"
 arch=('any')
@@ -22,7 +22,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-cairo"
          "${MINGW_PACKAGE_PREFIX}-zlib")
 options=('strip' 'staticlibs')
 source=("https://poppler.freedesktop.org/${_realname}-${pkgver}.tar.xz")
-sha256sums=('d0aa2586c0a4296c775f0d2045f28bb95a694113fc995f95350faa12930f7b35')
+sha256sums=('5e2219656c6bbd36154133fef2e12b7d0938464518827098b29a10b1697ea79c')
 
 prepare() {
   cd ${_realname}-${pkgver}
