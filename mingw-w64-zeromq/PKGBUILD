@@ -54,7 +54,8 @@ build() {
     --host=${MINGW_CHOST} \
     --with-libsodium \
     --disable-shared \
-    --enable-static
+    --enable-static \
+    --enable-drafts
 
   make
 }
