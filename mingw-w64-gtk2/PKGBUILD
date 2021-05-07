@@ -80,9 +80,9 @@ build() {
     --disable-papi \
     --enable-static \
     --disable-shared \
-    --disable-introspection \
-    --disable-glibtest \
-    --with-included-immodules=ime
+    --disable-maintainer-mode \
+    --enable-introspection=no \
+    --disable-glibtest
 
   make
 }
