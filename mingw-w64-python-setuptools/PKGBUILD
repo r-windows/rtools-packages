@@ -1,0 +1,89 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+# Contributor: Ray Donnelly <mingw.android@gmail.com>
+
+_realname=setuptools
+pkgbase=mingw-w64-python-${_realname}
+pkgname=("${MINGW_PACKAGE_PREFIX}-python-${_realname}")
+provides=("${MINGW_PACKAGE_PREFIX}-python3-${_realname}")
+conflicts=("${MINGW_PACKAGE_PREFIX}-python3-${_realname}"
+           "${MINGW_PACKAGE_PREFIX}-python2-setuptools<42.0.2")
+replaces=("${MINGW_PACKAGE_PREFIX}-python3-${_realname}")
+pkgver=56.1.0
+pkgrel=1
+pkgdesc="Easily download, build, install, upgrade, and uninstall Python packages (mingw-w64)"
+arch=('any')
+license=('PSF')
+url="https://pypi.org/pypi/setuptools"
+depends=("${MINGW_PACKAGE_PREFIX}-python")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
+source=(${_realname}-${pkgver}.tar.gz::https://pypi.org/packages/source/${_realname::1}/${_realname}/${_realname}-${pkgver}.tar.gz
+        '0001-mingw-python-fix.patch'
+        '0002-Allow-usr-bin-env-in-script.patch'
+        '0003-MinGW-w64-Look-in-same-dir-as-script-for-exe.patch'
+        '0005-execv-warning.patch'
+        '0006-fix-tests-path.patch'
+        '0007-windows-arm64.patch'
+)
+sha256sums=('7d9b5609ebda3db0f2e7c6d2fba807e9bd653e3a3a93ce3426b2b68260193a77'
+            '7b196884ac0151801f9638dabbf9a789fa9070a3b07a4c9e625c5523e8d47387'
+            'fa54581e3dddb9f4edd332dedbc101f48939a9ca5878e13cf9cf9b3408bc8c22'
+            '39503256652c7c23ce07e26539e8123d269eb5c09f5d9b07e5784b2d7fb8c96f'
+            'a356b0663f67a296624d1b178b42437b380b48a4bbe05a560d3bf29e93a4c623'
+            'dbdd96a7ead797b2db9f02dfe19ce853d3775337ccf8fd836377fe3c2a9d1c24'
+            'e6f9b6fc068a449c433150d936118114d50a71afb01b71291065d6a811d817e7')
+
+prepare() {
+  cd "${srcdir}/setuptools-${pkgver}"
+
+  patch -p1 -i ${srcdir}/0001-mingw-python-fix.patch
+  patch -p1 -i ${srcdir}/0002-Allow-usr-bin-env-in-script.patch
+  patch -p1 -i ${srcdir}/0003-MinGW-w64-Look-in-same-dir-as-script-for-exe.patch
+  patch -p1 -i ${srcdir}/0005-execv-warning.patch
+  patch -p1 -i ${srcdir}/0006-fix-tests-path.patch
+  patch -p1 -i ${srcdir}/0007-windows-arm64.patch
+
+  rm -f setuptools/{gui,cli}{-32,-64,-arm64,}.exe
+  local _gui_args="-DGUI=1 -mwindows -O2"
+  local _cli_args="-DGUI=0 -O2"
+  if check_option "strip" "y"; then
+    _gui_args+=" -s"
+    _cli_args+=" -s"
+  fi
+  case "${MINGW_CHOST}" in
+    i686-w64-mingw32)
+      gcc $_cli_args -o setuptools/cli-32.exe launcher.c
+      gcc $_gui_args -o setuptools/gui-32.exe launcher.c
+      cp setuptools/cli-32.exe setuptools/cli.exe
+      cp setuptools/gui-32.exe setuptools/gui.exe
+      ;;
+    x86_64-w64-mingw32)
+      gcc $_cli_args -o setuptools/cli-64.exe launcher.c
+      gcc $_gui_args -o setuptools/gui-64.exe launcher.c
+      ;;
+    aarch64-w64-mingw32)
+      gcc $_cli_args -o setuptools/cli-arm64.exe launcher.c
+      gcc $_gui_args -o setuptools/gui-arm64.exe launcher.c
+      ;;
+    *)
+      echo "Unsupported CHOST ${MINGW_CHOST}" && false
+      ;;
+  esac
+
+  cd "${srcdir}"
+  cp -r setuptools-${pkgver} setuptools-python-${CARCH}
+}
+
+build() {
+  cd "${srcdir}"/setuptools-python-${CARCH}
+
+  ${MINGW_PREFIX}/bin/python setup.py build
+}
+
+package() {
+  cd "${srcdir}/setuptools-python-${CARCH}"
+
+  MSYS2_ARG_CONV_EXCL="--prefix=;--install-scripts=;--install-platlib=" \
+    ${MINGW_PREFIX}/bin/python setup.py install --prefix=${MINGW_PREFIX} --root="${pkgdir}" --optimize=1 --skip-build
+
+  install -Dm644 ${srcdir}/${_realname}-${pkgver}/LICENSE ${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE
+}
