@@ -33,9 +33,9 @@ build() {
 
   # Jeroen: I think this is fixed in msys2?
   # https://github.com/msys2/MINGW-packages/commit/2e226007c3d5
-  PYTHONPATH=$(which python3)
+  PYTHONPATH=$(which python3.exe)
   PYTHONWINPATH="$(cygpath -m ${PYTHONPATH})"
-  sed -i.bak "s|${PYTHONPATH}.exe|${PYTHONWINPATH}|g" build.ninja
+  sed -i.bak "s|${PYTHONPATH}|${PYTHONWINPATH}|g" build.ninja
   ninja
 }
 
