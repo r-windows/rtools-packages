@@ -32,7 +32,7 @@ prepare() {
 
   patch -Np1 -i "${srcdir}"/0001-Install-scripts-without-.py-extension.patch
   patch -Np1 -i "${srcdir}"/0002-Default-to-sys.prefix-as-the-default-prefix.patch
-  patch -Np1 -i "${srcdir}"/0003-Strip-the-prefix-from-all-paths-when-installing-with.patch
+  #patch -Np1 -i "${srcdir}"/0003-Strip-the-prefix-from-all-paths-when-installing-with.patch
   
   # https://github.com/mesonbuild/meson/issues/4083
   patch -Np1 -i "${srcdir}"/test.patch
