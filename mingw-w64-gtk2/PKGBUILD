@@ -16,13 +16,11 @@ license=(LGPL2.1+)
 
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config")
-depends=("${MINGW_PACKAGE_PREFIX}-atk>=1.29.2"
-         "${MINGW_PACKAGE_PREFIX}-cairo>=1.6"
-         "${MINGW_PACKAGE_PREFIX}-gdk-pixbuf2>=2.21.0"
-         "${MINGW_PACKAGE_PREFIX}-glib2>=2.28.0"
-         "${MINGW_PACKAGE_PREFIX}-pango>=1.20")
-#optdepends=("${MINGW_PACKAGE_PREFIX}-gnome-icon-theme: Default icon theme")
-install=gtk2-${MSYSTEM}.install
+depends=("${MINGW_PACKAGE_PREFIX}-atk"
+         "${MINGW_PACKAGE_PREFIX}-cairo"
+         "${MINGW_PACKAGE_PREFIX}-gdk-pixbuf2"
+         "${MINGW_PACKAGE_PREFIX}-glib2"
+         "${MINGW_PACKAGE_PREFIX}-pango")
 options=(!libtool strip staticlibs)
 source=("https://download.gnome.org/sources/gtk+/${pkgver%.*}/gtk+-${pkgver}.tar.xz"
         'gtkrc'
