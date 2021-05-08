@@ -18,6 +18,11 @@ options=('strip' 'staticlibs')
 source=("https://download.gnome.org/sources/atk/${pkgver%.*}/${_realname}-${pkgver}.tar.xz")
 sha256sums=('fb76247e369402be23f1f5c65d38a9639c1164d934e40f6a9cf3c9e96b652788')
 
+prepare(){
+  cd "${srcdir}/${_realname}-${pkgver}"
+  sed -i 's/DllMain/DllMainAtk/g' atk/atkprivate.c
+}
+
 build() {
   [[ -d "${srcdir}"/build-${MINGW_CHOST} ]] && rm -rf "${srcdir}"/build-${MINGW_CHOST}
   mkdir -p "${srcdir}"/build-${MINGW_CHOST} && cd "${srcdir}"/build-${MINGW_CHOST}

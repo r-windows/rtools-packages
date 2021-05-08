@@ -64,8 +64,9 @@ prepare() {
   patch -p1 -i ${srcdir}/0022-icontheme-win32-detect-SVG-files-by-extension.patch
 
   #autoreconf -fi
+  # Disable DLL specific stuff:
   sed -i 's/__declspec(.*)//g' */*.h
-  sed -i 's/DllMain/DllDisable/g' gdk/win32/gdkmain-win32.c
+  sed -i 's/DllMain/DllMainGdk/g' gdk/win32/gdkmain-win32.c
 }
 
 build() {
