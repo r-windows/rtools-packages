@@ -1,0 +1,53 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+# Contributor: Renato Silva <br.renatosilva@gmail.com>
+
+_realname=atk
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=2.36.0
+pkgrel=2
+pkgdesc="Interface definitions of accessibility infrastructure (mingw-w64)"
+arch=('any')
+url="https://gitlab.gnome.org/GNOME/atk"
+license=(LGPL)
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config"
+             "${MINGW_PACKAGE_PREFIX}-meson")
+depends=("${MINGW_PACKAGE_PREFIX}-glib2")
+options=('strip' 'staticlibs')
+source=("https://download.gnome.org/sources/atk/${pkgver%.*}/${_realname}-${pkgver}.tar.xz")
+sha256sums=('fb76247e369402be23f1f5c65d38a9639c1164d934e40f6a9cf3c9e96b652788')
+
+prepare(){
+  cd "${srcdir}/${_realname}-${pkgver}"
+  sed -i 's/DllMain/DllMainAtk/g' atk/atkprivate.c
+}
+
+build() {
+  [[ -d "${srcdir}"/build-${MINGW_CHOST} ]] && rm -rf "${srcdir}"/build-${MINGW_CHOST}
+  mkdir -p "${srcdir}"/build-${MINGW_CHOST} && cd "${srcdir}"/build-${MINGW_CHOST}
+
+  LDFLAGS="$(pkg-config --libs-only-l --static gobject-2.0)" \
+  PKG_CONFIG= \
+  MSYS2_ARG_CONV_EXCL="--prefix=" \
+  meson \
+    --prefix=${MINGW_PREFIX} \
+    --default-library=static \
+    -Dintrospection=false \
+    ../${_realname}-${pkgver}
+
+  # Jeroen: I think this is fixed in msys2?
+  # https://github.com/msys2/MINGW-packages/commit/2e226007c3d5
+  PYTHONPATH=$(which python3.exe)
+  PYTHONWINPATH="$(cygpath -m ${PYTHONPATH})"
+  sed -i.bak "s|${PYTHONPATH}|${PYTHONWINPATH}|g" build.ninja
+  ninja
+}
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+
+  DESTDIR="${pkgdir}" ninja install
+
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
+}
