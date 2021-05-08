@@ -65,7 +65,7 @@ prepare() {
   # Disable DLL specific stuff:
   sed -i 's/__declspec(.*)//g' */*.h
   sed -i 's/DllMain/DllMainGdk/g' gdk/win32/gdkmain-win32.c
-  sed -i 's/_gtk_marshal_OBJECT__VOID/_gtk_marshal_perf_OBJECT__VOID' perf/*
+  sed -i 's/_gtk_marshal_OBJECT__VOID/_gtk_marshal_perf_OBJECT__VOID/g' perf/*
 }
 
 build() {
