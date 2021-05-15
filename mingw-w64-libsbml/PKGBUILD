@@ -39,6 +39,7 @@ build() {
     -DLIBSBML_DEPENDENCY_DIR=${MINGW_PREFIX} \
     -DLIBXML_INCLUDE_DIR="${MINGW_PREFIX}/include/libxml2" \
     -DLIBXML_LIBRARY="$(pkg-config --libs-only-l --static libxml-2.0)" \
+    -DWITH_EXAMPLES=ON \
     -DWITH_LIBXML=ON \
     -DWITH_EXPAT=OFF \
     -DWITH_BZIP2=ON \
@@ -58,7 +59,9 @@ build() {
 package() {
   cd "${srcdir}/build-${MINGW_CHOST}"
   make DESTDIR="${pkgdir}" install
-  rm -Rf ${pkgdir}${MINGW_PREFIX}/bin
-  rm -Rf ${pkgdir}${MINGW_PREFIX}/lib/*.dll.a
-  mv ${pkgdir}${MINGW_PREFIX}/lib/libsbml-static.a ${pkgdir}${MINGW_PREFIX}/lib/libsbml.a
+
+  # DBUILD_SHARED_LIBS doesn't seem to work?
+  rm -Rfv ${pkgdir}${MINGW_PREFIX}/bin
+  rm -Rfv ${pkgdir}${MINGW_PREFIX}/lib/*.dll.a
+  mv -v ${pkgdir}${MINGW_PREFIX}/lib/libsbml-static.a ${pkgdir}${MINGW_PREFIX}/lib/libsbml.a
 }
