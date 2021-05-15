@@ -3,14 +3,16 @@
 _realname=libsbml
 pkgbase="mingw-w64-${_realname}"
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=5.17.0
+pkgver=5.19.0
 pkgrel=1
 pkgdesc="A file format for exchanging computational models in systems biology (mingw-w64)"
 arch=('any')
 license=("custom")
 url="http://sbml.org/Software/libSBML/"
-source=("https://downloads.sourceforge.net/project/sbml/libsbml/${pkgver}/stable/libSBML-${pkgver}-core-src.tar.gz")
-sha256sums=('ab2bd29720e8d5a92166eb3eacc8d77b34e3f94a83ac19924708e1b0e4317494')
+source=("http://sourceforge.net/projects/sbml/files/libsbml/${pkgver}/stable/libSBML-${pkgver}-core-plus-packages-src.tar.gz"
+        02-install-layout.patch)
+sha256sums=('a7f0e18be78ff0e064e4cdb1cd86634d08bc33be5250db4a1878bd81eeb8b547'
+            'c007b7fec2d95a76600aa34eb62aec9bc44bdbeb228818d6d3f3e789a2cd8a9f')
 depends=("${MINGW_PACKAGE_PREFIX}-libxml2")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-cmake"
@@ -19,7 +21,8 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
 options=('staticlibs' 'strip')
 
 prepare() {
-  cd "${srcdir}/${_realname}-${pkgver}"
+  cd "${srcdir}/${_realname}-${pkgver}-Source"
+  patch -p1 -i ${srcdir}/02-install-layout.patch
 }
 
 build() {
@@ -31,10 +34,24 @@ build() {
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release \
     -DWITH_SWIG=OFF \
+    -DWITH_PYTHON=OFF \
+    -DBUILD_SHARED_LIBS=OFF \
     -DLIBSBML_DEPENDENCY_DIR=${MINGW_PREFIX} \
     -DLIBXML_INCLUDE_DIR="${MINGW_PREFIX}/include/libxml2" \
     -DLIBXML_LIBRARY="$(pkg-config --libs-only-l --static libxml-2.0)" \
-    ../${_realname}-${pkgver}
+    -DWITH_EXAMPLES=ON \
+    -DWITH_LIBXML=ON \
+    -DWITH_EXPAT=OFF \
+    -DWITH_BZIP2=ON \
+    -DWITH_ZLIB=ON \
+    -DENABLE_LAYOUT=ON \
+    -DENABLE_RENDER=ON \
+    -DENABLE_QUAL=ON \
+    -DENABLE_MULTI=ON \
+    -DENABLE_COMP=ON \
+    -DENABLE_FBC=ON \
+    -DENABLE_GROUPS=ON \
+    ../${_realname}-${pkgver}-Source
 
   make
 }
@@ -42,7 +59,9 @@ build() {
 package() {
   cd "${srcdir}/build-${MINGW_CHOST}"
   make DESTDIR="${pkgdir}" install
-  rm -Rf ${pkgdir}${MINGW_PREFIX}/bin
-  rm -Rf ${pkgdir}${MINGW_PREFIX}/lib/*.dll.a
-  mv ${pkgdir}${MINGW_PREFIX}/lib/libsbml-static.a ${pkgdir}${MINGW_PREFIX}/lib/libsbml.a
+
+  # DBUILD_SHARED_LIBS doesn't seem to work?
+  rm -Rfv ${pkgdir}${MINGW_PREFIX}/bin
+  rm -Rfv ${pkgdir}${MINGW_PREFIX}/lib/*.dll.a
+  mv -v ${pkgdir}${MINGW_PREFIX}/lib/libsbml-static.a ${pkgdir}${MINGW_PREFIX}/lib/libsbml.a
 }
