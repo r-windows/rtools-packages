@@ -35,6 +35,7 @@ build() {
     -DCMAKE_BUILD_TYPE=Release \
     -DWITH_SWIG=OFF \
     -DWITH_PYTHON=OFF \
+    -DBUILD_SHARED_LIBS=OFF \
     -DLIBSBML_DEPENDENCY_DIR=${MINGW_PREFIX} \
     -DLIBXML_INCLUDE_DIR="${MINGW_PREFIX}/include/libxml2" \
     -DLIBXML_LIBRARY="$(pkg-config --libs-only-l --static libxml-2.0)" \
