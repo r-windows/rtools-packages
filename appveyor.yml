@@ -17,6 +17,9 @@ environment:
     - MINGW_ARCH: mingw64
       PACMAN_REPOSITORY: mingw64
       MINGW_TOOLCHAIN: x86_64
+    - MINGW_ARCH: ucrt64
+      PACMAN_REPOSITORY: ucrt64
+      MINGW_TOOLCHAIN: ucrt-x86_64
 
 matrix:
   fast_finish: true

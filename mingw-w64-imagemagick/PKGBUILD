@@ -35,7 +35,7 @@ options=('staticlibs' 'strip' '!debug' 'libtool')
 source=(https://imagemagick.org/download/releases/ImageMagick-${_basever}${_rc}.tar.xz
         6.9.11-build-fixes.patch
         hardcode-thresholds.diff
-        https://patch-diff.githubusercontent.com/raw/jeroen/ImageMagick6/pull/1.diff)
+        https://github.com/ImageMagick/ImageMagick6/commit/2ac82aa7.diff)
 sha256sums=('SKIP'
             'SKIP'
             'SKIP'
@@ -47,7 +47,7 @@ prepare() {
   cd ImageMagick-${_basever}${_rc}
   patch -p1 -i ${srcdir}/6.9.11-build-fixes.patch
   patch -p1 -i ${srcdir}/hardcode-thresholds.diff
-  patch -p1 -i ${srcdir}/1.diff
+  patch -p1 -i ${srcdir}/2ac82aa7.diff
 }
 
 build() {
