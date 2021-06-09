@@ -1,9 +1,9 @@
 # Maintainer: Oscar Fuentes <ofv@wanadoo.es>
 
 _realname=ctags
-pkgbase=mingw-w64-universal-${_realname}-git
-pkgname="${MINGW_PACKAGE_PREFIX}-universal-${_realname}-git"
-pkgver=r7242.db4357d08
+pkgbase=mingw-w64-universal-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-universal-${_realname}"
+pkgver=p5.9.20210530.0
 pkgrel=1
 pkgdesc="A maintained Ctags implementation (mingw-w64)"
 arch=('any')
@@ -17,25 +17,19 @@ depends=("${MINGW_PACKAGE_PREFIX}-jansson"
          "${MINGW_PACKAGE_PREFIX}-libxml2"
          "${MINGW_PACKAGE_PREFIX}-libyaml")
 options=('staticlibs' 'strip')
-_commit="db4357d0"
-source=("git+https://github.com/universal-ctags/ctags.git#commit=${_commit}")
-sha256sums=('SKIP')
-
-pkgver() {
-  cd "${_realname}"
-  printf 'r%s.%s' "$(git rev-list --count "${_commit}")" "$(git rev-parse --short "${_commit}")"
-}
+source=("https://github.com/universal-ctags/ctags/archive/refs/tags/${pkgver}.0.tar.gz")
+sha256sums=('c332840e4a3c0c8cb28f9ff7b687a7762899d495b7dfc81bdf93c347cff018f7')
 
 prepare() {
-  cd ${srcdir}/${_realname}
+  cd ${srcdir}/${_realname}-${pkgver}
   ./autogen.sh
 }
 
 build() {
   [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
-  cp -rf ${_realname} ${srcdir}/build-${MINGW_CHOST}
+  cp -rf ${_realname}-${pkgver} ${srcdir}/build-${MINGW_CHOST}
   cd ${srcdir}/build-${MINGW_CHOST}
-  ../${_realname}/configure \
+  ../${_realname}-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST} \
@@ -44,19 +38,10 @@ build() {
     --disable-external-sort
 
   make
-  make -C docs html man
 }
 
 package() {
   cd "${srcdir}/build-${MINGW_CHOST}"
   make prefix="${pkgdir}${MINGW_PREFIX}" install
-
-  mkdir -p ${pkgdir}${MINGW_PREFIX}/share/doc/universal-${_realname}
-  cp -rf docs/_build/html ${pkgdir}${MINGW_PREFIX}/share/doc/universal-${_realname}
-  rm -rf ${pkgdir}${MINGW_PREFIX}/share/doc/universal-${_realname}/html/sources
-
-  mkdir -p ${pkgdir}${MINGW_PREFIX}/share/man/man1
-  cp -rf docs/_build/man ${pkgdir}${MINGW_PREFIX}/share/man/man1
-
   install -Dm0644 COPYING ${pkgdir}${MINGW_PREFIX}/share/licenses/universal-${_realname}/COPYING
 }
