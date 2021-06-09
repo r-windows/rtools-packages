@@ -17,7 +17,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-jansson"
          "${MINGW_PACKAGE_PREFIX}-libxml2"
          "${MINGW_PACKAGE_PREFIX}-libyaml")
 options=('staticlibs' 'strip')
-source=("https://github.com/universal-ctags/ctags/archive/refs/tags/${pkgver}.0.tar.gz")
+source=("https://github.com/universal-ctags/ctags/archive/refs/tags/${pkgver}.tar.gz")
 sha256sums=('c332840e4a3c0c8cb28f9ff7b687a7762899d495b7dfc81bdf93c347cff018f7')
 
 prepare() {
