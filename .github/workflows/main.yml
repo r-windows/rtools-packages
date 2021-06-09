@@ -68,11 +68,10 @@ jobs:
         name: Uploading files
         run: |
           ls -ltrR
-          mkdir -p ~/.ssh
-          echo "StrictHostKeyChecking no" > ~/.ssh/config
-          echo "${STAGINGKEY}" > ~/.ssh/id_rsa && chmod 400 ~/.ssh/id_rsa
-          echo 'put -pr .' | sftp "${STAGINGUSER}@ftp.opencpu.org:/rtools"
-          rm -f ~/.ssh/id_rsa
+          eval $(ssh-agent -s)
+          ssh-add <(echo "$STAGINGKEY")
+          echo 'put -pr .' | sftp -oStrictHostKeyChecking=no "${STAGINGUSER}@ftp.opencpu.org:/rtools"
+          exit ${PIPESTATUS[1]}
         env:
           STAGINGUSER: ${{ secrets.STAGINGUSER }}
           STAGINGKEY: ${{ secrets.STAGINGKEY }}

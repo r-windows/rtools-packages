@@ -21,7 +21,7 @@ fi
 cp -f pacman.conf /etc/pacman.conf
 pacman --noconfirm -Scc
 pacman --noconfirm -Syyu
-pacman --noconfirm --needed -S git base-devel binutils unzip
+pacman --noconfirm --needed -S git base-devel binutils unzip pactoys
 pacman --noconfirm --needed -S mingw-w64-${MINGW_TOOLCHAIN}-{gcc,libtre,pkg-config,xz}
 
 # Remove weird upstream build flags

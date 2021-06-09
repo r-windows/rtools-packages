@@ -1,0 +1,39 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+# Maintainer: Chilledheart <rwindz0@gmail.com>
+# Contributor: Andrew Sun <adsun701@gmail.com>
+
+_realname=jansson
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=2.13.1
+pkgrel=1
+pkgdesc="A C library for encoding, decoding and manipulating JSON data (mingw-w64)"
+arch=('any')
+url="http://www.digip.org/jansson/"
+license=('MIT')
+source=("http://www.digip.org/${_realname}/releases/${_realname}-${pkgver}.tar.gz")
+sha256sums=('f4f377da17b10201a60c1108613e78ee15df6b12016b116b6de42209f47a474f')
+
+prepare() {
+  cd "${srcdir}/${_realname}-$pkgver"
+}
+
+build() {
+  [[ -d "${srcdir}/build-${MINGW_CHOST}" ]] && rm -rf "${srcdir}/build-${MINGW_CHOST}"
+  mkdir -p "${srcdir}/build-${MINGW_CHOST}"
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  ../${_realname}-${pkgver}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --enable-static \
+    --disable-shared
+
+  make
+}
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  make DESTDIR="${pkgdir}" install
+}

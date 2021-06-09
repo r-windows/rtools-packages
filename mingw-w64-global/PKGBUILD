@@ -1,0 +1,56 @@
+#Maintainer: Ma, Leon <akml@163.com>
+
+_realname=global
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=6.6.6
+pkgrel=1
+pkgdesc="GNU GLOBAL source code tagging system (mingw-w64)"
+arch=('any')
+url='https://www.gnu.org/software/global'
+license=('GPL3')
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-ncurses")
+source=("https://ftp.gnu.org/gnu/${_realname}/${_realname}-${pkgver}.tar.gz"{,.sig}
+        '001-global-6.6.2-mingw64.patch')
+sha256sums=('758078afff98d4c051c58785c7ada3ed1977fabb77f8897ff657b71cc62d4d5d'
+            'SKIP'
+            '5a4ea7a804ee5c874e4297047bc5e22aaa0b422b4b50659d90b147f2b920c7fa')
+validpgpkeys=('26F631B43D624A927E6F1C33969C3BE389DDA6EB') # Shigio YAMAGUCHI <shigio@gnu.org>
+
+_global_srcdir=${_realname}-${pkgver}
+
+prepare() {
+  cd ${_global_srcdir}
+
+  patch -p1 -i ${srcdir}/001-global-6.6.2-mingw64.patch
+  autoconf
+
+  rm -rf "${srcdir}"/build-${CARCH}
+}
+
+build() {
+  [[ -d ${srcdir}/build-${CARCH} ]] && rm -rf ${srcdir}/build-${CARCH}
+  mkdir build-${CARCH} && cd build-${CARCH}
+  export CPPFLAGS="-I${MINGW_PREFIX}/include/ncurses"
+
+  ../${_global_srcdir}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --with-ncurses=${MINGW_PREFIX} \
+    --enable-static \
+    --disable-shared
+
+  make
+}
+
+check() {
+  cd "${srcdir}"/build-${CARCH}
+  make check
+}
+
+package() {
+  cd "${srcdir}"/build-${CARCH}
+  make install DESTDIR="${pkgdir}"
+}
