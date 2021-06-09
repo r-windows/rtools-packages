@@ -38,7 +38,9 @@ build() {
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST} \
     --target=${MINGW_CHOST} \
-    --with-ncurses=${MINGW_PREFIX}
+    --with-ncurses=${MINGW_PREFIX} \
+    --enable-static \
+    --disable-shared
 
   make
 }
