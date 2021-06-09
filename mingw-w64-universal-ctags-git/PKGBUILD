@@ -1,0 +1,62 @@
+# Maintainer: Oscar Fuentes <ofv@wanadoo.es>
+
+_realname=ctags
+pkgbase=mingw-w64-universal-${_realname}-git
+pkgname="${MINGW_PACKAGE_PREFIX}-universal-${_realname}-git"
+pkgver=r7242.db4357d08
+pkgrel=1
+pkgdesc="A maintained Ctags implementation (mingw-w64)"
+arch=('any')
+provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+url="https://github.com/universal-ctags/ctags"
+license=("GPL")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
+depends=("${MINGW_PACKAGE_PREFIX}-jansson"
+         "${MINGW_PACKAGE_PREFIX}-libiconv"
+         "${MINGW_PACKAGE_PREFIX}-libxml2"
+         "${MINGW_PACKAGE_PREFIX}-libyaml")
+options=('staticlibs' 'strip')
+_commit="db4357d0"
+source=("git+https://github.com/universal-ctags/ctags.git#commit=${_commit}")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "${_realname}"
+  printf 'r%s.%s' "$(git rev-list --count "${_commit}")" "$(git rev-parse --short "${_commit}")"
+}
+
+prepare() {
+  cd ${srcdir}/${_realname}
+  ./autogen.sh
+}
+
+build() {
+  [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
+  cp -rf ${_realname} ${srcdir}/build-${MINGW_CHOST}
+  cd ${srcdir}/build-${MINGW_CHOST}
+  ../${_realname}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --disable-etags \
+    --disable-external-sort
+
+  make
+  make -C docs html man
+}
+
+package() {
+  cd "${srcdir}/build-${MINGW_CHOST}"
+  make prefix="${pkgdir}${MINGW_PREFIX}" install
+
+  mkdir -p ${pkgdir}${MINGW_PREFIX}/share/doc/universal-${_realname}
+  cp -rf docs/_build/html ${pkgdir}${MINGW_PREFIX}/share/doc/universal-${_realname}
+  rm -rf ${pkgdir}${MINGW_PREFIX}/share/doc/universal-${_realname}/html/sources
+
+  mkdir -p ${pkgdir}${MINGW_PREFIX}/share/man/man1
+  cp -rf docs/_build/man ${pkgdir}${MINGW_PREFIX}/share/man/man1
+
+  install -Dm0644 COPYING ${pkgdir}${MINGW_PREFIX}/share/licenses/universal-${_realname}/COPYING
+}
