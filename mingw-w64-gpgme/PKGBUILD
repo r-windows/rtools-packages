@@ -5,7 +5,7 @@
 _realname=gpgme
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=1.15.1
+pkgver=1.16.0
 pkgrel=2
 pkgdesc="A C wrapper library for GnuPG (mingw-w64)"
 arch=('any')
@@ -30,7 +30,7 @@ validpgpkeys=('D8692123C4065DEA5E0F3AB5249B39D24F25E3B6'
               '031EC2536E580D8EA286A9F22071B08A33BD3F06'
               '5B80C5754298F0CB55D8ED6ABCEF7E294B092E28'
               '6DAA6E64A76D2840571B4902528897B826403ADA')
-sha256sums=('eebc3c1b27f1c8979896ff361ba9bb4778b508b2496c2fc10e3775a40b1de1ad'
+sha256sums=('6c8cc4aedb10d5d4c905894ba1d850544619ee765606ac43df7405865de29ed0'
             'SKIP'
             '71763a209761afe6495d3d85e25bbe6ba76348450d426f8a2618a34a264e058a'
             '2389cc237bf860b961bf3519377e83f7678e657dcf28c33510cd155f80516d42'
