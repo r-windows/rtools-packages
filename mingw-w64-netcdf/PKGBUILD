@@ -50,6 +50,10 @@ prepare() {
 
   # Fixed in upstream, just copy-paste :)
   patch -p1 -i ${srcdir}/0011-fix-multiple-def.patch
+
+  # Search implicit link path for extra libraries:
+  local PREFIX_WIN=$(cygpath -wm ${MINGW_PREFIX})
+  sed -i "/^ *FIND_LIBRARY(.*) *$/ s|) *$| HINTS \"${PREFIX_WIN}/${MINGW_CHOST}/lib\" )|" CMakeLists.txt
 }
 
 build() {
