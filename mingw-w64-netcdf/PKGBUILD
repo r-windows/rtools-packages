@@ -61,19 +61,32 @@ build() {
   [[ -d ${srcdir}/build-static-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-static-${MINGW_CHOST}
   mkdir -p ${srcdir}/build-static-${MINGW_CHOST} && cd ${srcdir}/build-static-${MINGW_CHOST}
 
+  if [[ $RUN_CHECK = 'y' ]]; then
+    ENABLE_TESTS=ON
+    LINKER_FLAGS=-Wl,--allow-multiple-definition
+  else
+    ENABLE_TESTS=OFF
+    LINKER_FLAGS=
+  fi
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake \
     -G "MSYS Makefiles" \
     -DNC_EXTRA_DEPS="-lhdf5 -lcurl -lssh2 -lssl -lcrypto -lz -lws2_32 -lcrypt32 -lwldap32" \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+    -DCMAKE_EXE_LINKER_FLAGS="${LINKER_FLAGS}" \
     -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_SHARED_LIBS=OFF \
     -DENABLE_DLL=OFF \
     -DENABLE_DAP=ON \
-    -DENABLE_TESTS=OFF \
+    -DENABLE_TESTS=${ENABLE_TESTS} \
     -DENABLE_NETCDF_4=ON \
     "${srcdir}/${_realname}-c-${pkgver}"
   make
+}
+
+check() {
+  cd ${srcdir}/build-static-${MINGW_CHOST}
+  make test
 }
 
 package() {
