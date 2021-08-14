@@ -1,0 +1,12 @@
+--- netcdf-c-4.7.4/oc2/CMakeLists.txt	2020-03-28 02:33:36.000000000 +1100
++++ netcdf-c-4.7.4/oc2/CMakeLists.txt	2021-08-14 11:11:21.617710400 +1000
+@@ -6,6 +6,9 @@
+ # See netcdf-c/COPYRIGHT file for more info.
+ SET(oc_SOURCES oc.c daplex.c dapparse.c dapy.c occompile.c occurlfunctions.c ocdata.c ocdebug.c ocdump.c ocinternal.c ocnode.c ochttp.c ocread.c ocutil.c xxdr.c)
+ 
++if (CMAKE_COMPILER_IS_GNUCC)
++  set_source_files_properties(daplex.c dapparse.c PROPERTIES COMPILE_FLAGS -fno-optimize-sibling-calls)
++endif()
+ 
+ add_library(oc2 OBJECT ${oc_SOURCES})
+ 
