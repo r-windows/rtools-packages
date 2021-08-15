@@ -50,10 +50,6 @@ prepare() {
 
   # Fixed in upstream, just copy-paste :)
   patch -p1 -i ${srcdir}/0011-fix-multiple-def.patch
-
-  # Search implicit link path for extra libraries:
-  local PREFIX_WIN=$(cygpath -wm ${MINGW_PREFIX})
-  sed -i "/^ *FIND_LIBRARY(.*) *$/ s|) *$| HINTS \"${PREFIX_WIN}/${MINGW_CHOST}/lib\" )|" CMakeLists.txt
 }
 
 build() {
@@ -67,11 +63,15 @@ build() {
     ENABLE_TESTS=OFF
     LINKER_FLAGS=
   fi
+
+  local PREFIX_WIN=$(cygpath -wm ${MINGW_PREFIX})
+
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake \
     -G "MSYS Makefiles" \
     -DNC_EXTRA_DEPS="-lhdf5 -lcurl -lssh2 -lssl -lcrypto -lz -lws2_32 -lcrypt32 -lwldap32" \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+    -DCMAKE_PREFIX_PATH="${PREFIX_WIN};${PREFIX_WIN}/${MINGW_CHOST}" \
     -DCMAKE_EXE_LINKER_FLAGS="${LINKER_FLAGS}" \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_C_FLAGS_RELEASE="-O3 -fno-optimize-sibling-calls -DNDEBUG" \
