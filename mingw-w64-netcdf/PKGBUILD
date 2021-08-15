@@ -75,6 +75,7 @@ build() {
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
     -DCMAKE_EXE_LINKER_FLAGS="${LINKER_FLAGS}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_FLAGS_RELEASE="-O3 -fno-optimize-sibling-calls -DNDEBUG" \
     -DBUILD_SHARED_LIBS=OFF \
     -DENABLE_DLL=OFF \
     -DENABLE_DAP=ON \
