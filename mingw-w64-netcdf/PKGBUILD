@@ -23,8 +23,7 @@ source=(${_realname}-${pkgver}.tar.gz::"https://github.com/Unidata/netcdf-c/arch
         0008-mingw-and-msvc-common.patch
         0009-mingw-getopt.patch
         0010-fix-typo.patch
-        0011-fix-multiple-def.patch
-        0012-fix-opendap-hang.patch)
+        0011-fix-multiple-def.patch)
 sha256sums=('99930ad7b3c4c1a8e8831fb061cb02b2170fc8e5ccaeda733bd99c3b9d31666b'
             'a306c20f6593d314701147323f952d4df80e77174c45ab201949f402d191e221'
             'da666e1f762b3ecd2becc9ad55fe1e32be9a47b5bae4f7990e7d94aae69697cd'
@@ -35,8 +34,7 @@ sha256sums=('99930ad7b3c4c1a8e8831fb061cb02b2170fc8e5ccaeda733bd99c3b9d31666b'
             '0c42dc0e93cff6e2f0a85340e08335f2eaed0a6f24f11152728b2739e0fcb7cc'
             '37e50632b805ea6de48c466010247b8e5ec30615248eb994204059dbe025a7e9'
             '278bea47ffc0566d5b6a60b3ccdb244405a64124f5905af01f6b834261dc72ac'
-            'e7bebd703c23d1473b27de1d66832bd505076b073c49f2dc737c213796a1faf2'
-            '8245f26ab6e1fa5564db22279ebbb6db39ecfc0e9b21b18b4ead0aba7f73559c')
+            'e7bebd703c23d1473b27de1d66832bd505076b073c49f2dc737c213796a1faf2')
 
 prepare() {
   cd "${srcdir}/${_realname}-c-${pkgver}"
@@ -49,8 +47,9 @@ prepare() {
   patch -p1 -i ${srcdir}/0008-mingw-and-msvc-common.patch
   patch -p1 -i ${srcdir}/0009-mingw-getopt.patch
   patch -p1 -i ${srcdir}/0010-fix-typo.patch
+
+  # Fixed in upstream, just copy-paste :)
   patch -p1 -i ${srcdir}/0011-fix-multiple-def.patch
-  patch -p1 -i ${srcdir}/0012-fix-opendap-hang.patch
 
   # Search implicit link path for extra libraries:
   local PREFIX_WIN=$(cygpath -wm ${MINGW_PREFIX})
