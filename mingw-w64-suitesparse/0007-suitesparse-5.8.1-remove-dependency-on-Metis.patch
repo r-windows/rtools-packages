@@ -1,0 +1,15 @@
+diff --git a/SuiteSparse_config/SuiteSparse_config.mk b/SuiteSparse_config/SuiteSparse_config.mk
+index 68cc0d3..01a4fbc 100644
+--- a/SuiteSparse_config/SuiteSparse_config.mk
++++ b/SuiteSparse_config/SuiteSparse_config.mk
+@@ -328,6 +328,7 @@ SUITESPARSE_VERSION = 5.8.1
+     # -DGPU_BLAS    enable the use of the CUDA BLAS
+ 
+     CHOLMOD_CONFIG ?= $(GPU_CONFIG)
++    CHOLMOD_CONFIG  += -DNPARTITION
+ 
+     #---------------------------------------------------------------------------
+     # SuiteSparseQR configuration:
+-- 
+2.28.0.windows.1
+
