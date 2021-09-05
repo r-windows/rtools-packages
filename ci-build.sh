@@ -52,6 +52,14 @@ export PKG_CONFIG="/${MINGW_ARCH}/bin/pkg-config --static"
 export PKGEXT='.pkg.tar.xz'
 
 for package in "${packages[@]}"; do
+    if [ "$MINGW_ARCH" == "ucrt64" ]; then
+      testurl="https://github.com/r-windows/rtools-ucrt/blob/HEAD/${package}/PKGBUILD"
+      if curl --output /dev/null --silent --head --fail "$testurl"; then
+        echo "A ucrt specific version of ${package} exists. Skipping ucrt64 build."
+        unset package
+        continue
+      fi
+    fi
     execute 'Building binary' makepkg-mingw --noconfirm --noprogressbar --skippgpcheck --syncdeps --rmdeps --cleanbuild
     MINGW_ARCH=mingw64 execute 'Building source' makepkg-mingw --noconfirm --noprogressbar --skippgpcheck --allsource
     execute 'List output contents' ls -ltr
