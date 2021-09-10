@@ -4,7 +4,7 @@
 _realname=geos
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=3.9.0
+pkgver=3.9.1
 pkgrel=1
 pkgdesc="C++ port of the Java Topology Suite (mingw-w64)"
 arch=('any')
@@ -13,7 +13,7 @@ license=('LGPL')
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
 options=('strip' '!emptydirs')
 source=("http://download.osgeo.org/geos/geos-${pkgver}.tar.bz2")
-sha256sums=('bd8082cf12f45f27630193c78bdb5a3cba847b81e72b20268356c2a4fc065269')
+sha256sums=('7e630507dcac9dc07565d249a26f06a15c9f5b0c52dd29129a0e3d381d7e382a')
 
 build() {
   rm -rf "${srcdir}/build-${MINGW_CHOST}"
