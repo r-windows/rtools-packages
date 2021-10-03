@@ -48,7 +48,6 @@ execute 'Approving recipe quality' check_recipe_quality
 rm -f /mingw32/lib/*.dll.a
 rm -f /mingw64/lib/*.dll.a
 rm -f /ucrt64/lib/*.dll.a
-export PKG_CONFIG="/${MINGW_ARCH}/bin/pkg-config --static"
 export PKGEXT='.pkg.tar.xz'
 
 for package in "${packages[@]}"; do
