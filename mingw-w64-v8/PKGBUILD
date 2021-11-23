@@ -2,7 +2,7 @@
 _realname=v8
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=9.0.257.17
+pkgver=9.1.269.38
 pkgrel=1
 pkgdesc="Fast and modern Javascript engine (mingw-w64)"
 arch=('any')
@@ -26,14 +26,14 @@ source=("bare-clones/gn::git+https://gn.googlesource.com/gn#tag=5da62d5e9d0f10cb
         "v8.pc"
         "https://github.com/v8/v8/commit/6930df0.patch")
 sha256sums=('SKIP'
-            '03dadee15a911aeb356c04e291e634ec7b99d5c206bdc733b3c560937f6af454'
             'SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
-            'f07e9391edd5fd25b061d1bc34bf5c56c45076b186fcc3176d4c7e8166eeed09'
+            'SKIP'
+            'SKIP'
             '63d759de8bad9b8ac8879f8e69c24e62bf71fe14396cbdd190d48cabf8335800'
             'b831576af25b275fca72851ec275c9d21bee0be29b4eb973a3e2a2580deac003'
             'c10169e7a34e212b1a2bf0eaf45131485719f32a7c34d9a666b692f05a2aa830'

@@ -629,19 +629,6 @@ index 436dbe7797..6db3de346d 100644
    STATIC_ASSERT(kSystemPointerSize != 8 || sizeof(HeapEntry) == 48);
  #else   // !V8_CC_MSVC
    STATIC_ASSERT(kSystemPointerSize != 8 || sizeof(HeapEntry) == 40);
-diff --git a/src/runtime/runtime-wasm.cc b/src/runtime/runtime-wasm.cc
-index 9ba26c23ad..5857bf4c39 100644
---- a/src/runtime/runtime-wasm.cc
-+++ b/src/runtime/runtime-wasm.cc
-@@ -570,7 +570,7 @@ RUNTIME_FUNCTION(Runtime_WasmDebugBreak) {
-   DebugScope debug_scope(isolate->debug());
-
-   // Check for instrumentation breakpoint.
--  DCHECK_EQ(script->break_on_entry(), instance->break_on_entry());
-+  DCHECK_EQ(script->break_on_entry(), static_cast<bool>(instance->break_on_entry()));
-   if (script->break_on_entry()) {
-     MaybeHandle<FixedArray> maybe_on_entry_breakpoints =
-         WasmScript::CheckBreakPoints(
 diff --git a/src/snapshot/snapshot-utils.cc b/src/snapshot/snapshot-utils.cc
 index eb2372372c..7defadb4b1 100644
 --- a/src/snapshot/snapshot-utils.cc
