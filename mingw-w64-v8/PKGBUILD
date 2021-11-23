@@ -2,7 +2,7 @@
 _realname=v8
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=9.0.257.17
+pkgver=9.1.269.38
 pkgrel=1
 pkgdesc="Fast and modern Javascript engine (mingw-w64)"
 arch=('any')
@@ -13,11 +13,11 @@ depends=("${MINGW_PACKAGE_PREFIX}-zlib")
 source=("bare-clones/gn::git+https://gn.googlesource.com/gn#tag=5da62d5e9d0f10cb8ece7c30563a6a214c78b68d"
         "https://github.com/v8/v8/archive/refs/tags/${pkgver}.zip"
         "bare-clones/build::git+https://chromium.googlesource.com/chromium/src/build.git#commit=acacc4cc0668cb4dc7f44a3f4430635f438d7478"
-        "bare-clones/zlib::git+https://chromium.googlesource.com/chromium/src/third_party/zlib.git#commit=156be8c52f80cde343088b4a69a80579101b6e67"
-        "bare-clones/common::git+https://chromium.googlesource.com/chromium/src/base/trace_event/common.git#commit=dab187b372fc17e51f5b9fad8201813d0aed5129"
+        "bare-clones/zlib::git+https://chromium.googlesource.com/chromium/src/third_party/zlib.git#commit=09490503d0f201b81e03f5ca0ab8ba8ee76d4a8e"
+        "bare-clones/common::git+https://chromium.googlesource.com/chromium/src/base/trace_event/common.git#commit=cab90cbdaaf4444d67aef6ce3cef09fc5fdeb560"
         "bare-clones/googletest::git+https://chromium.googlesource.com/external/github.com/google/googletest.git#commit=10b1902d893ea8cc43c69541d70868f91af3646b"
-        "bare-clones/jinja2::git+https://chromium.googlesource.com/chromium/src/third_party/jinja2.git#commit=b41863e42637544c2941b574c7877d3e1f663e25"
-        "bare-clones/markupsafe::git+https://chromium.googlesource.com/chromium/src/third_party/markupsafe.git#commit=8f45f5cfa0009d2a70589bcda0349b8cb2b72783"
+        "bare-clones/jinja2::git+https://chromium.googlesource.com/chromium/src/third_party/jinja2.git#commit=11b6b3e5971d760bd2d310f77643f55a818a6d25"
+        "bare-clones/markupsafe::git+https://chromium.googlesource.com/chromium/src/third_party/markupsafe.git#commit=0944e71f4b2cb9a871bcbe353f95e889b64a611a"
         "0000-add-mingw-main-code-changes.patch"
         "0001-add-mingw-toolchain.patch"
         "0002-gn-ninja-deletes-objs-workaround.patch"
@@ -26,14 +26,14 @@ source=("bare-clones/gn::git+https://gn.googlesource.com/gn#tag=5da62d5e9d0f10cb
         "v8.pc"
         "https://github.com/v8/v8/commit/6930df0.patch")
 sha256sums=('SKIP'
-            '03dadee15a911aeb356c04e291e634ec7b99d5c206bdc733b3c560937f6af454'
             'SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
-            'f07e9391edd5fd25b061d1bc34bf5c56c45076b186fcc3176d4c7e8166eeed09'
+            'SKIP'
+            'SKIP'
             '63d759de8bad9b8ac8879f8e69c24e62bf71fe14396cbdd190d48cabf8335800'
             'b831576af25b275fca72851ec275c9d21bee0be29b4eb973a3e2a2580deac003'
             'c10169e7a34e212b1a2bf0eaf45131485719f32a7c34d9a666b692f05a2aa830'
@@ -114,7 +114,7 @@ build() {
 
   cd "${srcdir}"/v8-${pkgver}
   "${srcdir}"/gn/out/${CARCH}/gn gen "${PWD}/out/${BUILDTYPE}-${CARCH}" \
-    --args="v8_monolithic=true v8_static_library=true is_debug=false use_gold=false target_cpu=\"${_arch}\" is_clang=false use_custom_libcxx=false v8_enable_verify_heap=false v8_enable_i18n_support=false enable_iterator_debugging=false v8_use_external_startup_data=false" || ${_ignorefail}
+    --args="v8_monolithic=true v8_static_library=true is_debug=false use_gold=false target_cpu=\"${_arch}\" is_clang=false use_custom_libcxx=false v8_enable_verify_heap=false v8_enable_i18n_support=false enable_iterator_debugging=false v8_use_external_startup_data=false v8_enable_system_instrumentation=false" || ${_ignorefail}
   ninja -C "${PWD}/out/${BUILDTYPE}-${CARCH}" :v8_monolith :d8
 }
 
