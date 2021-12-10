@@ -3,7 +3,7 @@
 _realname=libmariadbclient
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=3.1.11
+pkgver=3.2.5
 pkgrel=2
 pkgdesc="MariaDB client libraries (mingw-w64)"
 arch=('any')
