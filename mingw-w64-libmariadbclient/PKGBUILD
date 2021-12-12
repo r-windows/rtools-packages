@@ -31,6 +31,7 @@ prepare() {
   patch -p1 -i ${srcdir}/002-fix-prototype.patch
   patch -p1 -i ${srcdir}/003-gcc-fix-use_VA_ARGS.patch
   sed -i.bak 's/${OPENSSL_CRYPTO_LIBRARY}/${OPENSSL_CRYPTO_LIBRARY} -lcrypt32 -lws2_32/' CMakeLists.txt
+  sed -i.bak 's/IF(WIN32)/IF(0)/g' 'plugins/auth/CmakeLists.txt'
 }
 
 build() {
@@ -59,7 +60,7 @@ build() {
     -DCLIENT_PLUGIN_REMOTE_IO=OFF \
     -DCLIENT_PLUGIN_PVIO_NPIPE=STATIC \
     -DCLIENT_PLUGIN_PVIO_SHMEM=STATIC \
-    -DCLIENT_PLUGIN_CLIENT_ED25519=OFF \
+    -DCLIENT_PLUGIN_CLIENT_ED25519=STATIC \
     -DCLIENT_PLUGIN_CACHING_SHA2_PASSWORD=STATIC \
     -DCLIENT_PLUGIN_SHA256_PASSWORD=STATIC \
     -DCLIENT_PLUGIN_MYSQL_CLEAR_PASSWORD=STATIC \
