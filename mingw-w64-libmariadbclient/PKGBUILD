@@ -21,9 +21,9 @@ source=("http://ftp.hosteurope.de/mirror/archive.mariadb.org/connector-c-${pkgve
         003-gcc-fix-use_VA_ARGS.patch)
 validpgpkeys=("199369E5404BD5FC7D2FE43BCBCB082A1BB943DB") #MariaDB Package Signing Key <package-signing-key@mariadb.org>
 sha256sums=('SKIP'
-            'SKIP'
+            '82e3570b26bdea6f5502df69c8991be03a27ae7cee5dfc1ec30313bc7559e94f'
             '7f2231363c2b21bfd578c4600ca0fad33fb8ebf2a463bc3b42f202c9ff7ef366'
-            '18d3bd0b06906e7ac295b024f1d94d9852ede0a28f06da0d51b452c2d896b432')
+            '6837338d735391e4f1154823734ce5e86145c67d8e2e7e4f284476215d0c17ec')
 
 prepare() {
   cd ${srcdir}/mariadb-connector-c-${pkgver}-src
