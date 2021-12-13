@@ -30,8 +30,7 @@ prepare() {
   patch -p1 -i ${srcdir}/001-mingw-build.patch
   patch -p1 -i ${srcdir}/002-fix-prototype.patch
   patch -p1 -i ${srcdir}/003-gcc-fix-use_VA_ARGS.patch
-  sed -i.bak 's/${OPENSSL_CRYPTO_LIBRARY}/${OPENSSL_CRYPTO_LIBRARY} -lcrypt32 -lws2_32/' CMakeLists.txt
-  sed -i.bak 's/IF(WIN32)/IF(0)/g' 'plugins/auth/CmakeLists.txt'
+  sed -i.bak 's/${OPENSSL_CRYPTO_LIBRARY}/${OPENSSL_CRYPTO_LIBRARY} -lcrypt32 -lws2_32/' CmakeLists.txt
 }
 
 build() {
@@ -39,12 +38,17 @@ build() {
   mkdir -p ${srcdir}/build-${MINGW_CHOST}
   cd ${srcdir}/build-${MINGW_CHOST}
 
+  # Notes by Jeroen (Dec 2021)
+  # WITH_SSL=SCHANNEL requires a recent version
+  if [[ $MINGW_PACKAGE_PREFIX == *-clang-* ]] || [[ $MINGW_PACKAGE_PREFIX == *-ucrt-* ]]; then
+    local _SSL_BACKEND=SCHANNEL
+  else
+    local _SSL_BACKEND=OPENSSL
+    export CFLAGS="-D_WIN32_WINNT=0x0600 -D__USE_MINGW_ANSI_STDIO -D_Printf_format_string_="
+    sed -i.bak 's/IF(WIN32)/IF(0)/g' "../mariadb-connector-c-${pkgver}-src/plugins/auth/CmakeLists.txt"
+  fi
 
-  # Notes by Jeroen (Dec 2020):
-  # WITH_SSL=SCHANNEL require more recent mingw-w64 (and I think Windows 8.1)
   # Plugin 'REMOTE_IO' seems unimportant and requires libcurl
-  # I couldnt' get plugins ed25519 and caching_sha2_password to work.
-  export CFLAGS="-D_WIN32_WINNT=0x0600 -D__USE_MINGW_ANSI_STDIO -D_Printf_format_string_="
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake \
     -G "MSYS Makefiles" \
@@ -53,7 +57,7 @@ build() {
     -DCMAKE_BUILD_TYPE=RELEASE \
     -DWITH_EXTERNAL_ZLIB=ON \
     -DWITH_UNIT_TESTS=OFF \
-    -DWITH_SSL="OPENSSL" \
+    -DWITH_SSL="$_SSL_BACKEND" \
     -DWITH_MYSQLCOMPAT=OFF \
     -DCLIENT_PLUGIN_AUTH_GSSAPI_CLIENT=STATIC \
     -DCLIENT_PLUGIN_DIALOG=STATIC \
