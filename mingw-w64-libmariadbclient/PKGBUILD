@@ -3,7 +3,7 @@
 _realname=libmariadbclient
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=3.1.11
+pkgver=3.2.5
 pkgrel=2
 pkgdesc="MariaDB client libraries (mingw-w64)"
 arch=('any')
@@ -21,16 +21,16 @@ source=("http://ftp.hosteurope.de/mirror/archive.mariadb.org/connector-c-${pkgve
         003-gcc-fix-use_VA_ARGS.patch)
 validpgpkeys=("199369E5404BD5FC7D2FE43BCBCB082A1BB943DB") #MariaDB Package Signing Key <package-signing-key@mariadb.org>
 sha256sums=('SKIP'
-            'SKIP'
+            '82e3570b26bdea6f5502df69c8991be03a27ae7cee5dfc1ec30313bc7559e94f'
             '7f2231363c2b21bfd578c4600ca0fad33fb8ebf2a463bc3b42f202c9ff7ef366'
-            '18d3bd0b06906e7ac295b024f1d94d9852ede0a28f06da0d51b452c2d896b432')
+            '6837338d735391e4f1154823734ce5e86145c67d8e2e7e4f284476215d0c17ec')
 
 prepare() {
   cd ${srcdir}/mariadb-connector-c-${pkgver}-src
   patch -p1 -i ${srcdir}/001-mingw-build.patch
   patch -p1 -i ${srcdir}/002-fix-prototype.patch
   patch -p1 -i ${srcdir}/003-gcc-fix-use_VA_ARGS.patch
-  sed -i.bak 's/${OPENSSL_CRYPTO_LIBRARY}/${OPENSSL_CRYPTO_LIBRARY} -lcrypt32 -lws2_32/' CMakeLists.txt
+  sed -i.bak 's/${OPENSSL_CRYPTO_LIBRARY}/${OPENSSL_CRYPTO_LIBRARY} -lcrypt32 -lws2_32/' CmakeLists.txt
 }
 
 build() {
@@ -38,12 +38,17 @@ build() {
   mkdir -p ${srcdir}/build-${MINGW_CHOST}
   cd ${srcdir}/build-${MINGW_CHOST}
 
+  # Notes by Jeroen (Dec 2021)
+  # WITH_SSL=SCHANNEL requires a recent version
+  if [[ $MINGW_PACKAGE_PREFIX == *-clang-* ]] || [[ $MINGW_PACKAGE_PREFIX == *-ucrt-* ]]; then
+    local _SSL_BACKEND=SCHANNEL
+  else
+    local _SSL_BACKEND=OPENSSL
+    export CFLAGS="-D_WIN32_WINNT=0x0600 -D__USE_MINGW_ANSI_STDIO -D_Printf_format_string_="
+    sed -i.bak 's/IF(WIN32)/IF(0)/g' "../mariadb-connector-c-${pkgver}-src/plugins/auth/CmakeLists.txt"
+  fi
 
-  # Notes by Jeroen (Dec 2020):
-  # WITH_SSL=SCHANNEL require more recent mingw-w64 (and I think Windows 8.1)
   # Plugin 'REMOTE_IO' seems unimportant and requires libcurl
-  # I couldnt' get plugins ed25519 and caching_sha2_password to work.
-  export CFLAGS="-D_WIN32_WINNT=0x0600 -D__USE_MINGW_ANSI_STDIO -D_Printf_format_string_="
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake \
     -G "MSYS Makefiles" \
@@ -52,15 +57,15 @@ build() {
     -DCMAKE_BUILD_TYPE=RELEASE \
     -DWITH_EXTERNAL_ZLIB=ON \
     -DWITH_UNIT_TESTS=OFF \
-    -DWITH_SSL="OPENSSL" \
+    -DWITH_SSL="$_SSL_BACKEND" \
     -DWITH_MYSQLCOMPAT=OFF \
     -DCLIENT_PLUGIN_AUTH_GSSAPI_CLIENT=STATIC \
     -DCLIENT_PLUGIN_DIALOG=STATIC \
     -DCLIENT_PLUGIN_REMOTE_IO=OFF \
     -DCLIENT_PLUGIN_PVIO_NPIPE=STATIC \
     -DCLIENT_PLUGIN_PVIO_SHMEM=STATIC \
-    -DCLIENT_PLUGIN_CLIENT_ED25519=OFF \
-    -DCLIENT_PLUGIN_CACHING_SHA2_PASSWORD=OFF \
+    -DCLIENT_PLUGIN_CLIENT_ED25519=STATIC \
+    -DCLIENT_PLUGIN_CACHING_SHA2_PASSWORD=STATIC \
     -DCLIENT_PLUGIN_SHA256_PASSWORD=STATIC \
     -DCLIENT_PLUGIN_MYSQL_CLEAR_PASSWORD=STATIC \
     -DCLIENT_PLUGIN_MYSQL_OLD_PASSWORD=STATIC \

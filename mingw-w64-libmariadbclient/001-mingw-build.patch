@@ -11,6 +11,7 @@ diff -Naur mariadb-connector-c-3.1.7-src-orig/cmake/install.cmake mariadb-connec
  SET(INSTALL_INCLUDEDIR_DEFAULT "include/mariadb")
 -SET(INSTALL_DOCDIR_DEFAULT "docs")
 +SET(INSTALL_DOCDIR_DEFAULT "share/docs/mariadb")
+ SET(INSTALL_MANDIR_DEFAULT "man")
  IF(NOT IS_SUBPROJECT)
    SET(INSTALL_PLUGINDIR_DEFAULT "lib/mariadb/plugin")
  ELSE()
