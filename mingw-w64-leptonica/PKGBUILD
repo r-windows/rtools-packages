@@ -3,7 +3,7 @@
 _realname=leptonica
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
-pkgver=1.79.0
+pkgver=1.82.0
 pkgrel=1
 pkgdesc="Leptonica library (mingw-w64)"
 arch=('any')
@@ -17,8 +17,8 @@ depends=(${MINGW_PACKAGE_PREFIX}-giflib
          ${MINGW_PACKAGE_PREFIX}-openjpeg2
          ${MINGW_PACKAGE_PREFIX}-zlib)
 options=('!libtool' 'strip')
-source=(https://github.com/DanBloomberg/leptonica/releases/download/${pkgver}/${_realname}-${pkgver}.tar.gz)
-sha256sums=('045966c9c5d60ebded314a9931007a56d9d2f7a6ac39cb5cc077c816f62300d8')
+source=(http://www.leptonica.org/source/${_realname}-${pkgver}.tar.gz)
+sha256sums=('155302ee914668c27b6fe3ca9ff2da63b245f6d62f3061c8f27563774b8ae2d6')
 
 prepare() {
   cd "${srcdir}/${_realname}-${pkgver}"

@@ -4,29 +4,28 @@
 _realname=tesseract-ocr
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=4.1.1
+pkgver=5.0.1
 pkgrel=1
 pkgdesc="Tesseract OCR (mingw-w64)"
 arch=('any')
 url="https://github.com/tesseract-ocr/tesseract"
 license=("Apache License 2.0")
-makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-pkg-config")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config"
+             "autoconf"
+             "automake"
+             "libtool")
 depends=(${MINGW_PACKAGE_PREFIX}-cairo
-#         ${MINGW_PACKAGE_PREFIX}-icu
          ${MINGW_PACKAGE_PREFIX}-leptonica
-#         ${MINGW_PACKAGE_PREFIX}-pango
          ${MINGW_PACKAGE_PREFIX}-zlib)
 options=('!libtool' 'strip')
 source=(${_realname}-${pkgver}.tar.gz::https://github.com/tesseract-ocr/tesseract/archive/${pkgver}.tar.gz
-        https://github.com/tesseract-ocr/tessdata_fast/raw/master/osd.traineddata
-        001-proper-include-thread.patch)
-sha256sums=('2a66ff0d8595bff8f04032165e6c936389b1e5727c3ce5a27b3e059d218db1cb'
-            '9cf5d576fcc47564f11265841e5ca839001e7e6f38ff7f7aacf46d15a96b00ff'
-            '0c8eec0552e9d3af93e84f594e71cfce0e996c630bddc6a0c2ca509f516696c9')
+        https://github.com/tesseract-ocr/tessdata_fast/raw/4.1.0/osd.traineddata)
+sha256sums=('b5b0e561650ed67feb1e9de38d4746121d302ae4c876c95b99b8b6f9f89d5c58'
+            '9cf5d576fcc47564f11265841e5ca839001e7e6f38ff7f7aacf46d15a96b00ff')
 
 prepare() {
   cd "${srcdir}/tesseract-${pkgver}"
-  patch -p1 -i ${srcdir}/001-proper-include-thread.patch
   ./autogen.sh
 }
 
@@ -34,10 +33,6 @@ build() {
   [[ -d "${srcdir}/build-${MINGW_CHOST}" ]] && rm -rf "${srcdir}/build-${MINGW_CHOST}"
   mkdir "${srcdir}/build-${MINGW_CHOST}"
   cd "${srcdir}/build-${MINGW_CHOST}"
-  local -a extra_config
-  if check_option "debug" "y"; then
-    extra_config+=( --enable-debug )
-  fi
 
   ../tesseract-${pkgver}/configure \
     --build=${MINGW_CHOST} \
@@ -47,8 +42,7 @@ build() {
     --enable-static \
     --disable-shared \
     --disable-openmp \
-    LIBLEPT_HEADERSDIR=${MINGW_PREFIX}/include \
-    "${extra_config[@]}"
+    LIBLEPT_HEADERSDIR=${MINGW_PREFIX}/include
 
   make
   #make training
