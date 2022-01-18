@@ -28,12 +28,12 @@ build() {
   cd "${srcdir}/build-${CARCH}"
 
   # For R 4.2 and up we switch to native Windows SSL
-  if [[ $MINGW_PACKAGE_PREFIX == *-clang-* ]] || [[ $MINGW_PACKAGE_PREFIX == *-ucrt-* ]]; then
-    local _SSL_BACKEND=wincng
-  else
+  #if [[ $MINGW_PACKAGE_PREFIX == *-clang-* ]] || [[ $MINGW_PACKAGE_PREFIX == *-ucrt-* ]]; then
+  #  local _SSL_BACKEND=wincng
+  #else
     local _SSL_BACKEND=openssl
     export LIBS="-lcrypt32 -lgdi32"
-  fi
+  #fi
 
   ../${_realname}-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
