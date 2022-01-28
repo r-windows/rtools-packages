@@ -26,14 +26,17 @@ depends=(${MINGW_PACKAGE_PREFIX}-bzip2
          ${MINGW_PACKAGE_PREFIX}-zlib
          ${MINGW_PACKAGE_PREFIX}-zstd)
 source=("https://github.com/libarchive/libarchive/releases/download/v${pkgver}/${_realname}-${pkgver}.tar.gz"
-        "0001-libarchive-3.3.3-bcrypt-fix.patch")
+        "0001-libarchive-3.3.3-bcrypt-fix.patch"
+        "https://patch-diff.githubusercontent.com/raw/libarchive/libarchive/pull/1043.diff")
 sha256sums=('ba7eb1781c9fbbae178c4c6bad1c6eb08edab9a1496c64833d1715d022b30e2e'
-            '2c318a025029998a9389eb99ab80f733c0fcf3b4888421879f2f6b4530d7f522')
+            '2c318a025029998a9389eb99ab80f733c0fcf3b4888421879f2f6b4530d7f522'
+            'SKIP')
 
 prepare() {
   cd "${srcdir}/${_realname}-${pkgver}"
   #the patch is actually not needed because we build --without-cng
   #patch -p1 -i ${srcdir}/0001-libarchive-3.3.3-bcrypt-fix.patch
+  patch -p1 -i ${srcdir}/1043.diff
   autoreconf -fiv
 }
 
