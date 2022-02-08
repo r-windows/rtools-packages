@@ -10,6 +10,7 @@ arch=("any")
 url="https://arrow.apache.org/"
 license=("Apache-2.0")
 depends=("${MINGW_PACKAGE_PREFIX}-aws-sdk-cpp"
+         "${MINGW_PACKAGE_PREFIX}-brotli"
          "${MINGW_PACKAGE_PREFIX}-libutf8proc"
          "${MINGW_PACKAGE_PREFIX}-re2"
          "${MINGW_PACKAGE_PREFIX}-lz4"
@@ -67,6 +68,7 @@ build() {
     -DARROW_S3=ON \
     -DARROW_SNAPPY_USE_SHARED=OFF \
     -DARROW_USE_GLOG=OFF \
+    -DARROW_WITH_BROTLI=ON \
     -DARROW_WITH_LZ4=ON \
     -DARROW_WITH_RE2=ON \
     -DARROW_WITH_SNAPPY=ON \
