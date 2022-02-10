@@ -69,7 +69,7 @@ build() {
     --prefix=${MINGW_PREFIX} \
     --openssldir=ssl \
     ${_mingw} \
-    no-shared \
+    no-shared no-module \
     zlib-dynamic \
     enable-camellia \
     enable-capieng \
