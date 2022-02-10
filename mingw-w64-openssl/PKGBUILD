@@ -87,13 +87,14 @@ package() {
   cd "${srcdir}/build-${CARCH}"
   mkdir -p "${pkgdir}${MINGW_PREFIX}"/bin
   mkdir -p "${pkgdir}${MINGW_PREFIX}"/include/openssl
+  mkdir -p "${pkgdir}${MINGW_PREFIX}"/lib/pkgconfig
   mkdir -p "${pkgdir}${MINGW_PREFIX}"/share/licenses/${_realname}
 
-  make -j1 DESTDIR="${pkgdir}" MANDIR="${MINGW_PREFIX}/share/man" MANSUFFIX=ssl install
+  make -j1 DESTDIR="${pkgdir}" LIBDIR="lib" MANDIR="${MINGW_PREFIX}/share/man" MANSUFFIX=ssl install
   install -D -m644 "${srcdir}/${_realname}-${_ver}/LICENSE.txt" \
          "${pkgdir}${MINGW_PREFIX}"/share/licenses/${_realname}/LICENSE.txt
 
-  mv "${pkgdir}${MINGW_PREFIX}"/lib64 "${pkgdir}${MINGW_PREFIX}"/lib || true
+  #mv "${pkgdir}${MINGW_PREFIX}"/lib64 "${pkgdir}${MINGW_PREFIX}"/lib || true
   chmod -R 777 "${pkgdir}${MINGW_PREFIX}"/bin
   chmod -R 777 "${pkgdir}${MINGW_PREFIX}"/lib
 
