@@ -1,7 +1,7 @@
 _realname=poppler
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=21.04.0
+pkgver=21.12.0
 pkgrel=9500
 pkgdesc="PDF rendering library based on xpdf 3.0 (mingw-w64)"
 arch=('any')
@@ -22,7 +22,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-cairo"
          "${MINGW_PACKAGE_PREFIX}-zlib")
 options=('strip' 'staticlibs')
 source=("https://poppler.freedesktop.org/${_realname}-${pkgver}.tar.xz")
-sha256sums=('5e2219656c6bbd36154133fef2e12b7d0938464518827098b29a10b1697ea79c')
+sha256sums=('acb840c2c1ec07d07e53c57c4b3a1ff3e3ee2d888d44e1e9f2f01aaf16814de7')
 
 prepare() {
   cd ${_realname}-${pkgver}
@@ -44,6 +44,7 @@ build() {
     -DCMAKE_CXX_STANDARD_LIBRARIES="$(pkg-config --libs-only-l --static cairo libtiff-4) -lfreetype -lWinspool -lMsimg32 -lComdlg32" \
     -DCMAKE_INSTALL_PREFIX="${MINGW_PREFIX}" \
     -DENABLE_UNSTABLE_API_ABI_HEADERS=ON \
+    -DENABLE_BOOST=OFF \
     -DENABLE_GTK_DOC=OFF \
     -DENABLE_GLIB=OFF \
     -DENABLE_QT5=OFF \
