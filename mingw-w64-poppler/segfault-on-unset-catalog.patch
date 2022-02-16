@@ -1,0 +1,35 @@
+Description: fix a segfault when a document does not have a catalog
+ New poppler causes segfaults in r-cran-pdftools because the
+ get_pdf_version() function now depends on the document having a non-null
+ catalog, which is evidently not guaranteed to be the case.  Maybe something
+ is supposed to initialize it, but we can at least fix the segfault and
+ restore compatibility with previous behavior by checking for a null catalog
+ before dereferencing.
+Author: Steve Langasek <steve.langasek@ubuntu.com>
+Last-Update: 2021-12-08
+Forwarded: no
+
+Index: poppler-21.11.0/poppler/PDFDoc.h
+===================================================================
+--- poppler-21.11.0.orig/poppler/PDFDoc.h
++++ poppler-21.11.0/poppler/PDFDoc.h
+@@ -283,16 +283,16 @@
+     PDFSubtypeConformance getPDFSubtypeConformance() const { return pdfConformance; }
+ 
+     // Return the PDF version specified by the file (either header or catalog).
+-    int getPDFMajorVersion() const { return std::max(headerPdfMajorVersion, catalog->getPDFMajorVersion()); }
++    int getPDFMajorVersion() const { return std::max(headerPdfMajorVersion, catalog ? catalog->getPDFMajorVersion() : 0); }
+     int getPDFMinorVersion() const
+     {
+-        const int catalogMajorVersion = catalog->getPDFMajorVersion();
++        const int catalogMajorVersion = catalog ? catalog->getPDFMajorVersion() : 0;
+         if (catalogMajorVersion > headerPdfMajorVersion) {
+             return catalog->getPDFMinorVersion();
+         } else if (headerPdfMajorVersion > catalogMajorVersion) {
+             return headerPdfMinorVersion;
+         } else {
+-            return std::max(headerPdfMinorVersion, catalog->getPDFMinorVersion());
++            return std::max(headerPdfMinorVersion, catalog ? catalog->getPDFMinorVersion() : 0);
+         }
+     }
+ 
