@@ -1,7 +1,7 @@
 _realname=poppler
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=21.12.0
+pkgver=22.02.0
 pkgrel=9500
 pkgdesc="PDF rendering library based on xpdf 3.0 (mingw-w64)"
 arch=('any')
@@ -21,11 +21,14 @@ depends=("${MINGW_PACKAGE_PREFIX}-cairo"
          "${MINGW_PACKAGE_PREFIX}-poppler-data"
          "${MINGW_PACKAGE_PREFIX}-zlib")
 options=('strip' 'staticlibs')
-source=("https://poppler.freedesktop.org/${_realname}-${pkgver}.tar.xz")
-sha256sums=('acb840c2c1ec07d07e53c57c4b3a1ff3e3ee2d888d44e1e9f2f01aaf16814de7')
+source=("https://poppler.freedesktop.org/${_realname}-${pkgver}.tar.xz"
+        "segfault-on-unset-catalog.patch")
+sha256sums=('e390c8b806f6c9f0e35c8462033e0a738bb2460ebd660bdb8b6dca01556193e1'
+            'SKIP')
 
 prepare() {
   cd ${_realname}-${pkgver}
+  patch -p1 -i ${srcdir}/segfault-on-unset-catalog.patch
 }
 
 build() {
