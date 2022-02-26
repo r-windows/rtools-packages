@@ -1,0 +1,48 @@
+_realname=rrdtool
+pkgbase=mingw-w64-${_realname}
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+pkgver=1.7.2
+pkgrel=1
+pkgdesc="Round Robin Database (mingw-w64)"
+arch=('any')
+url='https://oss.oetiker.ch/rrdtool/index.en.html'
+license=('GPL2')
+makedepends=("autoconf" "automake" "libtool")
+depends=("${MINGW_PACKAGE_PREFIX}-glib2")
+source=("https://github.com/oetiker/rrdtool-1.x/releases/download/v${pkgver}/${_realname}-${pkgver}.tar.gz")
+sha256sums=('a199faeb7eff7cafc46fac253e682d833d08932f3db93a550a4a5af180ca58db')
+
+prepare() {
+  cp -Rf "${srcdir}/${_realname}-${pkgver}" "${srcdir}"/build-${CARCH}
+  cd "${srcdir}"/build-${CARCH}
+  ./bootstrap
+}
+
+
+build() {
+  cd "${srcdir}"/build-${CARCH}
+  ./configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --enable-static \
+    --disable-shared \
+    --disable-tcl \
+    --disable-python \
+    --disable-docs \
+    --disable-nls \
+    --disable-perl \
+    --disable-mmap \
+    --disable-ruby \
+    --disable-rrdcached \
+    --disable-rrd_graph \
+    --disable-rrd_restore
+
+  make CFLAGS='-D__USE_MINGW_ANSI_STDIO=1'
+}
+
+package() {
+  cd "${srcdir}"/build-${CARCH}
+  make install DESTDIR="${pkgdir}"
+}
