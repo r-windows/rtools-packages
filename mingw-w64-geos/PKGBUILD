@@ -4,30 +4,37 @@
 _realname=geos
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=3.9.1
+pkgver=3.10.2
 pkgrel=1
 pkgdesc="C++ port of the Java Topology Suite (mingw-w64)"
 arch=('any')
 url="https://trac.osgeo.org/geos/"
 license=('LGPL')
-makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-cmake")
 options=('strip' '!emptydirs')
 source=("http://download.osgeo.org/geos/geos-${pkgver}.tar.bz2")
-sha256sums=('7e630507dcac9dc07565d249a26f06a15c9f5b0c52dd29129a0e3d381d7e382a')
+sha256sums=('50bbc599ac386b4c2b3962dcc411f0040a61f204aaef4eba7225ecdd0cf45715')
+
+prepare() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+}
 
 build() {
   rm -rf "${srcdir}/build-${MINGW_CHOST}"
   mkdir "${srcdir}/build-${MINGW_CHOST}"
   cd "${srcdir}/build-${MINGW_CHOST}"
 
-  ../${_realname}-${pkgver}/configure \
-    --prefix=${MINGW_PREFIX} \
-    --build=${MINGW_CHOST} \
-    --host=${MINGW_CHOST} \
-    --target=${MINGW_CHOST} \
-    --enable-static \
-    --disable-shared \
-    --disable-inline
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+  ${MINGW_PREFIX}/bin/cmake.exe \
+    -Wno-dev \
+    -G"MSYS Makefiles" \
+    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DBUILD_TESTING=OFF \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DDISABLE_GEOS_INLINE=ON \
+    ../${_realname}-${pkgver}
 
   make
 }
