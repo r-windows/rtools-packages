@@ -7,13 +7,14 @@
 _realname=gdal
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=3.2.1
+pkgver=3.4.1
 pkgrel=1
 pkgdesc="A translator library for raster geospatial data formats (mingw-w64)"
 arch=('any')
 url="https://gdal.org/"
 license=('custom')
-makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+makedepends=("autoconf" "automake" "libtool"
+             "${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config")
 depends=("${MINGW_PACKAGE_PREFIX}-cfitsio"
          "${MINGW_PACKAGE_PREFIX}-curl"
@@ -31,7 +32,6 @@ depends=("${MINGW_PACKAGE_PREFIX}-cfitsio"
          "${MINGW_PACKAGE_PREFIX}-libmariadbclient"
          "${MINGW_PACKAGE_PREFIX}-libpng"
          "${MINGW_PACKAGE_PREFIX}-libspatialite"
-         "${MINGW_PACKAGE_PREFIX}-libtiff"
          "${MINGW_PACKAGE_PREFIX}-libwebp"
          "${MINGW_PACKAGE_PREFIX}-libxml2"
          "${MINGW_PACKAGE_PREFIX}-netcdf"
@@ -40,11 +40,12 @@ depends=("${MINGW_PACKAGE_PREFIX}-cfitsio"
          "${MINGW_PACKAGE_PREFIX}-libpq"
          "${MINGW_PACKAGE_PREFIX}-proj"
          "${MINGW_PACKAGE_PREFIX}-sqlite3"
-         "${MINGW_PACKAGE_PREFIX}-xz")
+         "${MINGW_PACKAGE_PREFIX}-xz"
+         "${MINGW_PACKAGE_PREFIX}-zstd")
 #optdepends=("${MINGW_PACKAGE_PREFIX}-postgresql")
 options=('strip' 'staticlibs')
-source=(https://download.osgeo.org/${_realname}/${pkgver}/${_realname}-${pkgver}.tar.gz)
-sha256sums=('43d40ba940e3927e38f9e98062ff62f9fa993ceade82f26f16fab7e73edb572e')
+source=(https://download.osgeo.org/${_realname}/${pkgver}/${_realname}-${pkgver}.tar.xz)
+sha256sums=('332f053516ca45101ef0f7fa96309b64242688a8024780a5d93be0230e42173d')
 
 prepare() {
   cd ${srcdir}
@@ -78,7 +79,7 @@ prepare() {
   #sed -i "s/-lnetcdf/(pkg-config --libs-only-l --static netcdf)/g"  configure.ac
 
   # LibTiff
-  TIFFLIBS=$(pkg-config --libs-only-l --static libtiff-4)
+  #TIFFLIBS=$(pkg-config --libs-only-l --static libtiff-4)
   #sed -i "s/-ltiff/${TIFFLIBS}/g" configure.ac
 
   # PROJ
@@ -94,7 +95,7 @@ prepare() {
 
   sed -i "s/-lspatialite/${SPATIALLIBS}/g" configure
   sed -i "s/-lproj/${PROJLIBS}/g" configure
-  sed -i "s/-ltiff/${TIFFLIBS}/g" configure
+  #sed -i "s/-ltiff/${TIFFLIBS}/g" configure
   sed -i "s/-lfreexl/-lfreexl -liconv/g" configure
 
 }
@@ -143,13 +144,15 @@ build() {
     --with-netcdf="${MINGW_PREFIX}" \
     --with-crypto \
     --with-spatialite="yes" \
-    --with-liblzma
+    --with-liblzma \
+    --with-libtiff="internal" \
+    --with-zstd="${MINGW_PREFIX}"
 
   sed -i GDALmake.opt -e "s|EXE_DEP_LIBS.*|EXE_DEP_LIBS = \$\(GDAL_SLIB\)|g"
   sed -i GNUmakefile -e "s|\$(GDAL_ROOT)\/||g"
 
   # mariadb_config seems broken
-  sed -i GDALmake.opt -e "s|-lmariadb|-lmariadbclient -lssl -lcrypto -lcrypt32 -lgdi32 -lz -lws2_32 -lshlwapi -pthread|g"
+  sed -i GDALmake.opt -e "s|-lmariadb|-lmariadbclient -lssl -lcrypto -lcrypt32 -lgdi32 -lz -lws2_32 -lshlwapi -pthread -lsecur32 -lbcrypt|g"
 
   # Print some output for debugging
   if grep -o "[^/]*\.a.*undefined reference to.*$" config.log; then
