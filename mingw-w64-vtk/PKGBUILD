@@ -10,26 +10,6 @@ arch=("any")
 mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64')
 url="https://vtk.org"
 license=("BSD")
-depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
-         "${MINGW_PACKAGE_PREFIX}-double-conversion"
-         "${MINGW_PACKAGE_PREFIX}-expat"
-         "${MINGW_PACKAGE_PREFIX}-ffmpeg"
-         "${MINGW_PACKAGE_PREFIX}-fontconfig"
-         "${MINGW_PACKAGE_PREFIX}-freetype"
-         "${MINGW_PACKAGE_PREFIX}-hdf5"
-         "${MINGW_PACKAGE_PREFIX}-jsoncpp"
-         "${MINGW_PACKAGE_PREFIX}-libjpeg"
-         "${MINGW_PACKAGE_PREFIX}-libharu"
-         "${MINGW_PACKAGE_PREFIX}-libpng"
-         "${MINGW_PACKAGE_PREFIX}-libogg"
-         "${MINGW_PACKAGE_PREFIX}-libtheora"
-         "${MINGW_PACKAGE_PREFIX}-libtiff"
-         "${MINGW_PACKAGE_PREFIX}-libxml2"
-         "${MINGW_PACKAGE_PREFIX}-lz4"
-         "${MINGW_PACKAGE_PREFIX}-pugixml"
-         "${MINGW_PACKAGE_PREFIX}-zlib"
-         $([[ ${MINGW_PACKAGE_PREFIX} == *-clang-* ]] || echo "${MINGW_PACKAGE_PREFIX}-intel-tbb")
-         )
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-curl")
@@ -93,23 +73,6 @@ build() {
     -DVTK_MODULE_ENABLE_VTK_IOLegacy=YES \
     -DVTK_MODULE_ENABLE_VTK_IOXML=YES \
     -DVTK_MODULE_ENABLE_VTK_IOXMLParser=YES \
-    -DVTK_USE_SYSTEM_DOUBLECONVERSION=ON \
-    -DVTK_USE_SYSTEM_EXPAT=ON \
-    -DVTK_USE_SYSTEM_FREETYPE=ON \
-    -DVTK_USE_SYSTEM_HDF5=ON \
-    -DVTK_USE_SYSTEM_JPEG=ON \
-    -DVTK_USE_SYSTEM_JSONCPP=ON \
-    -DVTK_USE_SYSTEM_LIBPROJ=OFF \
-    -DVTK_USE_SYSTEM_LIBHARU=OFF \
-    -DVTK_USE_SYSTEM_LIBXML2=ON \
-    -DVTK_USE_SYSTEM_LZ4=ON \
-    -DVTK_USE_SYSTEM_NETCDF=OFF \
-    -DVTK_USE_SYSTEM_OGG=ON \
-    -DVTK_USE_SYSTEM_PUGIXML=ON \
-    -DVTK_USE_SYSTEM_THEORA=ON \
-    -DVTK_USE_SYSTEM_PNG=ON \
-    -DVTK_USE_SYSTEM_TIFF=ON \
-    -DVTK_USE_SYSTEM_ZLIB=ON \
     -DVTK_SMP_IMPLEMENTATION_TYPE=${_default_smp} \
     -DVTK_VERSIONED_INSTALL=OFF \
     ${_cmakeopts[@]} \
