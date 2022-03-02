@@ -3,20 +3,40 @@
 _realname=vtk
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgmajor=9
-pkgminor=0
-pkgver=${pkgmajor}.${pkgminor}.1
+pkgver=9.0.1
 pkgrel=1
-pkgdesc="Process images and create 3D computer graphics with the Visualization Toolkit (mingw-w64)"
+pkgdesc="A software system for 3D computer graphics, image processing and visualization (mingw-w64)"
 arch=("any")
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64')
 url="https://vtk.org"
 license=("BSD")
+depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
+         "${MINGW_PACKAGE_PREFIX}-double-conversion"
+         "${MINGW_PACKAGE_PREFIX}-expat"
+         "${MINGW_PACKAGE_PREFIX}-ffmpeg"
+         "${MINGW_PACKAGE_PREFIX}-fontconfig"
+         "${MINGW_PACKAGE_PREFIX}-freetype"
+         "${MINGW_PACKAGE_PREFIX}-hdf5"
+         "${MINGW_PACKAGE_PREFIX}-jsoncpp"
+         "${MINGW_PACKAGE_PREFIX}-libjpeg"
+         "${MINGW_PACKAGE_PREFIX}-libharu"
+         "${MINGW_PACKAGE_PREFIX}-libpng"
+         "${MINGW_PACKAGE_PREFIX}-libogg"
+         "${MINGW_PACKAGE_PREFIX}-libtheora"
+         "${MINGW_PACKAGE_PREFIX}-libtiff"
+         "${MINGW_PACKAGE_PREFIX}-libxml2"
+         "${MINGW_PACKAGE_PREFIX}-lz4"
+         "${MINGW_PACKAGE_PREFIX}-pugixml"
+         "${MINGW_PACKAGE_PREFIX}-zlib"
+         $([[ ${MINGW_PACKAGE_PREFIX} == *-clang-* ]] || echo "${MINGW_PACKAGE_PREFIX}-intel-tbb")
+         )
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-curl")
 options=("staticlibs" "strip")
 
-source=(${_realname}-${pkgver}.tar.gz::"https://www.vtk.org/files/release/${pkgmajor}.${pkgminor}/VTK-${pkgver}.tar.gz")
+source=(${_realname}-${pkgver}.tar.gz::"https://www.vtk.org/files/release/${pkgver%.*}/VTK-${pkgver}.tar.gz")
+sha256sums=("e1c3bb23b87fefebac3e37d462aa4a5a3cca97a9f352cc6f5349d21ee9b8de37")
 noextract=(${_realname}-${pkgver}.tar.gz)
 
 prepare() {
@@ -26,20 +46,31 @@ prepare() {
 }
 
 build() {
+  CFLAGS+=" ${CPPFLAGS}"
+  CXXFLAGS+=" ${CPPFLAGS} -std=gnu++11"
+  [[ "$CARCH" = 'i686' ]] && {
+    _cmakeopts=('-DVTK_USE_64BIT_IDS=OFF')
+  }
+  [[ "$CARCH" = 'x86_64' ]] && {
+    _cmakeopts=('-DVTK_USE_64BIT_IDS=ON')
+  }
+
+  if [[ ${MINGW_PACKAGE_PREFIX} != *-clang-* ]]; then
+    _default_smp=TBB
+  else
+    _default_smp=STDThread
+  fi
+
   [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
   mkdir -p ${srcdir}/build-${MINGW_CHOST} && cd ${srcdir}/build-${MINGW_CHOST}
-
-  if [ "$CARCH" == "i686" ]; then
-  export CFLAGS="-mfpmath=sse -msse2"
-  export CXXFLAGS="-mfpmath=sse -msse2"
-  fi
 
   export MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX="
   ${MINGW_PREFIX}/bin/cmake.exe \
     -G"MSYS Makefiles" \
-    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+    -DCMAKE_RC_FLAGS=--use-temp-file \
     -DVTK_ENABLE_LOGGING=OFF \
     -DVTK_ENABLE_REMOTE_MODULES=OFF \
     -DVTK_ENABLE_WRAPPING=OFF \
@@ -62,21 +93,32 @@ build() {
     -DVTK_MODULE_ENABLE_VTK_IOLegacy=YES \
     -DVTK_MODULE_ENABLE_VTK_IOXML=YES \
     -DVTK_MODULE_ENABLE_VTK_IOXMLParser=YES \
+    -DVTK_USE_SYSTEM_DOUBLECONVERSION=ON \
+    -DVTK_USE_SYSTEM_EXPAT=ON \
+    -DVTK_USE_SYSTEM_FREETYPE=ON \
+    -DVTK_USE_SYSTEM_HDF5=ON \
+    -DVTK_USE_SYSTEM_JPEG=ON \
+    -DVTK_USE_SYSTEM_JSONCPP=ON \
+    -DVTK_USE_SYSTEM_LIBPROJ=OFF \
+    -DVTK_USE_SYSTEM_LIBHARU=OFF \
+    -DVTK_USE_SYSTEM_LIBXML2=ON \
+    -DVTK_USE_SYSTEM_LZ4=ON \
+    -DVTK_USE_SYSTEM_NETCDF=OFF \
+    -DVTK_USE_SYSTEM_OGG=ON \
+    -DVTK_USE_SYSTEM_PUGIXML=ON \
+    -DVTK_USE_SYSTEM_THEORA=ON \
+    -DVTK_USE_SYSTEM_PNG=ON \
+    -DVTK_USE_SYSTEM_TIFF=ON \
+    -DVTK_USE_SYSTEM_ZLIB=ON \
+    -DVTK_SMP_IMPLEMENTATION_TYPE=${_default_smp} \
     -DVTK_VERSIONED_INSTALL=OFF \
-  ../${_realname}-${pkgver}
-  make
-  make -C vtk
+    ${_cmakeopts[@]} \
+    ../${_realname}-${pkgver}
+  
+  ${MINGW_PREFIX}/bin/cmake.exe --build .
 }
 
 package() {
   cd ${srcdir}/build-${MINGW_CHOST}
-  make  DESTDIR="${pkgdir}" -C vtk install
-  rm -Rf "${pkgdir}${MINGW_PREFIX}/bin"
-  rm  "${pkgdir}${MINGW_PREFIX}/lib/libvtk.dll.a"
+  DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake.exe --install .
 }
-
-check (){
-  cd ${srcdir}/build-${MINGW_CHOST}
-  #make check
-}
-
