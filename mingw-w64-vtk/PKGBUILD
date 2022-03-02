@@ -1,0 +1,82 @@
+# Maintainer: Kouhei Sutou <kou@clear-code.com>        emacs, make this -*- mode: yaml; -*-
+
+_realname=vtk
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgmajor=9
+pkgminor=0
+pkgver=${pkgmajor}.${pkgminor}.1
+pkgrel=1
+pkgdesc="Process images and create 3D computer graphics with the Visualization Toolkit (mingw-w64)"
+arch=("any")
+url="https://vtk.org"
+license=("BSD")
+makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
+             "${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-curl")
+options=("staticlibs" "strip")
+
+source=(${_realname}-${pkgver}.tar.gz::"https://www.vtk.org/files/release/${pkgmajor}.${pkgminor}/VTK-${pkgver}.tar.gz")
+noextract=(${_realname}-${pkgver}.tar.gz)
+
+prepare() {
+  # Workaround for symlinks in tarball
+  MSYS="winsymlinks:lnk" tar -xf ${srcdir}/${_realname}-${pkgver}.tar.gz
+  cd "${srcdir}/${_realname}-${pkgver}"
+}
+
+build() {
+  [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
+  mkdir -p ${srcdir}/build-${MINGW_CHOST} && cd ${srcdir}/build-${MINGW_CHOST}
+
+  if [ "$CARCH" == "i686" ]; then
+  export CFLAGS="-mfpmath=sse -msse2"
+  export CXXFLAGS="-mfpmath=sse -msse2"
+  fi
+
+  export MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX="
+  ${MINGW_PREFIX}/bin/cmake.exe \
+    -G"MSYS Makefiles" \
+    -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DVTK_ENABLE_LOGGING=OFF \
+    -DVTK_ENABLE_REMOTE_MODULES=OFF \
+    -DVTK_ENABLE_WRAPPING=OFF \
+    -DVTK_GROUP_ENABLE_Imaging=NO \
+    -DVTK_GROUP_ENABLE_MPI=NO \
+    -DVTK_GROUP_ENABLE_Qt=NO \
+    -DVTK_GROUP_ENABLE_Rendering=NO \
+    -DVTK_GROUP_ENABLE_StandAlone=NO \
+    -DVTK_GROUP_ENABLE_Views=NO \
+    -DVTK_GROUP_ENABLE_Web=NO \
+    -DVTK_LEGACY_SILENT=ON \
+    -DVTK_MODULE_ENABLE_VTK_CommonCore=YES \
+    -DVTK_MODULE_ENABLE_VTK_CommonDataModel=YES \
+    -DVTK_MODULE_ENABLE_VTK_CommonExecutionModel=YES \
+    -DVTK_MODULE_ENABLE_VTK_CommonMath=YES \
+    -DVTK_MODULE_ENABLE_VTK_CommonMisc=YES \
+    -DVTK_MODULE_ENABLE_VTK_CommonSystem=YES \
+    -DVTK_MODULE_ENABLE_VTK_CommonTransforms=YES \
+    -DVTK_MODULE_ENABLE_VTK_IOCore=YES \
+    -DVTK_MODULE_ENABLE_VTK_IOLegacy=YES \
+    -DVTK_MODULE_ENABLE_VTK_IOXML=YES \
+    -DVTK_MODULE_ENABLE_VTK_IOXMLParser=YES \
+    -DVTK_VERSIONED_INSTALL=OFF \
+  ../${_realname}-${pkgver}
+  make
+  make -C vtk
+}
+
+package() {
+  cd ${srcdir}/build-${MINGW_CHOST}
+  make  DESTDIR="${pkgdir}" -C vtk install
+  rm -Rf "${pkgdir}${MINGW_PREFIX}/bin"
+  rm  "${pkgdir}${MINGW_PREFIX}/lib/libvtk.dll.a"
+}
+
+check (){
+  cd ${srcdir}/build-${MINGW_CHOST}
+  #make check
+}
+
