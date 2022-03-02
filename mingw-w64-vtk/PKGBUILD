@@ -16,7 +16,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
 options=("staticlibs" "strip")
 
 source=(${_realname}-${pkgver}.tar.gz::"https://www.vtk.org/files/release/${pkgver%.*}/VTK-${pkgver}.tar.gz")
-sha256sums=("e1c3bb23b87fefebac3e37d462aa4a5a3cca97a9f352cc6f5349d21ee9b8de37")
+sha256sums=("1b39a5e191c282861e7af4101eaa8585969a2de05f5646c9199a161213a622c7")
 noextract=(${_realname}-${pkgver}.tar.gz)
 
 prepare() {
