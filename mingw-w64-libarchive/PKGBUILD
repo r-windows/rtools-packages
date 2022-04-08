@@ -33,8 +33,7 @@ sha256sums=('5a411aceb978f43e626f0c2d1812ddd8807b645ed892453acabd532376c148e6'
 prepare() {
   cd "${srcdir}/${_realname}-${pkgver}"
   #the patch is actually not needed because we build --without-cng
-  #patch -p1 -i ${srcdir}/0001-libarchive-3.3.3-bcrypt-fix.patch
-  patch -p1 -i ${srcdir}/1043.diff
+  #patch -p1 -i ${srcdir}/0001-libarchive-3.6.1-bcrypt-fix.patch
   autoreconf -fiv
 }
 
