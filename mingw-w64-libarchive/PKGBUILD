@@ -26,11 +26,9 @@ depends=(${MINGW_PACKAGE_PREFIX}-bzip2
          ${MINGW_PACKAGE_PREFIX}-zlib
          ${MINGW_PACKAGE_PREFIX}-zstd)
 source=("https://github.com/libarchive/libarchive/releases/download/v${pkgver}/${_realname}-${pkgver}.tar.xz"
-        "0001-libarchive-3.3.3-bcrypt-fix.patch"
-        "https://patch-diff.githubusercontent.com/raw/libarchive/libarchive/pull/1043.diff")
+        "0001-libarchive-3.6.1-bcrypt-fix.patch")
 sha256sums=('5a411aceb978f43e626f0c2d1812ddd8807b645ed892453acabd532376c148e6'
-            '2c318a025029998a9389eb99ab80f733c0fcf3b4888421879f2f6b4530d7f522'
-            'SKIP')
+            'bb16a11d41af5c1ed01a4c191dc9a1cc23b154c06b6d9705c3e8a5f4eb640eae')
 
 prepare() {
   cd "${srcdir}/${_realname}-${pkgver}"
