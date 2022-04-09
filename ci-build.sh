@@ -49,7 +49,7 @@ rm -f /mingw32/lib/*.dll.a
 rm -f /mingw64/lib/*.dll.a
 rm -f /ucrt64/lib/*.dll.a
 export PKGEXT='.pkg.tar.xz'
-
+export SRCEXT='.src.tar.gz'
 for package in "${packages[@]}"; do
     if [ "$MINGW_ARCH" == "ucrt64" ]; then
       testurl="https://github.com/r-windows/rtools-ucrt/blob/HEAD/${package}/PKGBUILD"
