@@ -4,7 +4,7 @@
 _realname=tesseract-ocr
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=5.0.1
+pkgver=5.1.0
 pkgrel=1
 pkgdesc="Tesseract OCR (mingw-w64)"
 arch=('any')
@@ -21,7 +21,7 @@ depends=(${MINGW_PACKAGE_PREFIX}-cairo
 options=('!libtool' 'strip')
 source=(${_realname}-${pkgver}.tar.gz::https://github.com/tesseract-ocr/tesseract/archive/${pkgver}.tar.gz
         https://github.com/tesseract-ocr/tessdata_fast/raw/4.1.0/osd.traineddata)
-sha256sums=('b5b0e561650ed67feb1e9de38d4746121d302ae4c876c95b99b8b6f9f89d5c58'
+sha256sums=('fdec8528d5a0ecc28ab5fff985e0b8ced60726f6ef33f54126f2868e323d4bd2'
             '9cf5d576fcc47564f11265841e5ca839001e7e6f38ff7f7aacf46d15a96b00ff')
 
 prepare() {
