@@ -5,7 +5,7 @@ _realname=tesseract-ocr
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=5.1.0
-pkgrel=1
+pkgrel=2
 pkgdesc="Tesseract OCR (mingw-w64)"
 arch=('any')
 url="https://github.com/tesseract-ocr/tesseract"
@@ -20,12 +20,15 @@ depends=(${MINGW_PACKAGE_PREFIX}-cairo
          ${MINGW_PACKAGE_PREFIX}-zlib)
 options=('!libtool' 'strip')
 source=(${_realname}-${pkgver}.tar.gz::https://github.com/tesseract-ocr/tesseract/archive/${pkgver}.tar.gz
-        https://github.com/tesseract-ocr/tessdata_fast/raw/4.1.0/osd.traineddata)
+        https://github.com/tesseract-ocr/tessdata_fast/raw/4.1.0/osd.traineddata
+        https://github.com/tesseract-ocr/tesseract/commit/64bcdce60.diff)
 sha256sums=('fdec8528d5a0ecc28ab5fff985e0b8ced60726f6ef33f54126f2868e323d4bd2'
-            '9cf5d576fcc47564f11265841e5ca839001e7e6f38ff7f7aacf46d15a96b00ff')
+            '9cf5d576fcc47564f11265841e5ca839001e7e6f38ff7f7aacf46d15a96b00ff'
+            'SKIP')
 
 prepare() {
   cd "${srcdir}/tesseract-${pkgver}"
+  patch -p1 -i ${srcdir}/64bcdce60.diff
   ./autogen.sh
 }
 
