@@ -43,15 +43,14 @@ build() {
 
   ./configure \
     --prefix=${MINGW_PREFIX} \
-    --enable-shared \
+    --disable-shared \
     --enable-static \
     --enable-hdf5 \
     --enable-dap \
     --disable-plugins \
     --disable-byterange \
     --disable-logging \
-    --disable-dap-remote-tests \
-    LDFLAGS=-Wl,--export-all-symbols
+    --disable-dap-remote-tests
 
   make ${MAKEFLAGS}
 }
