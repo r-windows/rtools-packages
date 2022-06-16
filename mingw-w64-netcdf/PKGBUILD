@@ -13,7 +13,7 @@ url="https://www.unidata.ucar.edu/software/netcdf/"
 depends=("${MINGW_PACKAGE_PREFIX}-curl"
          "${MINGW_PACKAGE_PREFIX}-hdf5"
          "${MINGW_PACKAGE_PREFIX}-zlib")
-makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              autoconf
              automake
              libtool)
