@@ -41,6 +41,13 @@ prepare() {
 build() {
   cd "${srcdir}/${_realname}-c-${pkgver}"
 
+  # nczarr tests fail for i686 in Rtools40:
+  if [[ ${CARCH} == "i686" ]]; then
+    nczarr_opt=--disable-nczarr
+  else
+    nczarr_opt=""
+  fi
+
   ./configure \
     --prefix=${MINGW_PREFIX} \
     --disable-shared \
@@ -50,7 +57,8 @@ build() {
     --disable-plugins \
     --disable-byterange \
     --disable-logging \
-    --disable-dap-remote-tests
+    --disable-dap-remote-tests \
+    ${nczarr_opt}
 
   make ${MAKEFLAGS}
 }
