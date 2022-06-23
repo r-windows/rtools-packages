@@ -12,8 +12,10 @@ license=('custom')
 url="https://www.unidata.ucar.edu/software/netcdf/"
 depends=("${MINGW_PACKAGE_PREFIX}-curl"
          "${MINGW_PACKAGE_PREFIX}-hdf5"
+         "${MINGW_PACKAGE_PREFIX}-libxml2"
          "${MINGW_PACKAGE_PREFIX}-zlib")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config"
              autoconf
              automake
              libtool)
@@ -54,14 +56,15 @@ build() {
     --enable-static \
     --enable-hdf5 \
     --enable-dap \
+    --enable-libxml2 \
     --disable-plugins \
     --disable-byterange \
     --disable-logging \
-    --disable-libxml2 \
     --enable-dap-remote-tests \
     ${nczarr_opt} \
-    CFLAGS="-DCURL_STATICLIB" \
-    LIBS="$( pkg-config --libs-only-l --static libcurl )"
+    CPPFLAGS="-DCURL_STATICLIB -DLIBXML_STATIC -D__USE_MINGW_ANSI_STDIO=1 \
+      -I${MINGW_PREFIX}/include/libxml2" \
+    LIBS="$( pkg-config --libs-only-l --static libxml-2.0 libcurl )" \
 
   make ${MAKEFLAGS}
 }
