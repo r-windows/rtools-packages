@@ -50,6 +50,11 @@ build() {
     nczarr_opt=""
   fi
 
+  PREFIX_WIN="$( cygpath -wm / )"
+  CPPFLAGS="$( pkg-config --cflags libxml-2.0 libcurl |
+	  sed "s|${PREFIX_WIN}|/|g" ) -D__USE_MINGW_ANSI_STDIO=1"
+  LIBS="$( pkg-config --libs-only-l --static libxml-2.0 libcurl )"
+
   ./configure \
     --prefix=${MINGW_PREFIX} \
     --disable-shared \
@@ -62,9 +67,8 @@ build() {
     --disable-logging \
     --enable-dap-remote-tests \
     ${nczarr_opt} \
-    CPPFLAGS="-DCURL_STATICLIB -DLIBXML_STATIC -D__USE_MINGW_ANSI_STDIO=1 \
-      -I${MINGW_PREFIX}/include/libxml2" \
-    LIBS="$( pkg-config --libs-only-l --static libxml-2.0 libcurl )" \
+    CPPFLAGS="${CPPFLAGS}" \
+    LIBS="${LIBS}"
 
   make ${MAKEFLAGS}
 }
