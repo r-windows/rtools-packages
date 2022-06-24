@@ -20,8 +20,10 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              automake
              libtool)
 checkdepends=("unzip")
-source=(${_realname}-${pkgver}.tar.gz::"https://github.com/Unidata/netcdf-c/archive/v${pkgver}.tar.gz")
-sha256sums=('9f4cb864f3ab54adb75409984c6202323d2fc66c003e5308f3cdf224ed41c0a6')
+source=(${_realname}-${pkgver}.tar.gz::"https://github.com/Unidata/netcdf-c/archive/v${pkgver}.tar.gz"
+	0002-no-file.patch)
+sha256sums=('9f4cb864f3ab54adb75409984c6202323d2fc66c003e5308f3cdf224ed41c0a6'
+	'd6f566945c232f78cce680ddc235c178fc1c5a41e5b8eee067f5b9251e2ea81e')
 
 # Helper macros to help make tasks easier #
 apply_patch_with_msg() {
@@ -35,7 +37,8 @@ apply_patch_with_msg() {
 prepare() {
   cd "${srcdir}/${_realname}-c-${pkgver}"
 
-#  apply_patch_with_msg *.patch
+  # Patch from https://github.com/msys2/MINGW-packages/pull/11920:
+  apply_patch_with_msg 0002-no-file.patch
 
   autoreconf -if
 }
