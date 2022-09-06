@@ -17,13 +17,19 @@ options=('staticlibs' 'strip')
 
 # Build from git for now: https://github.com/libssh2/libssh2/issues/536#issuecomment-892897873
 source=("${_realname}-${pkgver}"::"git+https://github.com/libssh2/${_realname}.git"
-        "fix-pkgconfig.patch")
+        "fix-pkgconfig.patch"
+        "https://github.com/libssh2/libssh2/commit/b952674f.diff"
+        "https://github.com/libssh2/libssh2/commit/17c9c1fc.diff")
 sha256sums=('SKIP'
-            '7a6545f6d457ad008aacefe04a60727c02d33927c8a903745bf191f69cc8ba55')
+            '7a6545f6d457ad008aacefe04a60727c02d33927c8a903745bf191f69cc8ba55'
+            'SKIP'
+            'SKIP')
 
 prepare() {
   cd ${_realname}-${pkgver}
   patch -p1 -i ${srcdir}/fix-pkgconfig.patch
+  patch --reverse -p1 -i ${srcdir}/b952674f.diff
+  patch --reverse -p1 -i ${srcdir}/17c9c1fc.diff
   autoreconf -fi
 }
 
