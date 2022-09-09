@@ -31,7 +31,7 @@ prepare() {
   #patch --reverse -p1 -i ${srcdir}/b952674f.diff
   #patch --reverse -p1 -i ${srcdir}/17c9c1fc.diff
   autoreconf -fi
-  sed -i 's/libssl libcrypto/libssl libcrypto libcrypt32 libgdi32 libws2_32/g' configure
+  #sed -i 's/libssl libcrypto/libssl libcrypto libcrypt32 libgdi32 libws2_32/g' configure
 }
 
 build() {
@@ -44,7 +44,7 @@ build() {
   #  local _SSL_BACKEND=wincng
   #else
     local _SSL_BACKEND=openssl
-    #export LIBS="-lcrypt32 -lgdi32"
+    export LIBS=$(pkg-config --libs-only-l --static libssl)
   #fi
 
   ../${_realname}-${pkgver}/configure \
