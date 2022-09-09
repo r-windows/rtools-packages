@@ -56,6 +56,13 @@ build() {
     --disable-shared \
     --with-crypto=$_SSL_BACKEND
 
+  if grep 'AES-CTR: no' config.log; then
+    cat config.log
+    cat "==========="
+    echo "Failed to properly detect OpenSSL"
+    exit 1
+  fi
+
   make
 }
 
