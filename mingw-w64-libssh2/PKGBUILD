@@ -31,7 +31,7 @@ prepare() {
   #patch --reverse -p1 -i ${srcdir}/b952674f.diff
   #patch --reverse -p1 -i ${srcdir}/17c9c1fc.diff
   autoreconf -fi
-  sed -i 's/libssl libcrypto/libssl libcrypto libcrypt32 libgdi32/g' configure
+  sed -i 's/libssl libcrypto/libssl libcrypto libcrypt32 libgdi32 libws2_32/g' configure
 }
 
 build() {
@@ -58,7 +58,7 @@ build() {
 
   if grep 'AES-CTR: no' config.log; then
     cat config.log
-    cat "==========="
+    echo "==========="
     echo "Failed to properly detect OpenSSL"
     exit 1
   fi
