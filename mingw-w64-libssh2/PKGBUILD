@@ -28,9 +28,10 @@ sha256sums=('SKIP'
 prepare() {
   cd ${_realname}-${pkgver}
   patch -p1 -i ${srcdir}/fix-pkgconfig.patch
-  patch --reverse -p1 -i ${srcdir}/b952674f.diff
-  patch --reverse -p1 -i ${srcdir}/17c9c1fc.diff
+  #patch --reverse -p1 -i ${srcdir}/b952674f.diff
+  #patch --reverse -p1 -i ${srcdir}/17c9c1fc.diff
   autoreconf -fi
+  sed -i 's/libssl libcrypto/$(pkg-config --libs-only-l --static openssl)/g' configure
 }
 
 build() {
@@ -43,7 +44,7 @@ build() {
   #  local _SSL_BACKEND=wincng
   #else
     local _SSL_BACKEND=openssl
-    export LIBS="-lcrypt32 -lgdi32"
+    #export LIBS="-lcrypt32 -lgdi32"
   #fi
 
   ../${_realname}-${pkgver}/configure \
