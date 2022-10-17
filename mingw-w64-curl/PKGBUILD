@@ -42,7 +42,7 @@ validpgpkeys=('914C533DF9B2ADA2204F586D78E11C6B279D5C91'  # Daniel Stenberg
 
 prepare() {
   cd "${_realname}-${pkgver}"
-  #patch -p1 -i "${srcdir}/disable-cainfo-for-schannel.patch"
+  patch -p1 -i "${srcdir}/disable-cainfo-for-schannel.patch"
   #rm -f lib/pathtools.h lib/pathtools.c > /dev/null 2>&1 || true
   #patch -p1 -i "${srcdir}/0001-Make-cURL-relocatable.patch"
   #autoreconf -vfi
