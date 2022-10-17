@@ -60,7 +60,7 @@ build() {
   if [ "${_variant}" = "-winssl" ]; then
     _variant_config+=("--without-ssl")
     _variant_config+=("--without-gnutls")
-    _variant_config+=("--with-winssl")
+    _variant_config+=("--with-schannel")
     _variant_config+=('--without-nghttp2')
     _variant_config+=("--without-ca-bundle")
     _variant_config+=("--without-ca-path")
@@ -69,14 +69,14 @@ build() {
     _variant_config+=("--with-default-ssl-backend=schannel")
     _variant_config+=("--without-ssl")
     _variant_config+=("--with-gnutls")
-    _variant_config+=("--with-winssl")
+    _variant_config+=("--with-schannel")
     _variant_config+=('--without-nghttp2')
     _variant_config+=("--with-ca-bundle=${MINGW_PREFIX}/ssl/certs/ca-bundle.crt")
     _variant_config+=("--with-librtmp")
   elif [ "${_variant}" = "-openssl" ]; then
     _variant_config+=("--without-gnutls")
     _variant_config+=("--with-ssl")
-    _variant_config+=("--with-winssl")
+    _variant_config+=("--with-schannel")
     _variant_config+=("--with-default-ssl-backend=schannel")    
     _variant_config+=("--without-ca-bundle")
     _variant_config+=("--without-nghttp2")
@@ -101,7 +101,6 @@ build() {
     --with-libssh2 \
     --without-brotli \
     --with-ldap-lib=wldap32 \
-    --without-libmetalink \
     "${_variant_config[@]}" \
     "${extra_config[@]}"
 # there's a bug with zsh completion generation script and Windows.
