@@ -100,6 +100,7 @@ build() {
     --with-winidn \
     --with-libssh2 \
     --without-brotli \
+    --without-zstd \
     --with-ldap-lib=wldap32 \
     "${_variant_config[@]}" \
     "${extra_config[@]}"
