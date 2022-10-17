@@ -12,8 +12,8 @@ fi
 _realname=curl
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}${_namesuff}"
-pkgver=7.64.1
-pkgrel=9202
+pkgver=7.83.1
+pkgrel=9000
 pkgdesc="Command line tool and library for transferring data with URLs. (mingw-w64)"
 arch=('any')
 url="https://curl.haxx.se/"
@@ -32,9 +32,9 @@ if [ -n "${_namesuff}" ]; then
   conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 fi
 options=('staticlibs')
-source=("${url}/download/${_realname}-${pkgver}.tar.bz2"
+source=("${url}/download/${_realname}-${pkgver}.tar.xz"
         "disable-cainfo-for-schannel.patch")
-sha256sums=('4cc7c738b35250d0680f29e93e0820c4cb40035f43514ea3ec8d60322d41a45d'
+sha256sums=('2cb9c2356e7263a1272fd1435ef7cdebf2cd21400ec287b068396deb705c22c4'
             'SKIP')
 validpgpkeys=('914C533DF9B2ADA2204F586D78E11C6B279D5C91'  # Daniel Stenberg
               '27EDEAF22F3ABCEB50DB9A125CC908FDB71E12C2'
@@ -42,7 +42,7 @@ validpgpkeys=('914C533DF9B2ADA2204F586D78E11C6B279D5C91'  # Daniel Stenberg
 
 prepare() {
   cd "${_realname}-${pkgver}"
-  patch -p1 -i "${srcdir}/disable-cainfo-for-schannel.patch"
+  #patch -p1 -i "${srcdir}/disable-cainfo-for-schannel.patch"
   #rm -f lib/pathtools.h lib/pathtools.c > /dev/null 2>&1 || true
   #patch -p1 -i "${srcdir}/0001-Make-cURL-relocatable.patch"
   #autoreconf -vfi
@@ -83,7 +83,7 @@ build() {
     _variant_config+=("--without-librtmp")
   fi
 
-  export curl_disallow_strtok_r="yes" # For rtools 4.6.3
+  #export curl_disallow_strtok_r="yes" # For rtools 4.6.3
   cd "${srcdir}/build-${CARCH}"
   ../${_realname}-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
