@@ -3,7 +3,7 @@
 _realname=arrow
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=10.0.0
+pkgver=10.0.1
 pkgrel=1
 pkgdesc="Apache Arrow is a cross-language development platform for in-memory data (mingw-w64)"
 arch=("any")
@@ -33,7 +33,7 @@ options=("staticlibs" "strip" "!buildflags")
 # This is the official release
 source=("${_realname}-${pkgver}.tar.gz"::"https://downloads.apache.org/arrow/arrow-${pkgver}/apache-arrow-${pkgver}.tar.gz")
 source_dir="apache-${_realname}-${pkgver}"
-sha256sums=("5b46fa4c54f53e5df0019fe0f9d421e93fc906b625ebe8e89eed010d561f1f12")
+sha256sums=("c814e0670112a22c1a6ec03ab420a52ae236a9a42e9e438c3cbd37f37e658fb3")
 
 pkgver() {
   cd "$source_dir"
