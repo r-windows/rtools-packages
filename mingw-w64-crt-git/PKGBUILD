@@ -22,11 +22,13 @@ source=("https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-re
         0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
         0002-DirectX-9-fixes-for-VLC.patch
         0003-DirectX-11-fixes-for-VLC.patch
-        mkgmtime.diff)
+        mkgmtime.diff
+        https://patch-diff.githubusercontent.com/raw/r-windows/mingw-w64/pull/1.diff)
 sha256sums=('5527e1f6496841e2bb72f97a184fc79affdcd37972eaa9ebf7a5fd05c31ff803'
             'd641257f7e1469aff89adc33e57702b75fe9667ca035978f890eae1020b6814c'
             '7ec97c9c02827aedc8c922784cb998e1175769bf0c8f7bd18a79d64002620330'
             'e80b76aa3eef6d0206c4d99ac340a60cfd92ea80392a6ec5122dc3851fbd3286'
+            'SKIP'
             'SKIP')
 
 apply_patch_with_msg() {
@@ -39,7 +41,7 @@ apply_patch_with_msg() {
 
 prepare() {
   cd ${srcdir}/mingw-w64-v${pkgver}
-
+  apply_patch_with_msg 1.diff
   apply_patch_with_msg 0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
   apply_patch_with_msg 0002-DirectX-9-fixes-for-VLC.patch
   #apply_patch_with_msg 0003-DirectX-11-fixes-for-VLC.patch
