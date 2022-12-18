@@ -35,7 +35,7 @@ prepare() {
 
 build() {
   cd ${_realname}
-  ./build/gen.py --allow-warnings --link-lib="-lssp"
+  ./build/gen.py --allow-warnings --link-lib="-lssp -lpsapi"
 
   ${MINGW_PREFIX}/bin/ninja -C ./out
 }
