@@ -31,6 +31,10 @@ prepare() {
   cd ${_realname}
   patch -Np1 -i ${srcdir}/001-build-fixes.patch
   patch -Np1 -i ${srcdir}/002-add-missing-header.patch
+  if [[ $MINGW_PACKAGE_PREFIX != *-ucrt-* ]]; then
+    sed -i.bak 's/ENABLE_VIRTUAL_TERMINAL_PROCESSING/0/g' src/util/test/gn_test.cc
+    sed -i.bak 's/DISABLE_NEWLINE_AUTO_RETURN/0/g' src/util/test/gn_test.cc
+  fi
 }
 
 build() {
