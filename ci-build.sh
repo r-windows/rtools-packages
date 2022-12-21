@@ -26,6 +26,8 @@ pacman --noconfirm --needed -S mingw-w64-${MINGW_TOOLCHAIN}-{gcc,libtre,pkg-conf
 
 # Remove weird upstream build flags
 sed -i 's/,--default-image-base-high//g' /etc/makepkg_mingw.conf
+sed -i 's/-Wp,-D_FORTIFY_SOURCE=2//g' /etc/makepkg_mingw.conf
+sed -i 's/-fstack-protector-strong//g' /etc/makepkg_mingw.conf
 
 # Initiate git
 git_config user.email 'ci@msys2.org'
