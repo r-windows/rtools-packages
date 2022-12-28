@@ -21,6 +21,7 @@ license=("MIT")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-pkg-config")
 depends=("${MINGW_PACKAGE_PREFIX}-libssh2"
          "${MINGW_PACKAGE_PREFIX}-zlib"
+         "${MINGW_PACKAGE_PREFIX}-nghttp2"
          "${MINGW_PACKAGE_PREFIX}-openssl")
 
 # We include stubs for these libs because many packages have -lidn -lrtmp harcoded
@@ -79,11 +80,13 @@ build() {
     _variant_config+=("--with-schannel")
     _variant_config+=("--with-default-ssl-backend=schannel")    
     _variant_config+=("--without-ca-bundle")
-    _variant_config+=("--without-nghttp2")
+    _variant_config+=("--with-nghttp2")
     _variant_config+=("--without-librtmp")
   fi
 
   #export curl_disallow_strtok_r="yes" # For rtools 4.6.3
+  export CPPFLAGS="$CPPFLAGS -DNGHTTP2_STATICLIB"
+
   cd "${srcdir}/build-${CARCH}"
   ../${_realname}-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
