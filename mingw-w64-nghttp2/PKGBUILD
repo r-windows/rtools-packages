@@ -1,0 +1,66 @@
+# Maintainer: J. Peter Mugaas <jpmugaas@suddenlink.net>
+
+_realname=nghttp2
+pkgbase=mingw-w64-${_realname}
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+pkgver=1.51.0
+pkgrel=1
+pkgdesc="Framing layer of HTTP/2 is implemented as a reusable C library (mingw-w64)"
+arch=('any')
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64' 'clang32' 'clangarm64')
+url='https://nghttp2.org/'
+depends=()
+checkdepends=("${MINGW_PACKAGE_PREFIX}-cunit")
+makedepends=(
+  "${MINGW_PACKAGE_PREFIX}-cmake"
+  "${MINGW_PACKAGE_PREFIX}-ninja"
+  "${MINGW_PACKAGE_PREFIX}-gcc"
+)
+license=('spdx:MIT')
+source=("https://github.com/nghttp2/nghttp2/releases/download/v${pkgver}/${_realname}-${pkgver}.tar.xz"
+        "001-fix-pc-prefix.patch"
+        "002-versioned-dll.patch")
+sha256sums=('66aa76d97c143f42295405a31413e5e7d157968dad9f957bb4b015b598882e6b'
+            'baf901e7d565eaea1133d30b13620b02681ce96ebe56d38e1dea4394299106b6'
+            '69d3784778f83bfab8a55413f363a2aab2a6fcf41372b8dc6cd2739212ad1f7c')
+
+prepare() {
+  cd $srcdir/${_realname}-${pkgver}
+
+  patch -Nbp1 -i "${srcdir}/001-fix-pc-prefix.patch"
+  patch -Nbp1 -i "${srcdir}/002-versioned-dll.patch"
+}
+
+build() {
+  declare -a extra_config
+  if check_option "debug" "n"; then
+    extra_config+=("-DCMAKE_BUILD_TYPE=Release")
+  else
+    extra_config+=("-DCMAKE_BUILD_TYPE=Debug")
+  fi
+
+  cd "${srcdir}/${_realname}-${pkgver}"
+  mkdir -p "${srcdir}/build-static-${MSYSTEM}" && cd "${srcdir}/build-static-${MSYSTEM}"
+
+  export CPPFLAGS="$CPPFLAGS -DLIBXML_STATIC -DNGHTTP2_STATICLIB"
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+    "${MINGW_PREFIX}"/bin/cmake.exe \
+      -GNinja \
+      -DCMAKE_INSTALL_PREFIX="${MINGW_PREFIX}" \
+      "${extra_config[@]}" \
+      -DENABLE_SHARED_LIB=OFF \
+      -DENABLE_STATIC_LIB=ON \
+      -DENABLE_LIB_ONLY=ON \
+      -DWITH_JEMALLOC=OFF \
+      -DWITH_LIBXML2=OFF \
+      ../${_realname}-${pkgver}
+
+  "${MINGW_PREFIX}"/bin/cmake.exe --build .
+}
+
+package() {
+  cd "${srcdir}/build-static-${MSYSTEM}"
+  DESTDIR="${pkgdir}" "${MINGW_PREFIX}"/bin/cmake.exe --install .
+
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
+}

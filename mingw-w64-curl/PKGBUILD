@@ -12,7 +12,7 @@ fi
 _realname=curl
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}${_namesuff}"
-pkgver=7.83.1
+pkgver=7.84.0
 pkgrel=9000
 pkgdesc="Command line tool and library for transferring data with URLs. (mingw-w64)"
 arch=('any')
@@ -21,6 +21,7 @@ license=("MIT")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-pkg-config")
 depends=("${MINGW_PACKAGE_PREFIX}-libssh2"
          "${MINGW_PACKAGE_PREFIX}-zlib"
+         "${MINGW_PACKAGE_PREFIX}-nghttp2"
          "${MINGW_PACKAGE_PREFIX}-openssl")
 
 # We include stubs for these libs because many packages have -lidn -lrtmp harcoded
@@ -34,7 +35,7 @@ fi
 options=('staticlibs')
 source=("${url}/download/${_realname}-${pkgver}.tar.xz"
         "disable-cainfo-for-schannel.patch")
-sha256sums=('2cb9c2356e7263a1272fd1435ef7cdebf2cd21400ec287b068396deb705c22c4'
+sha256sums=('2d118b43f547bfe5bae806d8d47b4e596ea5b25a6c1f080aef49fbcd817c5db8'
             'SKIP')
 validpgpkeys=('914C533DF9B2ADA2204F586D78E11C6B279D5C91'  # Daniel Stenberg
               '27EDEAF22F3ABCEB50DB9A125CC908FDB71E12C2'
@@ -79,11 +80,13 @@ build() {
     _variant_config+=("--with-schannel")
     _variant_config+=("--with-default-ssl-backend=schannel")    
     _variant_config+=("--without-ca-bundle")
-    _variant_config+=("--without-nghttp2")
+    _variant_config+=("--with-nghttp2")
     _variant_config+=("--without-librtmp")
   fi
 
   #export curl_disallow_strtok_r="yes" # For rtools 4.6.3
+  export CPPFLAGS="$CPPFLAGS -DNGHTTP2_STATICLIB"
+
   cd "${srcdir}/build-${CARCH}"
   ../${_realname}-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
