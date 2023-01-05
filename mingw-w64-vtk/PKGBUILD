@@ -1,7 +1,7 @@
 _realname=vtk
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=9.2.2
+pkgver=9.2.4
 pkgrel=1
 pkgdesc="A software system for 3D computer graphics, image processing and visualization (mingw-w64)"
 arch=("any")
@@ -12,7 +12,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
 options=("staticlibs" "strip")
 
 source=("https://www.vtk.org/files/release/${pkgver%.*}/VTK-${pkgver}.tar.gz")
-sha256sums=("1c5b0a2be71fac96ff4831af69e350f7a0ea3168981f790c000709dcf9121075")
+sha256sums=("9ed0d55c923778469357412d3f6bdd4841a31c30be997a53a7b0632d815cbc9c")
 noextract=(${_realname}-${pkgver}.tar.gz)
 
 build() {
