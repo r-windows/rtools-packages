@@ -60,7 +60,7 @@ build() {
     --enable-hardcoded-tables \
     --enable-version3 \
     --enable-zlib \
-    --enable-libspeex
+    --enable-libspeex \
     --disable-lzma \
     --disable-doc \
     --extra-libs="$(${PKG_CONFIG:-pkgconfig} --libs-only-l --static vorbis)"
