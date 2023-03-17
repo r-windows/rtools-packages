@@ -19,7 +19,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-bzip2"
         "${MINGW_PACKAGE_PREFIX}-x264"
         "${MINGW_PACKAGE_PREFIX}-xvidcore"
         "${MINGW_PACKAGE_PREFIX}-zlib"
-        "${MINGW_PACKAGE_PREFIX}-libspeex")
+        "${MINGW_PACKAGE_PREFIX}-speex")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
              "${MINGW_PACKAGE_PREFIX}-nasm")
