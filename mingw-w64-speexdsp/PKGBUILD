@@ -12,7 +12,7 @@ license=('BSD')
 url="https://www.speex.org/"
 #depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs")
 options=('strip' '!libtool' 'staticlibs')
-makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-autotools")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
 source=("https://gitlab.xiph.org/xiph/speexdsp/-/archive/SpeexDSP-${pkgver}/speexdsp-SpeexDSP-${pkgver}.tar.gz"
         "0001-include-stdint-in-resample-neon-h.patch")
 sha256sums=('d17ca363654556a4ff1d02cc13d9eb1fc5a8642c90b40bd54ce266c3807b91a7'
