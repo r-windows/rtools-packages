@@ -29,9 +29,8 @@ Function InstallMSYS64 {
 
 ##### Old stuff ###
 
-$RTOOLS_ARCH = ${env:RTOOLS_ARCH}
-$RTOOLS_ZIP = "rtools40-${RTOOLS_ARCH}.7z"
-$RTOOLS_EXE = "rtools40-${RTOOLS_ARCH}.exe"
+$RTOOLS_ZIP = "rtools40-x86_64.7z"
+$RTOOLS_EXE = "rtools40-x86_64.exe"
 #$ErrorActionPreference = "Stop";
 
 ### Use for bootstrapping installation
