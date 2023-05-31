@@ -3,7 +3,7 @@
 _realname=opencv
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=4.4.0
+pkgver=4.7.0
 pkgrel=1
 pkgdesc="Open Source Computer Vision Library (mingw-w64)"
 arch=('any')
@@ -16,37 +16,28 @@ depends=("${MINGW_PACKAGE_PREFIX}-intel-tbb"
          "${MINGW_PACKAGE_PREFIX}-libwebp"
          "${MINGW_PACKAGE_PREFIX}-zlib")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
+             "${MINGW_PACKAGE_PREFIX}-ninja"
              "${MINGW_PACKAGE_PREFIX}-python3")
 source=("${_realname}-${pkgver}.tar.gz"::https://github.com/opencv/opencv/archive/${pkgver}.tar.gz
         "${_realname}_contrib-${pkgver}.tar.gz"::https://github.com/opencv/opencv_contrib/archive/${pkgver}.tar.gz
         '0001-mingw-w64-cmake.patch'
-        '0002-solve_deg3-underflow.patch'
-        '0003-issue-4107.patch'
         '0004-generate-proper-pkg-config-file.patch'
         '0008-mingw-w64-cmake-lib-path.patch'
-        '0010-find-libpng-header.patch'
-        '0012-make-header-usable-with-C-compiler.patch'
         '0014-python-install-path.patch'
         '0015-windres-cant-handle-spaces-in-defines.patch'
-        '0101-somehow-uint-not-detected.patch'
-        '0102-mingw-w64-have-sincos.patch'
-        '0103-sfm-module-linking.patch'
-        '0104-rgbd-module-missing-include.patch')
-sha256sums=('bb95acd849e458be7f7024d17968568d1ccd2f0681d47fd60d34ffb4b8c52563'
-            'a69772f553b32427e09ffbfd0c8d5e5e47f7dab8b3ffc02851ffd7f912b76840'
-            '496165d79ffdaee4626697c7f1c90891c1108854da2a266138c94dcb28e7a90f'
-            'fd4e095c3c879413184fc6b91a7b0a77dbb128612341a8be2c99d804a203e362'
-            '52ebc8875b9ef3ea70897f34509228daeff73d0cab0aa9eb8b931be6a7d32d7f'
-            'aaf2a1952b04c9be3a133b08b0a06f536b4e9ba5f312a03f41301dba61a3fc94'
+        '0021-requires-vtk.patch'
+        '0104-rgbd-module-missing-include.patch'
+        '0106-use-find-package-with-hdf5.patch')
+sha256sums=('8df0079cdbe179748a18d44731af62a245a45ebf5085223dc03133954c662973'
+            '42df840cf9055e59d0e22c249cfb19f04743e1bdad113d31b1573d3934d62584'
+            '34e63a897024d41adeadcf593480ae4074ecaed5fc7b05ba5cc2469c7669a83e'
+            '7fac6a7788638f8843f562381413ce13c59038d2fafc5dc05258195128e5caf5'
             '7398e66f80be37382bd427b5eb3a1201a23113c14e71435a44df8779ea1b8a34'
-            'f4d9c95251d74165de89f9c4f17a9a265302aca10ac8723a866f413a2181a361'
-            '7350e41ac9dfd95213b880ff017edda155ad704e35e024cfd9f42d286178b1fb'
-            'e7ca030c5fc9d1292ff464afe5fd83ebe7d58df98321ed83dc55afba8a60ea3d'
-            '41355ee1729805557f065de8336c07c5798d6eb3c09456edc837a8b78b11f03a'
-            '7d2ff25f97c84b59793502786dd64e25c8ca991b0523ffea56b45ce031e80c3f'
-            'ba227bb88c7e6948c54c5a3c8347daf5e2c930e99fb155047015bc5cfa2b33e5'
-            'd9d4da3c3f0c84b80fd14b882378c79c91435db9e33b9a6199d8eb260ed6eb13'
-            '3ed3f516c0a93954fdbcd08df2e685993a2cb954926524265aa13beabe699c29')
+            '0c310a580d6700601d4b4f824b849c0f0d64d3953e249f04c6a91f15aa8bee0a'
+            '11522ffedb22980ba8d09ff715a25327fe14806e55588bffa761e39e1d035ea5'
+            'f572f94eb3e438eb1e0700ee04b9c999cd3216b39ba04321148137cecf6bbcb5'
+            'c6c92cf39dfe45b8fb41d80ac0de3cd304e8b695420b307fd4320a105d8fe9f4'
+            '01db42dc6fec466433ebe701be4fa21d5cb439cc156b04d969290a98e18f7467')
 
 # Helper macros to help make tasks easier #
 apply_patch_with_msg() {
@@ -70,39 +61,31 @@ del_file_exists() {
 prepare() {
   cd "${srcdir}/${_realname}-${pkgver}"
   apply_patch_with_msg \
-        0001-mingw-w64-cmake.patch \
-        0002-solve_deg3-underflow.patch \
-        0003-issue-4107.patch \
-        0004-generate-proper-pkg-config-file.patch \
-        0008-mingw-w64-cmake-lib-path.patch \
-        0010-find-libpng-header.patch \
-        0012-make-header-usable-with-C-compiler.patch \
-        0014-python-install-path.patch \
-        0015-windres-cant-handle-spaces-in-defines.patch
+    0001-mingw-w64-cmake.patch \
+    0004-generate-proper-pkg-config-file.patch \
+    0008-mingw-w64-cmake-lib-path.patch \
+    0014-python-install-path.patch \
+    0015-windres-cant-handle-spaces-in-defines.patch \
+    0021-requires-vtk.patch
 
   cd "${srcdir}/${_realname}_contrib-${pkgver}"
   apply_patch_with_msg \
-        0101-somehow-uint-not-detected.patch \
-        0102-mingw-w64-have-sincos.patch \
-        0103-sfm-module-linking.patch \
-        0104-rgbd-module-missing-include.patch
+    0104-rgbd-module-missing-include.patch \
+    0106-use-find-package-with-hdf5.patch
 }
 
 build() {
-  [[ -d ${srcdir}/build-${CARCH} ]] && rm -rf ${srcdir}/build-${CARCH}
-  mkdir -p ${srcdir}/build-${CARCH} && cd ${srcdir}/build-${CARCH}
+  mkdir -p ${srcdir}/build-${MSYSTEM} && cd ${srcdir}/build-${MSYSTEM}
 
   CFLAGS+=" -D_POSIX_SOURCE -Wno-attributes"
   CXXFLAGS+=" -D_POSIX_SOURCE -Wno-attributes"
 
   export OpenEXR_HOME=${MINGW_PREFIX}
   export OpenBLAS_HOME=${MINGW_PREFIX}
-  export TINYDNN_ROOT=${MINGW_PREFIX}/include/tiny_dnn
 
-  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=;-DPYTHON2_PACKAGES_PATH=;-DPYTHON3_PACKAGES_PATH=" \
   ${MINGW_PREFIX}/bin/cmake.exe -Wno-dev \
-    -G"MSYS Makefiles" \
-    -DCMAKE_BUILD_TYPE=Release \
+    -G"Ninja" \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
     -DBUILD_SHARED_LIBS=OFF \
     -DPKG_CONFIG_WITHOUT_PREFIX=ON \
@@ -130,7 +113,7 @@ build() {
     -DWITH_OPENEXR=OFF \
     -DWITH_PROTOBUF=OFF \
     -DWITH_XINE=OFF \
-    -DWITH_QUIRC=OFF \
+    -DWITH_QUIRC=ON \
     -DWITH_ADE=OFF \
     -DWITH_OPENCL_D3D11_NV=OFF \
     -DOPENCV_SKIP_PYTHON_LOADER=ON \
@@ -144,16 +127,10 @@ build() {
     -DOPENCV_GENERATE_PKGCONFIG=ON \
     ../${_realname}-${pkgver}
 
-  make
+  ${MINGW_PREFIX}/bin/cmake --build .
 }
 
 package() {
-  cd "${srcdir}/build-${CARCH}"
-  make DESTDIR=${pkgdir} install
-  
-  # install missing headers https://github.com/opencv/opencv/issues/13201
-  for _module in imgcodecs videoio photo; do
-    cp -r "${srcdir}"/${_realname}-${pkgver}/modules/${_module}/include/opencv2/${_module}/legacy \
-      "${pkgdir}${MINGW_PREFIX}"/include/opencv4/opencv2/${_module}
-  done
+  cd "${srcdir}/build-${MSYSTEM}"
+  DESTDIR=${pkgdir} ${MINGW_PREFIX}/bin/cmake --install .
 }
