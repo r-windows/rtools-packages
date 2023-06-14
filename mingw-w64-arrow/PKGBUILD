@@ -3,7 +3,7 @@
 _realname=arrow
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=12.0.0
+pkgver=12.0.1
 pkgrel=1
 pkgdesc="Apache Arrow is a cross-language development platform for in-memory data (mingw-w64)"
 arch=("any")
@@ -29,11 +29,11 @@ options=("staticlibs" "strip" "!buildflags")
 # source_dir=${_realname}
 
 # Uncomment to build from rc
-#source=("${_realname}-${pkgver}.tar.gz"::"https://dist.apache.org/repos/dist/dev/arrow/apache-arrow-${pkgver}-rc0/apache-arrow-${pkgver}.tar.gz")
+# source=("${_realname}-${pkgver}.tar.gz"::"https://dist.apache.org/repos/dist/dev/arrow/apache-arrow-${pkgver}-rc1/apache-arrow-${pkgver}.tar.gz")
 # This is the official release
 source=("${_realname}-${pkgver}.tar.gz"::"https://downloads.apache.org/arrow/arrow-${pkgver}/apache-arrow-${pkgver}.tar.gz")
 source_dir="apache-${_realname}-${pkgver}"
-sha256sums=("ddd8347882775e53af7d0965a1902b7d8fcd0a030fd14f783d4f85e821352d52")
+sha256sums=("3481c411393aa15c75e88d93cf8315faf7f43e180fe0790128d3840d417de858")
 
 pkgver() {
   cd "$source_dir"
