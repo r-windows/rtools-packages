@@ -3,7 +3,7 @@
 _realname=openssl
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
-_ver=3.1.1
+pkgver=3.1.1
 pkgrel=9800
 arch=('any')
 pkgdesc="The Open Source toolkit for Secure Sockets Layer and Transport Layer Security (mingw-w64)"
@@ -12,8 +12,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
 options=('strip' '!buildflags' 'staticlibs')
 license=('BSD')
 url="https://www.openssl.org"
-noextract=(${_realname}-${_ver}.tar.gz)
-source=(https://www.openssl.org/source/${_realname}-${_ver}.tar.gz{,.asc})
+source=("https://www.openssl.org/source/openssl-${pkgver}.tar.gz"{,.asc})
 sha256sums=('b3aa61334233b852b63ddb048df181177c2c659eb9d4376008118f9c08d07674'
             'SKIP')
 
@@ -38,34 +37,18 @@ del_file_exists() {
 }
 # =========================================== #
 
-prepare() {
-  # Clean up old sources so re-patching doesn't fail.
-  [[ -d ${srcdir}/${_realname}-${_ver} ]] && rm -rf ${srcdir}/${_realname}-${_ver}
-  tar -xzvf ${_realname}-${_ver}.tar.gz -C ${srcdir} || true
-  cd ${srcdir}/${_realname}-${_ver}
-}
-
 build() {
-  rm -rf ${srcdir}/build-${CARCH}
- 
-  # No support for out-of-source builds
-  mkdir -p ${srcdir}/build-${CARCH}
-#  cp -a ${srcdir}/${_realname}-${_ver}/* ${srcdir}/build-${CARCH}
+  mkdir -p "${srcdir}/build-${MSYSTEM}" && cd "${srcdir}/build-${MSYSTEM}"
 
   # Use mingw cflags instead of hardcoded ones
   sed -i -e '/^"mingw"/ s/-fomit-frame-pointer -O3 -Wall/-O2 -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions --param=ssp-buffer-size=4/' \
-     ${srcdir}/${_realname}-${_ver}/Configure
-#     ${srcdir}/build-${CARCH}/Configure
+    ${srcdir}/${_realname}-${pkgver}/Configurations/10-main.conf
 
-  _mingw=mingw
-  if $(echo ${CARCH} | grep -q x86_64); then
-    _mingw=mingw64
-  fi
-  cd "${srcdir}/build-${CARCH}"
-  export MSYS2_ARG_CONV_EXCL="--prefix="
-  ${srcdir}/${_realname}-${_ver}/Configure \
-    --prefix=${MINGW_PREFIX} \
-    --openssldir=ssl \
+  MSYS2_ARG_CONV_EXCL="--prefix=" \
+  ../"${_realname}-${pkgver}"/Configure \
+    --prefix="${MINGW_PREFIX}" \
+    --libdir=lib \
+    --openssldir=etc/ssl \
     ${_mingw} \
     no-shared no-module \
     zlib-dynamic \
@@ -75,28 +58,14 @@ build() {
     enable-mdc2 \
     enable-rc5  \
     enable-rfc3779 \
-    -D__MINGW_USE_VC2005_COMPAT \
     -DOPENSSLBIN=\"\\\"${MINGW_PREFIX}/bin\\\"\"
 
-  make ZLIB_INCLUDE=-I"${MINGW_PREFIX}"/include depend all
+  MSYS2_ARG_CONV_EXCL="-DENGINESDIR=;-DMODULESDIR=;-DOPENSSLDIR=;-DINSTALLTOP=;-DOPENSSLBIN=" \
+  make
 }
 
 package() {
-  cd "${srcdir}/build-${CARCH}"
-  mkdir -p "${pkgdir}${MINGW_PREFIX}"/bin
-  mkdir -p "${pkgdir}${MINGW_PREFIX}"/include/openssl
-  mkdir -p "${pkgdir}${MINGW_PREFIX}"/lib/pkgconfig
-  mkdir -p "${pkgdir}${MINGW_PREFIX}"/share/licenses/${_realname}
-
-  make -j1 DESTDIR="${pkgdir}" LIBDIR="lib" MANDIR="${MINGW_PREFIX}/share/man" MANSUFFIX=ssl install
-  install -D -m644 "${srcdir}/${_realname}-${_ver}/LICENSE.txt" \
-         "${pkgdir}${MINGW_PREFIX}"/share/licenses/${_realname}/LICENSE.txt
-
-  #mv "${pkgdir}${MINGW_PREFIX}"/lib64 "${pkgdir}${MINGW_PREFIX}"/lib || true
-  chmod -R 777 "${pkgdir}${MINGW_PREFIX}"/bin
-  chmod -R 777 "${pkgdir}${MINGW_PREFIX}"/lib
-
-  install -m644 "${srcdir}/${_realname}-${_ver}/ms/applink.c" "${pkgdir}${MINGW_PREFIX}"/include/openssl/
-  rm -rf "${pkgdir}${MINGW_PREFIX}"/bin/c_rehash
-  rm -rf "${pkgdir}${MINGW_PREFIX}"/{ssl/misc,ssl/man}
+  cd "${srcdir}/build-${MSYSTEM}"
+  make install DESTDIR="${pkgdir}"
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/LICENSE.txt" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE"
 }
