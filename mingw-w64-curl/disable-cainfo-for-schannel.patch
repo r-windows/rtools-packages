@@ -1,11 +1,11 @@
 diff -aurp curl-7.83.1-orig/lib/vtls/schannel.c curl-7.83.1/lib/vtls/schannel.c
 --- curl-7.83.1-orig/lib/vtls/schannel.c	2022-10-17 20:57:44.000000000 +0200
 +++ curl-7.83.1/lib/vtls/schannel.c	2022-10-17 20:59:16.000000000 +0200
-@@ -810,7 +810,7 @@ schannel_connect_step1(struct Curl_easy 
+@@ -1129,7 +1129,7 @@ schannel_connect_step1(struct Curl_easy
  #endif
  #else
  #ifdef HAS_MANUAL_VERIFY_API
--  if(SSL_CONN_CONFIG(CAfile) || SSL_CONN_CONFIG(ca_info_blob)) {
+-  if(conn_config->CAfile || conn_config->ca_info_blob) {
 +  if(0) { /* disabled by jeroen: does not work well */
      if(curlx_verify_windows_version(6, 1, 0, PLATFORM_WINNT,
                                      VERSION_GREATER_THAN_EQUAL)) {
