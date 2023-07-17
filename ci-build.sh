@@ -4,6 +4,9 @@ source 'ci-library.sh'
 mkdir artifacts
 mkdir sourcepkg
 
+# Prevent cmake from picking up on openssl
+rm -Rf /c/Progra~1/OpenSSL/
+
 ## Remove packages
 #deploy_enabled && cd artifacts
 #execute 'Removing old python3 packages from index' remove_from_repository "${PACMAN_REPOSITORY:-ci-build}" "python3"
