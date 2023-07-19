@@ -15,28 +15,22 @@ depends=("${MINGW_PACKAGE_PREFIX}-libssh2"
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake" "${MINGW_PACKAGE_PREFIX}-gcc")
 source=(${_realname}-${pkgver}.tar.gz::"https://github.com/libgit2/libgit2/archive/v${pkgver}.tar.gz"
         "https://patch-diff.githubusercontent.com/raw/libgit2/libgit2/pull/6586.diff"
-        "winlibs.patch"
-        "0001-libgit2-1.4.2-rc-filename.patch")
+        "winlibs.patch")
 noextract=(${_realname}-${pkgver}.tar.gz)
 sha256sums=('d9d0f84a86bf98b73e68997f5c1543cc5067d0ca9c7a5acaba3e8d117ecefef3'
-            'SKIP'
             'SKIP'
             'SKIP')
 
 prepare() {
   tar --exclude tests/resources/testrepo-worktree/link_to_new.txt -zxf ${_realname}-${pkgver}.tar.gz
-  #rm ${_realname}-${pkgver}/src/win32/thread.c
   cd ${_realname}-${pkgver}
   patch -p1 -i ${srcdir}/winlibs.patch
   patch -R -p1 -i ${srcdir}/6586.diff
-  #patch -p1 -i ${srcdir}/0001-libgit2-1.4.2-rc-filename.patch
 }
 
 build() {
   [[ -d "${srcdir}"/build-${MINGW_CHOST} ]] && rm -rf "${srcdir}"/build-${MINGW_CHOST}
   mkdir -p "${srcdir}"/build-${MINGW_CHOST} && cd "${srcdir}"/build-${MINGW_CHOST}
-
-  echo "pkgconfig libssh2: $(pkg-config --libs --static libssh2)"
 
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=;-DCMAKE_PREFIX_PATH=" \
   ${MINGW_PREFIX}/bin/cmake.exe \
@@ -46,7 +40,6 @@ build() {
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
     -DCMAKE_PREFIX_PATH=${MINGW_PREFIX} \
     -DUSE_THREADS=OFF \
-    -DBUILD_TESTS=OFF \
     -DUSE_SSH=ON \
     -DUSE_ICONV=ON \
     -DREGEX_BACKEND=builtin \
