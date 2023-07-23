@@ -310,6 +310,8 @@ prepare() {
   apply_patch_with_msg 4000-clang-arm64.patch
 
   autoreconf -vfi
+
+  sed -i.bak 's/#ifndef MS_WINDOWS/#ifndef BLABLA/g' Python/fileutils.c
 }
 
 check() {
