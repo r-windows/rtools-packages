@@ -312,6 +312,7 @@ prepare() {
   autoreconf -vfi
 
   sed -i.bak 's/FromWideChar(lc->_W_ ## ATTR, -1)/DecodeLocale(lc->ATTR, NULL)/g' Python/fileutils.c
+  sed -i.bak 's/FromWideChar(lc->_W_ ## ATTR, -1)/DecodeLocale(lc->ATTR, NULL)/g' Modules/_localemodule.c
 }
 
 check() {
