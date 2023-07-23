@@ -328,6 +328,7 @@ build() {
   CFLAGS+=" -fwrapv -D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601"
   CXXFLAGS+=" -fwrapv -D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601"
   CPPFLAGS+=" -I${PREFIX_WIN}/include/ncurses "
+  CPPFLAGS+=" $(${MINGW_PREFIX}/bin/pkg-config --cflags libffi) "
 
   declare -a _extra_config
   if check_option "debug" "n"; then
