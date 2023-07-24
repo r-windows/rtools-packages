@@ -39,12 +39,28 @@ class Tests(unittest.TestCase):
     def test_sep(self):
         self.assertEqual(os.sep, SEP)
 
+    def test_module_file_path(self):
+        import asyncio
+        import zlib
+        self.assertEqual(zlib.__file__, os.path.normpath(zlib.__file__))
+        self.assertEqual(asyncio.__file__, os.path.normpath(asyncio.__file__))
+
+    def test_importlib_frozen_path_sep(self):
+        import importlib._bootstrap_external
+        self.assertEqual(importlib._bootstrap_external.path_sep, SEP)
+
     def test_os_commonpath(self):
         self.assertEqual(
             os.path.commonpath(
                 [os.path.join("C:", os.sep, "foo", "bar"),
                  os.path.join("C:", os.sep, "foo")]),
                  os.path.join("C:", os.sep, "foo"))
+
+    def test_pathlib(self):
+        import pathlib
+
+        p = pathlib.Path("foo") / pathlib.Path("foo")
+        self.assertEqual(str(p), os.path.normpath(p))
 
     def test_modules_import(self):
         import sqlite3
@@ -84,6 +100,24 @@ class Tests(unittest.TestCase):
         import sysconfig
         # This should be able to execute without exceptions
         sysconfig.get_config_vars()
+
+    def test_sqlite_enable_load_extension(self):
+        # Make sure --enable-loadable-sqlite-extensions is used
+        import sqlite3
+        self.assertTrue(sqlite3.Connection.enable_load_extension)
+
+    def test_venv_creation(self):
+        import tempfile
+        import venv
+        import subprocess
+        import shutil
+        with tempfile.TemporaryDirectory() as tmp:
+            builder = venv.EnvBuilder()
+            builder.create(tmp)
+            assert os.path.exists(os.path.join(tmp, "bin", "activate"))
+            assert os.path.exists(os.path.join(tmp, "bin", "python.exe"))
+            assert os.path.exists(os.path.join(tmp, "bin", "python3.exe"))
+            subprocess.check_call([shutil.which("bash.exe"), os.path.join(tmp, "bin", "activate")])
 
 
 def suite():
