@@ -69,6 +69,7 @@ build() {
 
   # Does not enable DLL_EXPORT, keeps DllMain far away (#17643)
   # gir disabled. ERROR: can't resolve libraries to shared libraries
+  LDFLAGS+=" -liphlpapi -ldnsapi" \
   CFLAGS+=" ${_static_flags[@]}" \
   CXXFLAGS+=" ${_static_flags[@]}" \
   MSYS2_ARG_CONV_EXCL="--prefix=" \
@@ -79,6 +80,10 @@ build() {
     -Dintrospection=disabled \
     "gdk-pixbuf-${pkgver}" \
     "build-${MSYSTEM}-static"
+
+  # Jeroen: somehow python needs to be a windows path here
+  WINPREFIX=$(cygpath -m ${MINGW_PREFIX})
+  sed -i.bak "s@${MINGW_PREFIX}/bin/python3.exe@${WINPREFIX}/bin/python3.exe@g" "build-${MSYSTEM}-static/build.ninja"
 
   ${MINGW_PREFIX}/bin/meson compile -C "build-${MSYSTEM}-static"
 
