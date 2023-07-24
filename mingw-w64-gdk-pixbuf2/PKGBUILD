@@ -4,79 +4,112 @@
 
 _realname=gdk-pixbuf2
 pkgbase=mingw-w64-${_realname}
-pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=2.36.12
-pkgrel=1
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+pkgver=2.42.10
+pkgrel=4
 pkgdesc="An image loading library (mingw-w64)"
 arch=('any')
-url="https://www.gtk.org/"
-license=(LGPL2)
+url="https://gitlab.gnome.org/GNOME/gdk-pixbuf"
+license=('spdx:LGPL-2.1-or-later')
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
-             "gtk-doc")
+             "${MINGW_PACKAGE_PREFIX}-meson")
 depends=("${MINGW_PACKAGE_PREFIX}-glib2"
          "${MINGW_PACKAGE_PREFIX}-libjpeg-turbo"
          "${MINGW_PACKAGE_PREFIX}-libpng"
          "${MINGW_PACKAGE_PREFIX}-libtiff")
-options=('emptydirs')
+install=${_realname}-${MSYSTEM}.install
 source=("https://download.gnome.org/sources/gdk-pixbuf/${pkgver%.*}/gdk-pixbuf-${pkgver}.tar.xz"
         0003-fix-dllmain.patch
-        0001-windows-rework-loaders-cache-relocation-support.patch
-        0004-build-all-loaders-plus-gdi.patch)
-sha256sums=('fff85cf48223ab60e3c3c8318e2087131b590fd6f1737e42cb3759a3b427a334'
+        0004-build-all-loaders-plus-gdi.patch
+        fix-missing-meson-dep.patch
+        gdk-pixbuf-query-loaders.hook.in)
+noextract=("gdk-pixbuf-${pkgver}.tar.xz")
+sha256sums=('ee9b6c75d13ba096907a2e3c6b27b61bcd17f5c7ebeab5a5b439d2f2e39fe44b'
             '21bd9b2ba1447267c84f1b445cbcf50c62299254856c1c227cc7ba4babc9f27e'
-            '50e5e0f9d6ab91809c1c96522240b0519b70f101c98689c51d493833d3859a5d'
-            '9b47961aa97518c0a136bfe1c0d2d6386d94e0a4a2054ca1882b386de2def89f')
+            '9c4aadcc9ac9dc09c1d9ad94e395078f3d69623db3d7be66bacdb26b919e6540'
+            'SKIP'
+            '6277c30e763c7889a3446e2ce8c7b8dbe7212678497b2905582de8159831e3fb')
 
 prepare() {
+  cd ${srcdir}/
+  tar --exclude tests/test-images/reftests/tga -xf "gdk-pixbuf-${pkgver}.tar.xz"
   cd ${srcdir}/gdk-pixbuf-${pkgver}
+
   msg2 "0003-fix-dllmain.patch"
   patch -p1 -i "${srcdir}"/0003-fix-dllmain.patch
-  msg2 "0001-windows-rework-loaders-cache-relocation-support.patch"
-  patch -p1 -i "${srcdir}"/0001-windows-rework-loaders-cache-relocation-support.patch
+  patch -p1 -i "${srcdir}"/fix-missing-meson-dep.patch
 
   # build all loaders + all gdi loaders static and just don't register
   # the gdi loaders we don't need so the external ones get used
   # (everything except wmf/emf atm)
   patch -p1 -i "${srcdir}"/0004-build-all-loaders-plus-gdi.patch
-  autoreconf -fi
+  sed -i.bak 's/build_modules =.*/build_modules=false/g' meson.build
+  sed -i.bak "/subdir('docs')/d" meson.build
 }
 
 build() {
-  [[ -d "${srcdir}/build-${MINGW_CHOST}" ]] && rm -rf "${srcdir}/build-${MINGW_CHOST}"
-  mkdir -p "${srcdir}/build-${MINGW_CHOST}"
-  cd "${srcdir}/build-${MINGW_CHOST}"
+  local -a _static_flags=(
+    -DGIO_STATIC_COMPILATION
+    -DGLIB_STATIC_COMPILATION
+    -DGMODULE_STATIC_COMPILATION
+    -DGOBJECT_STATIC_COMPILATION
+  )
 
-  mkdir -p docs/reference/gdk-pixbuf/html
-  cp -rf ../gdk-pixbuf-${pkgver}/docs/reference/gdk-pixbuf/html/* docs/reference/gdk-pixbuf/html
+  local -a _meson_options=(
+    --prefix=${MINGW_PREFIX}
+    --wrap-mode=nodownload
+    --auto-features=enabled
+    --buildtype=plain
+    -Dinstalled_tests=false
+    -Drelocatable=true
+    -Dnative_windows_loaders=true
+    -Dbuiltin_loaders=all
+  )
 
-  export LIBS="$(pkg-config --libs-only-l --static gio-windows-2.0) -lgdiplus -liphlpapi -ldnsapi"
-  #export CFLAGS="-DGLIB_STATIC_COMPILATION"
-  ../gdk-pixbuf-${pkgver}/configure \
-    --prefix=${MINGW_PREFIX} \
-    --build=${MINGW_CHOST} \
-    --host=${MINGW_CHOST} \
-    --enable-static \
-    --disable-shared \
-    --disable-introspection \
-    --enable-relocations \
-    --without-libjasper \
-    --disable-nls \
-    --disable-glibtest \
-    --disable-gtk-doc-html \
-    --disable-dependency-tracking \
-    --disable-maintainer-mode \
-    --enable-debug=no \
-    --with-gdiplus \
-    --disable-modules \
-    --with-included-loaders=yes
+  # Does not enable DLL_EXPORT, keeps DllMain far away (#17643)
+  # gir disabled. ERROR: can't resolve libraries to shared libraries
+  LDFLAGS+=" -liphlpapi -ldnsapi" \
+  CFLAGS+=" ${_static_flags[@]}" \
+  CXXFLAGS+=" ${_static_flags[@]}" \
+  MSYS2_ARG_CONV_EXCL="--prefix=" \
+  ${MINGW_PREFIX}/bin/meson setup \
+    "${_meson_options[@]}" \
+    --default-library=static \
+    -Dgtk_doc=false \
+    -Dintrospection=disabled \
+    "gdk-pixbuf-${pkgver}" \
+    "build-${MSYSTEM}-static"
 
-  make
+  # Jeroen: somehow python needs to be a windows path here
+  WINPREFIX=$(cygpath -m ${MINGW_PREFIX})
+  sed -i.bak "s@${MINGW_PREFIX}/bin/python3.exe@${WINPREFIX}/bin/python3.exe@g" "build-${MSYSTEM}-static/build.ninja"
+
+  ${MINGW_PREFIX}/bin/meson compile -C "build-${MSYSTEM}-static"
+
 }
 
-package() {
-  cd "${srcdir}/build-${MINGW_CHOST}"
+package_gdk-pixbuf2() {
+  ${MINGW_PREFIX}/bin/meson install -C "${srcdir}/build-${MSYSTEM}-static" --destdir "${pkgdir}"
 
-  make DESTDIR="${pkgdir}" install
+  for hook in gdk-pixbuf-query-loaders; do
+    local hook_path="${srcdir}/${MINGW_PACKAGE_PREFIX}-${hook}.hook";
+    cp "${srcdir}/${hook}.hook.in" "${hook_path}"
+    sed -s "s|@MINGW_HOOK_TARGET_PREFIX@|${MINGW_PREFIX:1}|g" -i "${hook_path}"
+    sed -s "s|@MINGW_PREFIX@|${MINGW_PREFIX}|g" -i "${hook_path}"
+    install -Dt "$pkgdir/usr/share/libalpm/hooks" -m644 "${hook_path}"
+  done
+
   install -Dm644 "${srcdir}/gdk-pixbuf-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
 }
+
+# template start; name=mingw-w64-splitpkg-wrappers; version=1.0;
+# vim: set ft=bash :
+
+# generate wrappers
+for _name in "${pkgname[@]}"; do
+  _short="package_${_name#${MINGW_PACKAGE_PREFIX}-}"
+  _func="$(declare -f "${_short}")"
+  eval "${_func/#${_short}/package_${_name}}"
+done
+# template end;

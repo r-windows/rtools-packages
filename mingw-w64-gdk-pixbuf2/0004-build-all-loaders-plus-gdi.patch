@@ -1,34 +1,47 @@
---- gdk-pixbuf-2.36.11/configure.ac.orig	2017-10-02 17:29:22.000000000 +0200
-+++ gdk-pixbuf-2.36.11/configure.ac	2018-02-01 17:28:59.137015100 +0100
-@@ -455,7 +456,7 @@
+--- gdk-pixbuf-2.42.9/meson.build.orig	2022-08-11 09:42:23.286806100 +0200
++++ gdk-pixbuf-2.42.9/meson.build	2022-08-11 09:43:15.784358900 +0200
+@@ -293,7 +293,7 @@
  
- dnl Test for libtiff
- libtiff_found=no
--if test x$os_win32 = xno || test x$with_gdiplus = xno; then
-+if test x$os_win32 = xno || true; then
-   if test x$with_libtiff != xno; then
-     PKG_CHECK_MODULES(TIFF, libtiff-4)
-     libtiff_found=yes
-@@ -470,7 +471,7 @@
- fi
+ # Don't check and build the jpeg loader if native_windows_loaders is true
+ jpeg_opt = get_option('jpeg')
+-if not jpeg_opt.disabled() and not native_windows_loaders
++if not jpeg_opt.disabled()
+   jpeg_dep = dependency(is_msvc_like ? 'jpeg' : 'libjpeg', required: false)
  
- dnl Test for libjpeg
--if test x$os_win32 = xno || test x$with_gdiplus = xno; then
-+if test x$os_win32 = xno || true; then
-   if test x$with_libjpeg != xno && test -z "$LIBJPEG"; then
-     AC_CHECK_LIB(jpeg, jpeg_destroy_decompress,
-       jpeg_ok=yes,
---- gdk-pixbuf-2.36.11/gdk-pixbuf/Makefile.am.orig	2017-10-02 17:24:27.000000000 +0200
-+++ gdk-pixbuf-2.36.11/gdk-pixbuf/Makefile.am	2018-02-01 17:32:09.504903500 +0100
-@@ -280,7 +280,7 @@
+   # Finally, look for the dependency in a fallback
+@@ -324,7 +324,7 @@
  
- endif
- 
--else
-+# else
- 
- # Loaders that aren't built if we build the GDI+ loader
- --- gdk-pixbuf-2.36.11/gdk-pixbuf/gdk-pixbuf-io.c.orig	2018-02-01 18:02:27.955913000 +0100
+ # Don't check and build the tiff loader if native_windows_loaders is true
+ tiff_opt = get_option('tiff')
+-if not tiff_opt.disabled() and not native_windows_loaders
++if not tiff_opt.disabled()
+   # We currently don't have a fallback subproject, but this handles error
+   # reporting if tiff_opt is enabled.
+   tiff_dep = dependency(is_msvc_like ? 'tiff' : 'libtiff-4', required: tiff_opt)
+
+--- gdk-pixbuf-2.42.6/gdk-pixbuf/meson.build.orig	2021-07-10 13:23:08.992612200 +0200
++++ gdk-pixbuf-2.42.6/gdk-pixbuf/meson.build	2021-07-10 13:23:26.904145500 +0200
+@@ -12,15 +12,15 @@
+   },
+   'bmp': {
+     'sources': [ 'io-bmp.c' ],
+-    'enabled': not native_windows_loaders,
++    'enabled': true,
+   },
+   'gif': {
+     'sources': [ 'io-gif.c', 'io-gif-animation.c', 'lzw.c' ],
+-    'enabled': not native_windows_loaders,
++    'enabled': true,
+   },
+   'ico': {
+     'sources': [ 'io-ico.c' ],
+-    'enabled': not native_windows_loaders,
++    'enabled': true,
+   },
+   'ani': {
+     'sources': [ 'io-ani.c', 'io-ani-animation.c' ],
+
+--- gdk-pixbuf-2.36.11/gdk-pixbuf/gdk-pixbuf-io.c.orig	2018-02-01 18:02:27.955913000 +0100
 +++ gdk-pixbuf-2.36.11/gdk-pixbuf/gdk-pixbuf-io.c	2018-02-01 18:11:35.652239400 +0100
 @@ -457,17 +457,17 @@
          /* We don't bother having the GDI+ loaders individually selectable
