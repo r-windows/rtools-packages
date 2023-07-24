@@ -4,7 +4,7 @@ _realname=librsvg
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=2.50.5
-pkgrel=1
+pkgrel=2
 pkgdesc="SVG rendering library (mingw-w64)"
 arch=('any')
 url="https://wiki.gnome.org/Projects/LibRsvg"
@@ -12,7 +12,10 @@ license=("LGPL")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
              "setconf"
-             "gtk-doc")
+             "gtk-doc"
+             "autoconf"
+             "automake"
+             "libtool")
 depends=("${MINGW_PACKAGE_PREFIX}-gdk-pixbuf2"
          "${MINGW_PACKAGE_PREFIX}-glib2"
          "${MINGW_PACKAGE_PREFIX}-harfbuzz"
@@ -59,7 +62,7 @@ build() {
 
   # an argument passed to glib-mkenums starts with a c++ comment
   export MSYS2_ARG_CONV_EXCL="/*"
-  LIBS="-lgdi32 -lgdiplus -ldnsapi -liphlpapi" \
+  LIBS="-lgdi32 -lgdiplus -ldnsapi -liphlpapi -lbcrypt -lntdll" \
   ../${_realname}-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
@@ -68,7 +71,7 @@ build() {
     --disable-shared \
     --disable-introspection \
     --enable-tools=yes \
-    --enable-pixbuf-loader=no \
+    --enable-pixbuf-loader=yes \
     --enable-gtk-doc=no \
     --enable-gtk-doc-html=no \
     --enable-silent-rules
