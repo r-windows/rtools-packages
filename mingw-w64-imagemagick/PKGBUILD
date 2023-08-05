@@ -4,16 +4,21 @@ _realname=imagemagick
 pkgbase="mingw-w64-${_realname}"
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 _basever=6.9.12
-_rc=-3
+_rc=-93
 pkgver=${_basever}${_rc//-/.} # pkgver doesn't have "," "/", "-" and space.
-pkgrel=2
+pkgrel=1
 pkgdesc="An image viewing/manipulation program (mingw-w64)"
 arch=('any')
 url="https://www.imagemagick.org/"
 license=("custom")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-libtool"
-             "${MINGW_PACKAGE_PREFIX}-pkg-config")
+             "${MINGW_PACKAGE_PREFIX}-pkg-config"
+             "setconf"
+             "gtk-doc"
+             "autoconf"
+             "automake"
+             "libtool")
 depends=("${MINGW_PACKAGE_PREFIX}-bzip2"
          "${MINGW_PACKAGE_PREFIX}-fftw"
          "${MINGW_PACKAGE_PREFIX}-freetype"
@@ -33,33 +38,30 @@ depends=("${MINGW_PACKAGE_PREFIX}-bzip2"
          "${MINGW_PACKAGE_PREFIX}-zstd")
 options=('staticlibs' 'strip' '!debug' 'libtool')
 source=(https://imagemagick.org/download/releases/ImageMagick-${_basever}${_rc}.tar.xz
-        6.9.11-build-fixes.patch
-        hardcode-thresholds.diff
-        https://github.com/ImageMagick/ImageMagick6/commit/2ac82aa7.diff)
+        6.9.12-build-fixes.patch)
 sha256sums=('SKIP'
-            'SKIP'
-            'SKIP'
             'SKIP')
-#Lexie Parsimoniae (ImageMagick code signing key) <lexie.parsimoniae@imagemagick.org>
 validpgpkeys=('D8272EF51DA223E4D05B466989AB63D48277377A')
 
 prepare() {
   cd ImageMagick-${_basever}${_rc}
-  patch -p1 -i ${srcdir}/6.9.11-build-fixes.patch
-  patch -p1 -i ${srcdir}/hardcode-thresholds.diff
-  patch -p1 -i ${srcdir}/2ac82aa7.diff
+  patch -p1 -i ${srcdir}/6.9.12-build-fixes.patch
+
+  if [[ $CARCH = "i686" ]]; then
+    echo "" > utilities/Makefile.am
+    autoreconf -fiv
+  fi
 }
 
 build() {
   export lt_cv_deplibs_check_method='pass_all'
   [[ $CARCH = "i686" ]] && EXTRAOPTS="--with-gcc-arch=i686"
-  [[ $CARCH = "x86_64" ]] && EXTRAOPTS="" #EXTRAOPTS="--with-gcc-arch=x86-64"
 
   [[ -d build-${MINGW_CHOST} ]] && rm -rf build-${MINGW_CHOST}
   mkdir -p build-${MINGW_CHOST} && cd build-${MINGW_CHOST}
 
   #--with-lcms2, --with-opencl, --without-ltdl
-  LIBS="$(pkg-config --static --libs-only-l pango cairo-gobject) -lgdi32 -lgdiplus -ldnsapi -liphlpapi -luserenv" \
+  LIBS="$(pkg-config --static --libs-only-l pango cairo-gobject) -lntdll -lgdi32 -lgdiplus -ldnsapi -liphlpapi -luserenv -lbcrypt -ladvapi32" \
   ../ImageMagick-${_basever}${_rc}/configure \
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
