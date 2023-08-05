@@ -4,7 +4,7 @@
 _realname=libtiff
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=4.2.0
+pkgver=4.5.1
 pkgrel=9600
 pkgdesc="Library for manipulation of TIFF images (mingw-w64)"
 arch=('any')
@@ -15,7 +15,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-libjpeg-turbo"
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
 options=('staticlibs' 'strip')
 source=("http://download.osgeo.org/libtiff/tiff-${pkgver}.tar.gz")
-sha256sums=('eb0484e568ead8fa23b513e9b0041df7e327f4ee2d22db5a533929dfc19633cb')
+sha256sums=('d7f38b6788e4a8f5da7940c5ac9424f494d8a79eba53d555f4a507167dca5e2b')
 
 prepare() {
   cd tiff-${pkgver}
@@ -55,9 +55,5 @@ package() {
 
   cp ${srcdir}/tiff-${pkgver}/libtiff/{tiffiop,tif_dir}.h "${pkgdir}${MINGW_PREFIX}/include/"
   cp "libtiff/tif_config.h" "${pkgdir}${MINGW_PREFIX}/include/"
-
-  # License
-  # See https://fedoraproject.org/wiki/Licensing:MIT#Hylafax_Variant
-  install -Dm644 "${srcdir}/tiff-${pkgver}/COPYRIGHT" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYRIGHT"
 }
 
