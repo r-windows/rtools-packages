@@ -34,14 +34,23 @@ prepare() {
   # Hack: use external rust for now, until we have our own
   export PATH="$(cygpath -u $USERPROFILE)/.cargo/bin:$PATH"
   TARGET="${MINGW_CHOST/w64-mingw32/pc-windows-gnu}"
+
+  # The new ntdll dependency gives conflicts on win32
+  #if [[ $CARCH = "i686" ]]; then
+    RUSTVER="1.69"
+  #else
+  #  RUSTVER="stable"
+  #fi
+
   if command -v rustup; then
     echo "Found existing rustup!"
     rustup target add $TARGET
-    rustup default "stable-$TARGET"
+    rustup default "$RUSTVER-$TARGET"
   else
     curl -L https://win.rustup.rs -o rustup-init.exe
     ./rustup-init.exe -yv --default-toolchain stable --default-host $TARGET
   fi
+
   echo "PATH=$PATH"
   rustc --version
 
