@@ -1,10 +1,8 @@
-# Maintainer: Martell Malone <martellmalone@gmail.com>
-
 _realname=libgit2
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=1.7.0
-pkgrel=2
+pkgver=1.7.1
+pkgrel=9000
 pkgdesc='A linkable library for Git (mingw-w64)'
 arch=('any')
 url='https://github.com/libgit2/libgit2'
@@ -14,18 +12,25 @@ depends=("${MINGW_PACKAGE_PREFIX}-libssh2"
          "${MINGW_PACKAGE_PREFIX}-zlib")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cmake" "${MINGW_PACKAGE_PREFIX}-gcc")
 source=(${_realname}-${pkgver}.tar.gz::"https://github.com/libgit2/libgit2/archive/v${pkgver}.tar.gz"
-        "https://patch-diff.githubusercontent.com/raw/libgit2/libgit2/pull/6586.diff"
+        "0001-libgit2-1.4.2-rc-filename.patch"
+        "0002-cmake-fix-openssl-build-on-win32.patch"
         "winlibs.patch")
 noextract=(${_realname}-${pkgver}.tar.gz)
-sha256sums=('d9d0f84a86bf98b73e68997f5c1543cc5067d0ca9c7a5acaba3e8d117ecefef3'
-            'SKIP'
+sha256sums=('17d2b292f21be3892b704dddff29327b3564f96099a1c53b00edc23160c71327'
+            'bdffd718bbf178817d5cfd80f9d5a9706b9c6ff981b1631978ae02657cbf2a55'
+            '4329cef22a301adf67652ac00372e08077fe4dd005f7036751be413dda6ac156'
             'SKIP')
 
 prepare() {
   tar --exclude tests/resources/testrepo-worktree/link_to_new.txt -zxf ${_realname}-${pkgver}.tar.gz
   cd ${_realname}-${pkgver}
+
+  patch -Np1 -i "${srcdir}/0001-libgit2-1.4.2-rc-filename.patch"
+
+  # https://github.com/libgit2/libgit2/pull/6626
+  patch -Np1 -i "${srcdir}/0002-cmake-fix-openssl-build-on-win32.patch"
+
   patch -p1 -i ${srcdir}/winlibs.patch
-  patch -R -p1 -i ${srcdir}/6586.diff
 }
 
 build() {
@@ -39,6 +44,7 @@ build() {
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
     -DCMAKE_PREFIX_PATH=${MINGW_PREFIX} \
+    -DUSE_HTTPS=OpenSSL \
     -DUSE_SSH=ON \
     -DUSE_ICONV=ON \
     -DREGEX_BACKEND=builtin \
