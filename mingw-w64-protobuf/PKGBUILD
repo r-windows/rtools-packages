@@ -1,83 +1,60 @@
 # Maintainer: Mario Emmenlauer <memmenlauer@biodataanalysis.de>
+# Contributor: Andrew Sun <adsun701@gmail.com>
 
 _realname=protobuf
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=3.19.4
-_gtest_ver=1.10.0
-pkgrel=1
+pkgver=21.12
+pkgrel=9000
 pkgdesc="Protocol Buffers - Google's data interchange format (mingw-w64)"
 arch=('any')
 url='https://developers.google.com/protocol-buffers/'
-license=('BSD')
+license=('spdx:BSD-3-Clause')
 depends=("${MINGW_PACKAGE_PREFIX}-zlib")
-makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-cmake" "automake" "autoconf" "libtool" "unzip")
-options=('staticlibs' 'strip')
-source=(${_realname}-${pkgver}.tar.gz::https://github.com/google/protobuf/archive/v${pkgver}.tar.gz
-        googletest-release-${_gtest_ver}.tar.gz::https://github.com/google/googletest/archive/release-${_gtest_ver}.tar.gz
+makedepends=("${MINGW_PACKAGE_PREFIX}-cmake"
+             "${MINGW_PACKAGE_PREFIX}-ninja"
+             "${MINGW_PACKAGE_PREFIX}-gcc")
+options=('strip' '!debug' 'staticlibs')
+source=(https://github.com/protocolbuffers/${_realname}/releases/download/v${pkgver}/${_realname}-all-${pkgver}.tar.gz
         0001-protobuf-3.1.0-gcc6.2.0-tests.patch
         0002-windres-invocation.patch)
-noextract=("${_realname}-${pkgver}.tar.gz")
-sha256sums=('3bd7828aa5af4b13b99c191e8b1e884ebfa9ad371b0ce264605d347f135d2568'
-            '9dc9157a9a1551ec7a7e43daea9a694a0bb5fb8bec81235d8a1e6ef64c716dcb'
-            '15c2248597356040be0111d5bfc7317d59a49552d5cd05b0fa70c76980b7ca66'
-            '7c5434ca428784058d6a3bb4a14ff8ff2c4ee843c51800751bbee599d5a63288')
+sha256sums=('2c6a36c7b5a55accae063667ef3c55f2642e67476d96d355ff0acb13dbb47f09'
+            'b71354ef179da2d632c9149addc3994ce38234091994dd35f602eb12c8e1a14e'
+            '174f714b842d5153c79c5fda1ae775ee002aea11d53cb5d5f51cb5c4b9e63d29')
 
 prepare() {
-  tar -xzf "${srcdir}/${_realname}-${pkgver}.tar.gz"
   cd "${srcdir}/${_realname}-${pkgver}"
-
-  cp -r ../googletest-release-${_gtest_ver}/googlemock third_party/googletest/googlemock
-  cp -r ../googletest-release-${_gtest_ver}/googletest third_party/googletest/googletest
 
   patch -p1 -i ${srcdir}/0001-protobuf-3.1.0-gcc6.2.0-tests.patch
   patch -p1 -i ${srcdir}/0002-windres-invocation.patch
-  ./autogen.sh
 }
 
 build() {
-  [[ -d "${srcdir}/build-${MINGW_CHOST}" ]] && rm -rf "${srcdir}/build-${MINGW_CHOST}"
-  cp -rf "${_realname}-${pkgver}" "build-${MINGW_CHOST}"
-  
-  # remove googlemock and googletest directories to allow both architectures to prepare correctly
-  rm -rf "${srcdir}/${_realname}-${pkgver}/googlemock"
-  rm -rf "${srcdir}/${_realname}-${pkgver}/googletest"
-  
-  cd "${srcdir}/build-${MINGW_CHOST}"
 
-  #CPPFLAGS+=" -D_WIN32_WINNT=0x0601"
-
-  # autogen and configure are used to generate the pkg-config files
-  # that will be manually installed. The cmake-based build does not
-  # create pkg-config files. Remove autogen and configure if pkg-config
-  # is not required:
-  ./autogen.sh
-  ./configure \
-      --prefix="${MINGW_PREFIX}" \
-      --build="${MINGW_CHOST}" \
-      --host="${MINGW_CHOST}" \
-      --disable-shared
+  echo "Building static library"
+  [[ -d "${srcdir}/build-${MSYSTEM}-static" ]] && rm -rf "${srcdir}/build-${MSYSTEM}-static"
+  cp -rf "${srcdir}/${_realname}-${pkgver}" "${srcdir}/build-${MSYSTEM}-static"
+  cd "${srcdir}/build-${MSYSTEM}-static"
 
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
-  ${MINGW_PREFIX}/bin/cmake \
+  ${MINGW_PREFIX}/bin/cmake.exe \
       -Wno-dev \
-      -G"MSYS Makefiles" \
+      -G"Ninja" \
       -DCMAKE_INSTALL_PREFIX="${MINGW_PREFIX}" \
-      -DCMAKE_BUILD_TYPE="Release" \
-      -DCMAKE_SKIP_RPATH="ON" \
-      -Dprotobuf_MSVC_STATIC_RUNTIME="ON" \
-      -DBUILD_SHARED_LIBS="OFF" \
+      -DCMAKE_BUILD_TYPE=Release \
+      -Dprotobuf_BUILD_SHARED_LIBS="OFF" \
       -Dprotobuf_BUILD_TESTS="OFF" \
       -Dprotobuf_WITH_ZLIB="ON" \
-      cmake
+      ../${_realname}-${pkgver}/cmake
 
-  make -j1
+  ${MINGW_PREFIX}/bin/cmake.exe --build ./
+
+
 }
 
 package() {
-  cd "${srcdir}/build-${MINGW_CHOST}"
-  make DESTDIR="${pkgdir}" install
+  cd "${srcdir}/build-${MSYSTEM}-static"
+  DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake.exe --install .
+
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/LICENSE" "${pkgdir}/${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE"
-  install -Dm644 "${srcdir}/build-${MINGW_CHOST}/protobuf.pc" "${pkgdir}/${MINGW_PREFIX}/lib/pkgconfig/protobuf.pc"
-  install -Dm644 "${srcdir}/build-${MINGW_CHOST}/protobuf-lite.pc" "${pkgdir}/${MINGW_PREFIX}/lib/pkgconfig/protobuf-lite.pc"
 }
