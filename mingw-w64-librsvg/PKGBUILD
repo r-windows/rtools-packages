@@ -2,20 +2,15 @@
 
 _realname=librsvg
 pkgbase=mingw-w64-${_realname}
-pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=2.50.5
-pkgrel=2
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+pkgver=2.56.3
+pkgrel=1
 pkgdesc="SVG rendering library (mingw-w64)"
 arch=('any')
 url="https://wiki.gnome.org/Projects/LibRsvg"
-license=("LGPL")
-makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
-             "${MINGW_PACKAGE_PREFIX}-pkg-config"
-             "setconf"
-             "gtk-doc"
-             "autoconf"
-             "automake"
-             "libtool")
+license=("spdx:LGPL-2.1-or-later")
+makedepends=("autoconf" "automake" "libtool"
+             "${MINGW_PACKAGE_PREFIX}-gcc")
 depends=("${MINGW_PACKAGE_PREFIX}-gdk-pixbuf2"
          "${MINGW_PACKAGE_PREFIX}-glib2"
          "${MINGW_PACKAGE_PREFIX}-harfbuzz"
@@ -24,28 +19,32 @@ depends=("${MINGW_PACKAGE_PREFIX}-gdk-pixbuf2"
          "${MINGW_PACKAGE_PREFIX}-libxml2")
 options=('staticlibs' 'strip')
 source=("https://download.gnome.org/sources/librsvg/${pkgver%.*}/${_realname}-${pkgver}.tar.xz"
-        "0005-hack-unixy-paths.patch"
-        "configure.patch")
-sha256sums=('32701574c234fed352520c6d0bd5081f728184bc1a9b9c87d423dd27c32b9272'
-            'b23b094c0cb65fcbbbb952350448de6f3430b30f273e05acdbf7a56d634212dc'
+        "0001-configure-set-pass-prefix-to-pkg-config-when-retriev.patch"
+        "glib-0.17.10.tar.gz::https://crates.io/api/v1/crates/glib/0.17.10/download"
+        "glib-rs.patch")
+sha256sums=('5a328048a02d014645cd27f61140f4e0b11280fb2c7f2a21864fe0c59ac1ce88'
+            '189eec6486c9ef6cf1071af9750405bc41e16ae3a55ad663435e574369fec915'
+            'SKIP'
             'SKIP')
+msys2_repository_url="https://gitlab.gnome.org/GNOME/librsvg"
 
 prepare() {
-  # Hack: use external rust for now, until we have our own
+  # Patch the glib rust bindings first
+  cd "${srcdir}/glib-0.17.10"
+  patch -p1 -i "${srcdir}/glib-rs.patch"
+
+  cd "${srcdir}/${_realname}-${pkgver}"
+  patch -p1 -i "${srcdir}/0001-configure-set-pass-prefix-to-pkg-config-when-retriev.patch"
+
+  # Hack: use external rust which lets us select a target version
   export PATH="$(cygpath -u $USERPROFILE)/.cargo/bin:$PATH"
   TARGET="${MINGW_CHOST/w64-mingw32/pc-windows-gnu}"
 
-  # The new ntdll dependency gives conflicts on win32
-  #if [[ $CARCH = "i686" ]]; then
-    RUSTVER="1.69"
-  #else
-  #  RUSTVER="stable"
-  #fi
-
+  # Avoid the ntdll dependency which gives conflicts on msvcrt
   if command -v rustup; then
     echo "Found existing rustup!"
     rustup target add $TARGET
-    rustup default "$RUSTVER-$TARGET"
+    rustup default "1.69-$TARGET"
   else
     curl -L https://win.rustup.rs -o rustup-init.exe
     ./rustup-init.exe -yv --default-toolchain stable --default-host $TARGET
@@ -54,24 +53,36 @@ prepare() {
   echo "PATH=$PATH"
   rustc --version
 
-  # Actual patches
-  cd "${srcdir}/${_realname}-${pkgver}"
-  patch -p1 -i "${srcdir}/0005-hack-unixy-paths.patch"
-  patch -p1 -i "${srcdir}/configure.patch"
-  autoreconf -fiv
+  ## Jeroen: try to fix static linking of rust to glib
+  ## See: https://github.com/msys2/MINGW-packages/issues/18574
+  echo "" >> Cargo.toml
+  echo "[patch.crates-io]" >> Cargo.toml
+  echo "glib = { path = '../glib-0.17.10' }" >> Cargo.toml
+
+  cargo update --package glib
+  cargo fetch --locked
 }
 
 build() {
-  [[ -d "${srcdir}/build-${MINGW_CHOST}" ]] && rm -rf "${srcdir}/build-${MINGW_CHOST}"
-  cp -rf ${srcdir}/${_realname}-${pkgver} "${srcdir}/build-${MINGW_CHOST}"
-  cd "${srcdir}/build-${MINGW_CHOST}"
+  [[ -d "${srcdir}/build-${MSYSTEM}" ]] && rm -rf "${srcdir}/build-${MSYSTEM}"
+  mkdir "${srcdir}/build-${MSYSTEM}" && cd "${srcdir}/build-${MSYSTEM}"
 
-  CXXFLAGS+=" -D_POSIX_SOURCE"
-  CFLAGS+=" -D_POSIX_SOURCE"
+  # html documentation doesn't install from out of tree
+  cp -rf "${srcdir}/${_realname}-${pkgver}/doc" "${srcdir}/build-${MSYSTEM}/doc"
+
+  # https://github.com/msys2/MINGW-packages/pull/13622#issuecomment-1285820970
+  export WINAPI_NO_BUNDLED_LIBRARIES=1
+
+  export lt_cv_deplibs_check_method='pass_all'
 
   # an argument passed to glib-mkenums starts with a c++ comment
   export MSYS2_ARG_CONV_EXCL="/*"
-  LIBS="-lgdi32 -lgdiplus -ldnsapi -liphlpapi -lbcrypt -lntdll" \
+  # so the unix path gets preserved when passed through pkg-config
+  MSYS2_ARG_CONV_EXCL="$MSYS2_ARG_CONV_EXCL;--define-variable=prefix"
+
+  # Autoconf thinks we need pangoft2, but it is not needed.
+  cp -fv ${MINGW_PREFIX}/lib/pkgconfig/pango.pc ${MINGW_PREFIX}/lib/pkgconfig/pangoft2.pc
+
   ../${_realname}-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
@@ -85,15 +96,10 @@ build() {
     --enable-gtk-doc-html=no \
     --enable-silent-rules
 
-  # pass static rust package to linker
-  sed -i "s/^deplibs_check_method=.*/deplibs_check_method=\"pass_all\"/g" libtool
-  # add missing crt libs (ws2_32 and userenv) to LIBRSVG_LIBS
-  sed -i "s/^LIBRSVG_LIBS = .*/& -lws2_32 -luserenv/g" Makefile
   make
 }
 
 package() {
-  cd "${srcdir}/build-${MINGW_CHOST}"
-  make DESTDIR="${pkgdir}" install || true
+  make -C "${srcdir}/build-${MSYSTEM}" DESTDIR="${pkgdir}" install
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING.LIB" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING.LIB"
 }
