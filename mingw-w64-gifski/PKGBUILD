@@ -1,0 +1,36 @@
+# Maintainer: Jeroen
+
+_realname=gifski
+pkgbase=mingw-w64-${_realname}
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+pkgver=1.12.0
+pkgrel=1
+pkgdesc="Highest-quality GIF encoder based on pngquant (mingw-w64)"
+arch=('any')
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64' 'clang32' 'clangarm64')
+url="https://crates.io/crates/gifski"
+license=("spdx:LGPL-2.1-or-later")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
+options=('staticlibs' 'strip')
+source=("${_realname}-${pkgver}.tar.gz::https://crates.io/api/v1/crates/${_realname}/${pkgver}/download")
+sha256sums=('SKIP')
+
+prepare() {
+  export PATH="$(cygpath -u $USERPROFILE)/.cargo/bin:$PATH"
+  TARGET="${MINGW_CHOST/w64-mingw32/pc-windows-gnu}"
+  RUSTVER="1.69"
+  rustup target add $TARGET
+  rustup default "$RUSTVER-$TARGET"
+  rustc --version
+}
+
+build() {
+  cd ${srcdir}/${_realname}-${pkgver}
+  cargo build --release
+}
+
+package() {
+  cd ${srcdir}/${_realname}-${pkgver}
+  install -Dm644 target/release/libgifski.a ${pkgdir}${MINGW_PREFIX}/lib/libgifski.a
+  #install -Dm644 gifski.h ${pkgdir}${MINGW_PREFIX}/include/gifski.h
+}
