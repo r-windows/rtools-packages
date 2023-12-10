@@ -18,7 +18,8 @@ depends=("${MINGW_PACKAGE_PREFIX}-bzip2"
         "${MINGW_PACKAGE_PREFIX}-libvpx"
         "${MINGW_PACKAGE_PREFIX}-x264"
         "${MINGW_PACKAGE_PREFIX}-xvidcore"
-        "${MINGW_PACKAGE_PREFIX}-zlib")
+        "${MINGW_PACKAGE_PREFIX}-zlib"
+        "${MINGW_PACKAGE_PREFIX}-speex")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
              "${MINGW_PACKAGE_PREFIX}-nasm")
@@ -60,6 +61,7 @@ build() {
     --enable-hardcoded-tables \
     --enable-version3 \
     --enable-zlib \
+    --enable-libspeex \
     --disable-lzma \
     --disable-doc \
     --extra-libs="$(${PKG_CONFIG:-pkgconfig} --libs-only-l --static vorbis)"
